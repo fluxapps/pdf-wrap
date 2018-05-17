@@ -1,0 +1,6 @@
+site_name: PDF Wrap
+pages:
+  - Home: index.md
+  - Guides:
+    - 'Basic PDF viewer': guides/basic-viewer.md
+  - Examples: examples.md
