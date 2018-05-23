@@ -73,7 +73,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Nicolas Märchy** - *Initial work* - [BilledTrain380(https://github.com/BilledTrain380)
+* **Nicolas Märchy** - *Initial work* - [BilledTrain380](https://github.com/BilledTrain380)
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
