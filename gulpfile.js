@@ -7,6 +7,8 @@ const file = require("gulp-file");
 const spawn = require("child_process").spawn;
 const uglify = require("gulp-uglify");
 const sequence = require("gulp-sequence");
+const gulpTslint = require("gulp-tslint");
+const tslint = require("tslint");
 
 const appProperties = require("./app.properties");
 
@@ -96,6 +98,23 @@ gulp.task("copyDependencies", function (done) {
     });
 });
 
+// --- lint
+/*
+ * Lints the typescript code
+ */
+gulp.task("lint", () =>
+    gulp.src(`${appProperties.root}/src/**/*.ts`)
+        .pipe(gulpTslint({
+            formatter: "stylish",
+            program: tslint.Linter.createProgram("./tsconfig.json"), // required for type aware rules
+            configuration: "./tslint.json"
+        }))
+        .pipe(gulpTslint.report({
+            summarizeFailureOutput: true,
+            allowWarnings: false
+        }))
+);
+
 // --- transformPackageJSON
 /*
  * Declares every dependency used in package.json as bundledDependencies.
@@ -117,7 +136,7 @@ gulp.task("transformPackageJSON", function () {
  * Transpiles typescript to javascript based on the tsconfig.json file
  * and generates inline source maps.
  */
-gulp.task("transpileTypescript", function () {
+gulp.task("transpileTypescript", ["lint"], function () {
 
     const tsProject = ts.createProject("tsconfig.json");
 
