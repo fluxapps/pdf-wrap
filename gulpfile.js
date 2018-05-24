@@ -40,6 +40,7 @@ gulp.task("package", ["uglifyJS", "copyDependencies", "transformPackageJSON"], f
         .src([
             `${appProperties.root}/README.md`,
             `${appProperties.root}/LICENSE.md`,
+            `${appProperties.root}/CHANGELOG.md`,
             `${appProperties.build.dirs.libs}/pdf-wrap/**/*`
         ])
         .pipe(gulp.dest(`${appProperties.build.dirs.dist}/npm`));

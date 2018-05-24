@@ -6,7 +6,9 @@
   "author": "studer + raimann ag",
   "license": "GPL-3.0",
   "devDependencies": {
+    "@types/chai": "^4.1.3",
     "@types/mocha": "^5.2.0",
+    "chai": "^4.1.2",
     "copy-node-modules": "^1.0.4",
     "del": "^3.0.0",
     "gulp": "^3.9.1",
