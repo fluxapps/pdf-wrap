@@ -26,7 +26,7 @@ gulp.task("clean", function () {
 /*
  * Transpiles typescript and runs the tests.
  */
-gulp.task("build", ["test"], function (done) {
+gulp.task("build", ["test", "lint"], function (done) {
     done();
 });
 
@@ -136,7 +136,7 @@ gulp.task("transformPackageJSON", function () {
  * Transpiles typescript to javascript based on the tsconfig.json file
  * and generates inline source maps.
  */
-gulp.task("transpileTypescript", ["lint"], function () {
+gulp.task("transpileTypescript", function () {
 
     const tsProject = ts.createProject("tsconfig.json");
 
