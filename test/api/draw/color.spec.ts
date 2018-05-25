@@ -9,13 +9,13 @@ describe("a color class", () => {
 
             it('should should create a new color instance', () => {
 
-                const [red, green, blue, alpha] = [255, 0, 0, 1];
+                const [red, green, blue, alpha]: [number, number, number, number] = [255, 0, 0, 1];
 
 
                 const color: Color = colorFromRgba(red, green, blue, alpha);
 
 
-                chai.expect(color.hex).to.equal("FFFF0000");
+                chai.expect(color.hex()).to.equal("#FFFF0000");
             });
         });
 
@@ -23,7 +23,7 @@ describe("a color class", () => {
 
             it('should throw a illegal color value error', () => {
 
-                const [red, green, blue, alpha] = [255, 0, 0, 1];
+                const [red, green, blue, alpha]: [number, number, number, number] = [255, 0, 0, 1];
 
 
                 chai.expect(() => colorFromRgba(286, green, blue, alpha))
@@ -125,6 +125,51 @@ describe("a color class", () => {
                 chai.expect(() => colorFromHex(illegalHex))
                     .to.throw(Error)
                     .and.to.have.property("message", "Parameter value is not a valid hex color value: value=h0ff00");
+            });
+        });
+    });
+
+    describe('formatted hex value', () => {
+
+        const color: Color = colorFromHex("80fc8ac3");
+
+        describe('on #XXXXXX format', () => {
+
+            it('should return the formatted hex value', () => {
+
+                const hex: string = color.hex("#XXXXXX");
+
+                chai.expect(hex).to.equal("#FC8AC3");
+            });
+        });
+
+        describe('on default format', () => {
+
+            it('should return the formatted hex value', () => {
+
+                const hex: string = color.hex();
+
+                chai.expect(hex).to.equal("#80FC8AC3");
+            });
+        });
+
+        describe('on XXXXXX format', () => {
+
+            it('should return the formatted hex value', () => {
+
+                const hex: string = color.hex("XXXXXX");
+
+                chai.expect(hex).to.equal("FC8AC3");
+            });
+        });
+
+        describe('on XXXXXXXX format', () => {
+
+            it('should return the formatted hex value', () => {
+
+                const hex: string = color.hex("XXXXXXXX");
+
+                chai.expect(hex).to.equal("80FC8AC3");
             });
         });
     });

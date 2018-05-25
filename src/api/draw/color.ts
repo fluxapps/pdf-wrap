@@ -1,3 +1,5 @@
+export type HexPattern = "#XXXXXX" | "#XXXXXXXX" | "XXXXXX" | "XXXXXXXX";
+
 /**
  * Predefined colors for a {@link Color} instance.
  *
@@ -20,9 +22,6 @@ export enum Colors {
 /**
  * Holds information about a color like the hex value.
  *
- * The hex value always contains the alpha value.
- * e.g. FFFFFFFF = solid white, 80FFFFFF = 50% white
- *
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
  */
@@ -31,7 +30,21 @@ export interface Color {
     readonly green: number;
     readonly blue: number;
     readonly alpha: number;
-    readonly hex: string;
+
+    /**
+     * The hex value can be formatted by a pattern.
+     * - #XXXXXX = #FFFFFF (normal)
+     * - #XXXXXXXX = #FFFFFFFF (normal with alpha value)
+     * - XXXXXX = FFFFFF (normal without beginning #)
+     * - XXXXXXXX = FFFFFFFF (normal with alpha value, but without beginning #)
+     *
+     * The default format is: #XXXXXXXX
+     *
+     * @param {HexPattern} format - a valid format
+     *
+     * @returns {string} the formatted hex value
+     */
+    hex(format?: HexPattern): string;
 }
 
 /**
@@ -175,7 +188,7 @@ function decToHex(decimal: number): string {
 }
 
 function alphaToHex(alpha: number): string {
-    return decToHex(Math.floor(alpha * 255));
+    return decToHex(Math.round(alpha * 255));
 }
 
 function hexToDec(value: string): number {
@@ -192,7 +205,10 @@ function isAlphaValue(value: number): boolean {
 
 class SimpleColor implements Color {
 
-    readonly hex: string;
+    private readonly hexAlpha: string;
+    private readonly hexRed: string;
+    private readonly hexGreen: string;
+    private readonly hexBlue: string;
 
     constructor(
         readonly red: number,
@@ -200,6 +216,26 @@ class SimpleColor implements Color {
         readonly blue: number,
         readonly alpha: number
     ) {
-        this.hex = `${alphaToHex(alpha)}${decToHex(red)}${decToHex(green)}${decToHex(blue)}`;
+        this.hexAlpha = alphaToHex(alpha);
+        this.hexRed = decToHex(red);
+        this.hexGreen = decToHex(green);
+        this.hexBlue = decToHex(blue);
+    }
+
+    hex(format: HexPattern = "#XXXXXXXX"): string {
+
+        switch (format) {
+            case "#XXXXXX":
+                return `#${this.hexRed}${this.hexGreen}${this.hexBlue}`;
+
+            case "XXXXXX":
+                return `${this.hexRed}${this.hexGreen}${this.hexBlue}`;
+
+            case "XXXXXXXX":
+                return `${this.hexAlpha}${this.hexRed}${this.hexGreen}${this.hexBlue}`;
+
+            default:
+                return `#${this.hexAlpha}${this.hexRed}${this.hexGreen}${this.hexBlue}`;
+        }
     }
 }
