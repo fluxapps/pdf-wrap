@@ -1,6 +1,7 @@
 import {Color, colorFrom, Colors} from "../api/draw/color";
 import {Dimension, Point} from "../api/draw/draw.basic";
 import * as svgjs from "svgjs";
+import uuid from "uuid-js";
 
 /**
  * Describes a canvas which can be used to draw elements on.
@@ -58,6 +59,7 @@ export interface Painter {
 export interface BorderPainter<T> extends Painter {
     borderColor(value: Color): T;
     borderWidth(value: number): T;
+    id(value: string): T;
 }
 
 /**
@@ -134,6 +136,7 @@ export class IllegalPaintStateError extends Error {}
 class SVGPolyLinePainter implements PolyLinePainter {
 
     /* tslint:disable: variable-name */
+    private _id: string = `$svg${uuid.create(4).toString()}`;
     private _borderColor: Color = colorFrom(Colors.BLACK);
     private _borderWidth: number = 1;
     private _coordinates: Array<Point> = [];
@@ -148,6 +151,11 @@ class SVGPolyLinePainter implements PolyLinePainter {
     constructor(
         private readonly svg: svgjs.Doc
     ) {}
+
+    id(value: string): PolyLinePainter {
+        this._id = value;
+        return this;
+    }
 
     borderColor(value: Color): PolyLinePainter {
         this._borderColor = value;
@@ -223,6 +231,7 @@ class SVGPolyLinePainter implements PolyLinePainter {
     private paintPolyLine(): svgjs.PolyLine {
         return this.svg.polyline(this.flatCoordinates)
             .fill("none")
+            .attr("id", this._id)
             .stroke({width: this._borderWidth, color: `${this._borderColor.hex()}`});
     }
 }
@@ -237,6 +246,7 @@ class SVGPolyLinePainter implements PolyLinePainter {
 class SVGRectanglePainter implements RectanglePainter {
 
     /* tslint:disable: variable-name */
+    private _id: string = `$svg${uuid.create(4).toString()}`;
     private _borderColor: Color = colorFrom(Colors.NONE);
     private _borderWidth: number = 0;
     private _fillColor: Color = colorFrom(Colors.BLACK);
@@ -247,6 +257,11 @@ class SVGRectanglePainter implements RectanglePainter {
     constructor(
         private readonly svg: svgjs.Doc
     ) {}
+
+    id(value: string): RectanglePainter {
+        this._id = value;
+        return this;
+    }
 
     borderColor(value: Color): RectanglePainter {
         this._borderColor = value;
@@ -277,6 +292,7 @@ class SVGRectanglePainter implements RectanglePainter {
 
         this.svg.rect(this._dimension.width, this._dimension.height)
             .fill(`${this._fillColor.hex()}`)
+            .attr("id", this._id)
             .stroke({width: this._borderWidth, color: `${this._borderColor.hex()}`})
             .move(this._position.x, this._position.y);
     }
