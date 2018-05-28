@@ -19,6 +19,7 @@
         "no-misused-new": true,
         "no-duplicate-switch-case": true,
         "no-empty": true,
+        "no-submodule-imports": false,
         "eofline": true,
         "await-promise": true,
         "no-mergeable-namespace": true,

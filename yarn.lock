@@ -35,6 +35,10 @@
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.0.tgz#b3c8e69f038835db1a7fdc0b3d879fc50506e29e"
 
+"@types/node@^10.1.2":
+  version "10.1.2"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.1.2.tgz#1b928a0baa408fc8ae3ac012cc81375addc147c6"
+
 "@types/uuid-js@^0.7.1":
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/@types/uuid-js/-/uuid-js-0.7.1.tgz#8f58e32a9e7d3fccd434ce02deafeab013068e77"

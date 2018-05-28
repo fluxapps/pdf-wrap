@@ -9,6 +9,7 @@
     "@ryancavanaugh/svgjs": "^0.0.9-alpha",
     "@types/chai": "^4.1.3",
     "@types/mocha": "^5.2.0",
+    "@types/node": "^10.1.2",
     "@types/uuid-js": "^0.7.1",
     "chai": "^4.1.2",
     "copy-node-modules": "^1.0.4",
