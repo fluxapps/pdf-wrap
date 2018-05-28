@@ -1,6 +1,15 @@
 site_name: PDF Wrap
+site_description: "Full documentation of PDF Wrap. Includes guides, api and reference documentation and examples."
+site_author: "studer + raimann ag"
+
+copyright: "Creative Commons Attribution-ShareAlike 4.0 International License"
+
 pages:
   - Home: index.md
   - Guides:
     - 'Basic PDF viewer': guides/basic-viewer.md
   - Reference Documentation: reference-documentation.md
+
+site_dir: "build/docs/mkdocs"
+
+dev_addr: "localhost:8000"
