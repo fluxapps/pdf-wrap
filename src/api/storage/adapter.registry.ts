@@ -1,5 +1,4 @@
 import {StorageAdapter} from "./adapter";
-import {Map} from "gulp-typescript/release/utils";
 import {URI} from "../document.service";
 
 /**
@@ -13,7 +12,7 @@ export class StorageRegistry {
 
     static readonly instance: StorageRegistry = new StorageRegistry();
 
-    private readonly adapterMap: Map<Array<StorageAdapter>> = {};
+    private readonly adapterMap: Map<string, Array<StorageAdapter>> = new Map();
 
     private constructor() {}
 
@@ -26,7 +25,11 @@ export class StorageRegistry {
 
         const uri: URI = adapter.register();
 
-        (this.adapterMap[uri.schema] || (this.adapterMap[uri.schema] = [])).push(adapter);
+        if (this.adapterMap.has(uri.schema)) {
+            this.adapterMap.get(uri.schema)!.push(adapter);
+        } else {
+            this.adapterMap.set(uri.schema, [adapter]);
+        }
 
         return this;
     }
@@ -41,7 +44,7 @@ export class StorageRegistry {
      */
     get(uri: URI): Array<StorageAdapter> {
 
-        const adapters: Array<StorageAdapter> | undefined = this.adapterMap[uri.schema];
+        const adapters: Array<StorageAdapter> | undefined = this.adapterMap.get(uri.schema);
 
         if (adapters === undefined || adapters.length < 1) {
             throw new Error(`No storage adapter available matching the given uri schema: schema=${uri.schema}`);

@@ -17,7 +17,7 @@ function mockStorageAdapter(uri: URI): StorageAdapter {
 describe('a storage registry', () => {
 
     beforeEach(() => {
-        (StorageRegistry.instance as any).adapterMap = {}; // tslint:disable-line: no-any
+        (StorageRegistry.instance as any).adapterMap = new Map(); // tslint:disable-line: no-any
     });
 
     describe('using a storage adapter', () => {

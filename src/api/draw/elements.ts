@@ -17,7 +17,7 @@ export interface Element {
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
  */
-export interface BorderElement extends Element{
+export interface BorderElement extends Element {
     readonly borderColor: Color;
 }
 
@@ -27,7 +27,7 @@ export interface BorderElement extends Element{
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
  */
-export interface PolyLine extends BorderElement{
+export interface PolyLine extends BorderElement {
     readonly coordinates: Array<Point>;
 }
 
@@ -37,9 +37,9 @@ export interface PolyLine extends BorderElement{
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
  */
-export interface Form extends BorderElement{
+export interface Form extends BorderElement {
     readonly position: Point;
-    readonly fillColor: Color
+    readonly fillColor: Color;
 }
 
 /**

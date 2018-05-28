@@ -4,10 +4,10 @@
  * @author Nicols Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
  */
-export interface PDFDocumentService {
-
-    loadWith(optinos: LoadingOptions): Promise<any>
-}
+// export interface PDFDocumentService {
+//
+//     loadWith(optinos: LoadingOptions): Promise<any>
+// }
 
 /**
  *
