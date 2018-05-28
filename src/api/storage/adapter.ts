@@ -39,13 +39,13 @@ export interface StorageAdapter {
 }
 
 /**
- * A skipable storage adapter provides a {@code skip} method
+ * A skippable storage adapter provides a {@code skip} method
  * to abort a function call.
  *
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
  */
-export abstract class SkipableStorgaeAdapter implements StorageAdapter {
+export abstract class SkippableStorgaeAdapter implements StorageAdapter {
 
     abstract register(): URI;
     abstract start(): void;
