@@ -9,6 +9,7 @@ const uglify = require("gulp-uglify");
 const sequence = require("gulp-sequence");
 const gulpTslint = require("gulp-tslint");
 const tslint = require("tslint");
+const typedoc = require("gulp-typedoc");
 
 const appProperties = require("./app.properties");
 
@@ -78,7 +79,22 @@ gulp.task("uglifyJS", ["build"], function () {
 
 // --- mkdocs
 
-// --- jsdoc
+// --- typedoc
+/*
+ * Generates the typescript api documentation
+ */
+gulp.task("typedoc", () => {
+    return gulp.src(`${appProperties.root}/src/**/*.ts`)
+        .pipe(typedoc({
+            module: "commonjs",
+            target: "es5",
+            out: `${appProperties.build.dirs.docs}/typedoc`,
+            name: "PDF Wrap",
+            externalPattern: `${appProperties.root}/node_modules/**`,
+            excludeExternals: true,
+            ignoreCompilerErrors: true
+        }));
+});
 
 
 // other ----------------------------------------------------
