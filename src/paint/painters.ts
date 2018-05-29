@@ -2,6 +2,9 @@ import {Color, colorFrom, Colors} from "../api/draw/color";
 import {Dimension, Point} from "../api/draw/draw.basic";
 import * as svgjs from "svgjs";
 import uuid from "uuid-js";
+import * as log4js from "@log4js-node/log4js-api";
+
+const logger: log4js.Logger = log4js.getLogger("pdf-wrap");
 
 /**
  * Describes a canvas which can be used to draw elements on.
@@ -229,6 +232,9 @@ class SVGPolyLinePainter implements PolyLinePainter {
     }
 
     private paintPolyLine(): svgjs.PolyLine {
+
+        logger.trace(`Draw poly line on svg: polyLineId=${this._id}`);
+
         return this.svg.polyline(this.flatCoordinates)
             .fill("none")
             .attr("id", this._id)
@@ -289,6 +295,8 @@ class SVGRectanglePainter implements RectanglePainter {
     }
 
     paint(): void {
+
+        logger.trace(`Draw rectangle on svg: rectangleId=${this._id}`);
 
         this.svg.rect(this._dimension.width, this._dimension.height)
             .fill(`${this._fillColor.hex()}`)

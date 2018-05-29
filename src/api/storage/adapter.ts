@@ -1,6 +1,9 @@
 import {URI} from "../document.service";
 import {BorderElement, Rectangle} from "../draw/elements";
 import {PageEventCollection} from "./page.event";
+import * as log4js from "@log4js-node/log4js-api";
+
+const logger: log4js.Logger = log4js.getLogger("pdf-wrap");
 
 /**
  * Describes a adapdet to load page overlays
@@ -61,6 +64,7 @@ export abstract class SkippableStorgaeAdapter implements StorageAdapter {
      * @throws {UnfinishedExecutionError} to indicate the skip of a function
      */
     protected skip(): void {
+        logger.info(`Skip storage adapter: class=${this.constructor.name}`);
         throw new UnfinishedExecutionError("Skip function execution");
     }
 }

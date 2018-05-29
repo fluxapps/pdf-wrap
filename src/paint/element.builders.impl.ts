@@ -4,6 +4,9 @@ import {PolyLine, Rectangle} from "../api/draw/elements";
 import {Color, colorFrom, Colors} from "../api/draw/color";
 import {DrawablePolyLine, DrawableRectangle} from "./elements.impl";
 import uuid from "uuid-js";
+import * as log4js from "@log4js-node/log4js-api";
+
+const logger: log4js.Logger = log4js.getLogger("pdf-wrap");
 
 /**
  * Default element builder factory implementation.
@@ -52,6 +55,8 @@ export class PolyLineBuilderImpl implements PolyLineBuilder {
     }
 
     build(): PolyLine {
+
+        logger.trace(`Build poly line element: polyLineId=${this._id}`);
 
         return new DrawablePolyLine(
             this._borderColor,
@@ -103,6 +108,8 @@ export class RectangleBuilderImpl implements RectangleBuilder {
     }
 
     build(): Rectangle {
+
+        logger.trace(`Build rectangle element: rectangleId=${this._id}`);
 
         return new DrawableRectangle(
             this._borderColor,

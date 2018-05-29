@@ -1,3 +1,7 @@
+import * as log4js from "@log4js-node/log4js-api";
+
+const logger: log4js.Logger = log4js.getLogger("pdf-wrap");
+
 export type HexPattern = "#XXXXXX" | "#XXXXXXXX" | "XXXXXX" | "XXXXXXXX";
 
 /**
@@ -91,6 +95,7 @@ export function colorFromRgba(red: number, green: number, blue: number, alpha: n
         throw new IllegalColorValue(`Parameter alpha is not a valid alpha value: alpha=${alpha}`);
     }
 
+    logger.trace(`Create a color from rgba: rgba=${red}, ${green}, ${blue}, ${alpha}`);
     return new SimpleColor(red, green, blue, alpha);
 }
 

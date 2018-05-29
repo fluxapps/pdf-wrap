@@ -1,5 +1,8 @@
 import {StorageAdapter} from "./adapter";
 import {URI} from "../document.service";
+import * as log4js from "@log4js-node/log4js-api";
+
+const logger: log4js.Logger = log4js.getLogger("pdf-wrap");
 
 /**
  * The registry to add {@link StorageAdapter} instances.
@@ -22,6 +25,8 @@ export class StorageRegistry {
      * @param {StorageAdapter} adapter - the storage adapter to add
      */
     add(adapter: StorageAdapter): StorageRegistry {
+
+        logger.info(`Add storage adapter to registry: class=${adapter.constructor.name}`);
 
         const uri: URI = adapter.register();
 
