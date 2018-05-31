@@ -27,18 +27,20 @@ export interface StorageAdapter {
     /**
      * Will be invoked when the storage adapter is used the first time.
      *
+     * @param {URI} uri - the uri to the storage location of the page overlay
      * @param {PageEventCollection} events - page event collection to be notified on PDF page modifications
      */
-    start(events: PageEventCollection): void;
+    start(uri: URI, events: PageEventCollection): void;
 
     /**
      * Will be invoked when loading a PDF document with the matching uri of this storage adapter.
      *
+     * @param {URI} uri - the uri to the storage location of the page overlay
      * @param {number} pageNumber - the number of the page that should be loaded
      *
      * @returns {Promise<PageOverlay>} the overlay data of the loaded page
      */
-    loadPage(pageNumber: number): Promise<PageOverlay>;
+    loadPage(uri: URI, pageNumber: number): Promise<PageOverlay>;
 }
 
 /**
@@ -51,8 +53,10 @@ export interface StorageAdapter {
 export abstract class SkippableStorgaeAdapter implements StorageAdapter {
 
     abstract register(): URI;
-    abstract start(): void;
-    abstract loadPage(pageNumber: number): Promise<PageOverlay>;
+
+    abstract loadPage(uri: URI, pageNumber: number): Promise<PageOverlay>;
+
+    abstract start(uri: URI, events: PageEventCollection): void;
 
     /**
      * Emits a skip signal to indicate that the invoked

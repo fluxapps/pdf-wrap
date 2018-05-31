@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Element builders
 * Element painters
 * Storage adapter api
+* Toolbox
+    * Freehand - to draw with the mouse
+    * Eraser - to erase drawings
 
 ### Changed
 

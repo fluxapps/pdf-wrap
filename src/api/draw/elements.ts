@@ -7,7 +7,7 @@ import {Dimension, Point} from "./draw.basic";
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
  */
-export interface Element {
+export interface DrawElement {
     readonly id: string;
 }
 
@@ -17,7 +17,7 @@ export interface Element {
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
  */
-export interface BorderElement extends Element {
+export interface BorderElement extends DrawElement {
     readonly borderColor: Color;
 }
 

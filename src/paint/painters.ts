@@ -1,8 +1,10 @@
 import {Color, colorFrom, Colors} from "../api/draw/color";
 import {Dimension, Point} from "../api/draw/draw.basic";
-import * as svgjs from "svgjs";
 import uuid from "uuid-js";
 import * as log4js from "@log4js-node/log4js-api";
+import {CanvasElement, CanvasPolyLine, CanvasRectangle} from "./canvas.elements";
+import * as svgjs from "svgjs";
+import {DrawElement} from "../api/draw/elements";
 
 const logger: log4js.Logger = log4js.getLogger("pdf-wrap");
 
@@ -11,10 +13,28 @@ const logger: log4js.Logger = log4js.getLogger("pdf-wrap");
  *
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
+ * @internal
  */
 export interface Canvas {
     rectangle(): RectanglePainter;
     polyLine(): PolyLinePainter;
+
+    /**
+     * Returns all elements on this canvas matching
+     * the given {@code selector}.
+     *
+     * @param {string} selector - a html selector
+     *
+     * @returns {Array<CanvasElement<object>>}
+     */
+    select(selector: string): Array<CanvasElement<DrawElement>>;
+
+    /**
+     * Removes all elements matching the given {@code selector}.
+     *
+     * @param {string} selector - a html selector
+     */
+    remove(selector: string): void;
 }
 
 /**
@@ -23,6 +43,7 @@ export interface Canvas {
  *
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
+ * @internal
  */
 export class SVGCanvas implements Canvas {
 
@@ -37,29 +58,82 @@ export class SVGCanvas implements Canvas {
     rectangle(): RectanglePainter {
         return new SVGRectanglePainter(this.svg);
     }
+
+    /**
+     * Removes all elements matching the given {@code selector}.
+     *
+     * @param {string} selector - a html selector
+     */
+    remove(selector: string): void {
+        this.select(selector).forEach((it) => it.remove());
+    }
+
+    /**
+     * Returns all elements on this canvas matching
+     * the given {@code selector}.
+     *
+     * Currently supported types:
+     * - {@link CanvasRectangle}
+     * - {@link CanvasPolyLine}
+     *
+     * @param {string} selector - a html selector
+     *
+     * @returns {Array<CanvasElement<object>>}
+     */
+    select(selector: string): Array<CanvasElement<DrawElement>> {
+
+        const svgElements: svgjs.Set = this.svg.select(selector);
+
+        const canvasElements: Array<CanvasElement<DrawElement>> = [];
+
+        for (let x: number = 0; x < svgElements.length(); x++) {
+
+            const element: svgjs.Element = svgElements.get(x);
+
+            switch (element.type) {
+                case "rect":
+                    canvasElements.push(new CanvasRectangle(element as svgjs.Rect));
+                    break;
+                case "polyline":
+                    canvasElements.push(new CanvasPolyLine(element as svgjs.PolyLine));
+                    break;
+            }
+        }
+
+        return canvasElements;
+    }
 }
 
 /**
  * Describe a basic painter to draw on a canvas.
  *
+ * @param R - the element type which will be painted
+ *
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
+ * @internal
  */
-export interface Painter {
+export interface Painter<R extends CanvasElement<DrawElement>> {
 
     /**
      * Paints the element built with this painter on a canvas.
+     *
+     * @returns the painted element
      */
-    paint(): void;
+    paint(): R;
 }
 
 /**
  * Describes a generic border painter to draw an a canvas.
  *
+ * @param T - the specific painter type for method chaining
+ * @param R - the element type which will be painted
+ *
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
+ * @internal
  */
-export interface BorderPainter<T> extends Painter {
+export interface BorderPainter<T, R extends CanvasElement<DrawElement>> extends Painter<R> {
     borderColor(value: Color): T;
     borderWidth(value: number): T;
     id(value: string): T;
@@ -70,8 +144,9 @@ export interface BorderPainter<T> extends Painter {
  *
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
+ * @internal
  */
-export interface PolyLinePainter extends BorderPainter<PolyLinePainter> {
+export interface PolyLinePainter extends BorderPainter<PolyLinePainter, CanvasPolyLine> {
     coordinates(value: Array<Point>): PolyLinePainter;
 
     /**
@@ -95,18 +170,24 @@ export interface PolyLinePainter extends BorderPainter<PolyLinePainter> {
      * Finishes the process of {@code beginLine} and {@code drawLine}.
      *
      * @param {Point} position - the position on a canvas to end the line
+     *
+     * @returns the painted poly line
      * @throws {IllegalPaintStateError} if {@code beginLine} was not called before this method
      */
-    endLine(position: Point): void;
+    endLine(position: Point): CanvasPolyLine;
 }
 
 /**
  * Describes a generic from painter to draw on a canvas.
  *
+ * @param T - the specific painter type for method chaining
+ * @param R - the element type which will be painted
+ *
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
+ * @internal
  */
-export interface FormPainter<T> extends BorderPainter<T> {
+export interface FormPainter<T, R extends CanvasElement<DrawElement>> extends BorderPainter<T, R> {
     position(value: Point): T;
     fillColor(value: Color): T;
 }
@@ -116,8 +197,9 @@ export interface FormPainter<T> extends BorderPainter<T> {
  *
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
+ * @internal
  */
-export interface RectanglePainter extends FormPainter<RectanglePainter> {
+export interface RectanglePainter extends FormPainter<RectanglePainter, CanvasRectangle> {
     dimension(value: Dimension): RectanglePainter;
 }
 
@@ -135,6 +217,7 @@ export class IllegalPaintStateError extends Error {}
  *
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
+ * @internal
  */
 class SVGPolyLinePainter implements PolyLinePainter {
 
@@ -175,8 +258,8 @@ class SVGPolyLinePainter implements PolyLinePainter {
         return this;
     }
 
-    paint(): void {
-        this.paintPolyLine();
+    paint(): CanvasPolyLine {
+        return new CanvasPolyLine(this.paintPolyLine());
     }
 
     /**
@@ -222,22 +305,30 @@ class SVGPolyLinePainter implements PolyLinePainter {
      *
      * @param {Point} position - the position on a canvas to end the line
      *
+     * @returns the painted poly line
      * @throws {IllegalPaintStateError} if {@code beginLine} was not called before this method
      */
-    endLine(position: Point): void {
+    endLine(position: Point): CanvasPolyLine {
+
+        logger.trace(`Draw poly line on svg: polyLineId=${this._id}`);
+
         this.drawTo(position);
+
+        const createdPolyLine: CanvasPolyLine = new CanvasPolyLine(this.line!);
+
         this.line = undefined;
         this._borderColor = colorFrom(Colors.BLACK);
         this._coordinates = [];
+
+        return createdPolyLine;
     }
 
     private paintPolyLine(): svgjs.PolyLine {
 
-        logger.trace(`Draw poly line on svg: polyLineId=${this._id}`);
-
         return this.svg.polyline(this.flatCoordinates)
             .fill("none")
             .attr("id", this._id)
+            .addClass("drawing")
             .stroke({width: this._borderWidth, color: `${this._borderColor.hex()}`});
     }
 }
@@ -248,6 +339,7 @@ class SVGPolyLinePainter implements PolyLinePainter {
  *
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
+ * @internal
  */
 class SVGRectanglePainter implements RectanglePainter {
 
@@ -294,14 +386,17 @@ class SVGRectanglePainter implements RectanglePainter {
         return this;
     }
 
-    paint(): void {
+    paint(): CanvasRectangle {
 
         logger.trace(`Draw rectangle on svg: rectangleId=${this._id}`);
 
-        this.svg.rect(this._dimension.width, this._dimension.height)
+        const rect: svgjs.Rect = this.svg.rect(this._dimension.width, this._dimension.height)
             .fill(`${this._fillColor.hex()}`)
             .attr("id", this._id)
+            .addClass("drawing")
             .stroke({width: this._borderWidth, color: `${this._borderColor.hex()}`})
             .move(this._position.x, this._position.y);
+
+        return new CanvasRectangle(rect);
     }
 }

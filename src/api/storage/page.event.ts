@@ -1,5 +1,5 @@
 import {Observable} from "rxjs/internal/Observable";
-import {PolyLine, Rectangle, Element} from "../draw/elements";
+import {PolyLine, Rectangle, DrawElement} from "../draw/elements";
 
 /**
  * Possible layers of a single PDF page.
@@ -53,10 +53,10 @@ export interface PageEventCollection {
     afterRectangleRendered(): Observable<DrawEvent<Rectangle>>;
 
     /**
-     * Returns an observable of {@link DrawEvent<Element>} which
+     * Returns an observable of {@link DrawEvent<DrawElement>} which
      * emits a draw event every time after a element is removed from a canvas.
      *
-     * @returns {Observable<DrawEvent<Element>>} a hot observable that emits draw events
+     * @returns {Observable<DrawEvent<DrawElement>>} a hot observable that emits draw events
      */
-    afterElementRemoved(): Observable<DrawEvent<Element>>;
+    afterElementRemoved(): Observable<DrawEvent<DrawElement>>;
 }
