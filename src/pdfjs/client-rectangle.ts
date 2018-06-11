@@ -162,13 +162,13 @@ export class ClientRectangle implements ClientRect {
         logger.trace(`Unite client rectangles:\n${JSON.stringify(this)}\n${JSON.stringify(other)}`);
 
         if (!this.isIntersectedWith(other)) {
-            // tslint:disable-next-line: max-line-length
-            throw new Error(`Can not unite client rectangles with no intersection:\n${JSON.stringify(this)}\n${JSON.stringify(other)}`);
+            throw new Error("Can not unite client rectangles with no intersection:"
+            + `\n${JSON.stringify(this)}\n${JSON.stringify(other)}`);
         }
 
         if (this.top !== other.top || this.bottom !== other.bottom) {
-            // tslint:disable-next-line: max-line-length
-            throw new Error(`Can not unite client rectangles with uneven top or bottom attributes:\n${JSON.stringify(this)}\n${JSON.stringify(other)}`);
+            throw new Error("Can not unite client rectangles with uneven top or bottom attributes:"
+            + `\n${JSON.stringify(this)}\n${JSON.stringify(other)}`);
         }
 
         return ClientRectangle.fromCoordinates(
@@ -196,8 +196,8 @@ export class ClientRectangle implements ClientRect {
         logger.trace(`Subtract client rectangles:\n ${JSON.stringify(this)}\n-${JSON.stringify(other)}`);
 
         if (this.top !== other.top || this.bottom !== other.bottom) {
-            // tslint:disable-next-line: max-line-length
-            throw new Error(`Can not subtract rectangle with uneven top or bottom attributes:\n${JSON.stringify(this)}\n${JSON.stringify(other)}`);
+            throw new Error("Can not subtract rectangle with uneven top or bottom attributes:"
+            + `\n${JSON.stringify(this)}\n${JSON.stringify(other)}`);
         }
 
         if (!this.isIntersectedWith(other)) {

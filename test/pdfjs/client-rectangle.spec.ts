@@ -225,7 +225,8 @@ describe('a client rectangle', () => {
 
                 chai.expect(() => a.unite(b))
                     .to.throw(Error)
-                    .and.to.have.property("message", `Can not unite client rectangles with uneven top or bottom attributes:\n${JSON.stringify(a)}\n${JSON.stringify(b)}`); // tslint:disable-line: max-line-length
+                    .and.to.have.property("message", "Can not unite client rectangles with uneven top or bottom attributes:"
+                    + `\n${JSON.stringify(a)}\n${JSON.stringify(b)}`);
             });
         });
 
@@ -239,7 +240,8 @@ describe('a client rectangle', () => {
 
                 chai.expect(() => a.unite(b))
                     .to.throw(Error)
-                    .and.to.have.property("message", `Can not unite client rectangles with uneven top or bottom attributes:\n${JSON.stringify(a)}\n${JSON.stringify(b)}`); // tslint:disable-line: max-line-length
+                    .and.to.have.property("message", "Can not unite client rectangles with uneven top or bottom attributes:"
+                    + `\n${JSON.stringify(a)}\n${JSON.stringify(b)}`);
             });
         });
 
@@ -253,7 +255,8 @@ describe('a client rectangle', () => {
 
                 chai.expect(() => a.unite(b))
                     .to.throw(Error)
-                    .and.to.have.property("message", `Can not unite client rectangles with no intersection:\n${JSON.stringify(a)}\n${JSON.stringify(b)}`); // tslint:disable-line: max-line-length
+                    .and.to.have.property("message", "Can not unite client rectangles with no intersection:"
+                    + `\n${JSON.stringify(a)}\n${JSON.stringify(b)}`);
             });
         });
     });
@@ -336,7 +339,8 @@ describe('a client rectangle', () => {
 
                 chai.expect(() => a.subtract(b))
                     .to.throw(Error)
-                    .and.to.have.property("message", `Can not subtract rectangle with uneven top or bottom attributes:\n${JSON.stringify(a)}\n${JSON.stringify(b)}`); // tslint:disable-line: max-line-length
+                    .and.to.have.property("message", "Can not subtract rectangle with uneven top or bottom attributes:"
+                    + `\n${JSON.stringify(a)}\n${JSON.stringify(b)}`);
             });
         });
 
@@ -350,7 +354,8 @@ describe('a client rectangle', () => {
 
                 chai.expect(() => a.subtract(b))
                     .to.throw(Error)
-                    .and.to.have.property("message", `Can not subtract rectangle with uneven top or bottom attributes:\n${JSON.stringify(a)}\n${JSON.stringify(b)}`); // tslint:disable-line: max-line-length
+                    .and.to.have.property("message", "Can not subtract rectangle with uneven top or bottom attributes:"
+                    + `\n${JSON.stringify(a)}\n${JSON.stringify(b)}`);
             });
         });
 
