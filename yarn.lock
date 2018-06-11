@@ -23,10 +23,6 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@log4js-node/log4js-api/-/log4js-api-1.0.0.tgz#a97d9838a1da83820b05f278361d879363de5adb"
 
-"@ryancavanaugh/svgjs@^0.0.9-alpha":
-  version "0.0.9-alpha"
-  resolved "https://registry.yarnpkg.com/@ryancavanaugh/svgjs/-/svgjs-0.0.9-alpha.tgz#e5f07368486caf3fbfe11372bc217e1db5d7ffb3"
-
 "@types/chai@^4.1.3":
   version "4.1.3"
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.1.3.tgz#b8a74352977a23b604c01aa784f5b793443fb7dc"
@@ -2729,6 +2725,12 @@ to-through@^2.0.0:
   resolved "https://registry.yarnpkg.com/to-through/-/to-through-2.0.0.tgz#fc92adaba072647bc0b67d6b03664aa195093af6"
   dependencies:
     through2 "^2.0.3"
+
+ts-mockito@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/ts-mockito/-/ts-mockito-2.3.0.tgz#c1836f04ec037cad82cfd7b3b66d52fc75adfcc7"
+  dependencies:
+    lodash "^4.17.5"
 
 tslib@1.9.0:
   version "1.9.0"
