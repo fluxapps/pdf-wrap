@@ -26,7 +26,6 @@ describe('a storage registry', () => {
 
             it('should return the added storage adapter', () => {
 
-                // tslint:disable-next-line: no-require-imports
                 const registry: StorageRegistry = StorageRegistry.instance;
                 const mockAdapter: StorageAdapter = mockStorageAdapter(URI.from("ex://"));
 
@@ -44,7 +43,6 @@ describe('a storage registry', () => {
 
             it('should return both adapters', () => {
 
-                // tslint:disable-next-line: no-require-imports
                 const registry: StorageRegistry = StorageRegistry.instance;
                 const firstMockAdapter: StorageAdapter = mockStorageAdapter(URI.from("ex://"));
                 const secondMockAdapter: StorageAdapter = mockStorageAdapter(URI.from("ex://"));
@@ -67,7 +65,7 @@ describe('a storage registry', () => {
 
                 chai.expect(() => StorageRegistry.instance.get(URI.from("ex://")))
                     .to.throw(Error)
-                    .and.to.have.property("message", "No storage adapter available matching the given uri schema: schema=ex"); // tslint:disable-line: max-line-length
+                    .and.to.have.property("message", "No storage adapter available matching the given uri schema: schema=ex");
             });
         });
     });
