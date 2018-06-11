@@ -51,6 +51,4 @@ export interface Freehand extends Tool {
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
  */
-/* tslint:disable: no-empty-interface */
 export interface Eraser extends Tool {}
-/* tslint:enable */

@@ -221,12 +221,10 @@ export class IllegalPaintStateError extends Error {}
  */
 class SVGPolyLinePainter implements PolyLinePainter {
 
-    /* tslint:disable: variable-name */
     private _id: string = `$svg${uuid.create(4).toString()}`;
     private _borderColor: Color = colorFrom(Colors.BLACK);
     private _borderWidth: number = 1;
     private _coordinates: Array<Point> = [];
-    /* tslint:enable */
 
     private line?: svgjs.PolyLine;
 
@@ -343,14 +341,12 @@ class SVGPolyLinePainter implements PolyLinePainter {
  */
 class SVGRectanglePainter implements RectanglePainter {
 
-    /* tslint:disable: variable-name */
     private _id: string = `$svg${uuid.create(4).toString()}`;
     private _borderColor: Color = colorFrom(Colors.NONE);
     private _borderWidth: number = 0;
     private _fillColor: Color = colorFrom(Colors.BLACK);
     private _position: Point = {x: 0, y: 0};
     private _dimension: Dimension = {height: 0, width: 0};
-    /* tslint:enable */
 
     constructor(
         private readonly svg: svgjs.Doc

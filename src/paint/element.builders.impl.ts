@@ -33,11 +33,9 @@ export class ElementBuilderFactoryImpl implements ElementBuilderFactory {
  */
 export class PolyLineBuilderImpl implements PolyLineBuilder {
 
-    /* tslint:disable: variable-name */
     private _id: string = `$svg${uuid.create(4).toString()}`;
     private _borderColor: Color = colorFrom(Colors.BLACK);
     private _coordinates: Array<Point> = [];
-    /* tslint:enable */
 
     id(value: string): PolyLineBuilder {
         this._id = value;
@@ -74,13 +72,11 @@ export class PolyLineBuilderImpl implements PolyLineBuilder {
  */
 export class RectangleBuilderImpl implements RectangleBuilder {
 
-    /* tslint:disable: variable-name */
     private _id: string = `$svg${uuid.create(4).toString()}`;
     private _borderColor: Color = colorFrom(Colors.NONE);
     private _fillColor: Color = colorFrom(Colors.BLACK);
     private _dimension: Dimension = {height: 0, width: 0};
     private _position: Point = {x: 0, y: 0};
-    /* tslint:enable */
 
     id(value: string): RectangleBuilder {
         this._id = value;
