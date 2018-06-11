@@ -35,7 +35,7 @@ gulp.task("build", ["test", "lint"], function (done) {
 /*
  * Copies javascript files, README.md, LICENSE.md and package.json to the libs directory.
  */
-gulp.task("package", ["uglifyJS", "copyDependencies", "transformPackageJSON"], function () {
+gulp.task("package", ["uglifyJS", "copyDependencies", "copyPDFJS", "transformPackageJSON"], function () {
 
     return gulp
         .src([
@@ -164,6 +164,19 @@ gulp.task("transpileTypescript", function () {
         .pipe(gulp.dest(appProperties.build.dirs.javascript));
 });
 
+// --- copyPDFJS
+/*
+ * Copies pdf-js files which are needed in order to use it.
+ */
+gulp.task("copyPDFJS", () => {
+    return gulp
+        .src([
+            `${appProperties.root}/node_modules/pdfjs-dist/build/pdf.worker.js`,
+            `${appProperties.root}/node_modules/pdfjs-dist/cmaps/*`,
+            `${appProperties.root}/node_modules/pdfjs-dist/web/*`
+        ])
+        .pipe(gulp.dest(`${appProperties.build.dirs.dist}/npm/assets`));
+});
 
 // npm ------------------------------------------------------
 

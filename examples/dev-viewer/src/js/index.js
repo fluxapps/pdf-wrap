@@ -4,8 +4,8 @@
 const {PDFjsDocumentService, setWorkerSrc, setMapUrl} = require("pdf-wrap/pdfjs/pdfjs.document.service");
 const {URI} = require("pdf-wrap/api/document.service");
 
-setWorkerSrc("assets/libs/pdfjs-dist/build/pdf.worker.js");
-setMapUrl("assets/libs/pdfjs-dist/cmaps");
+setWorkerSrc("assets/libs/pdf-wrap/pdf.worker.js");
+setMapUrl("assets/libs/pdf-wrap");
 
 const documentService = new PDFjsDocumentService();
 
