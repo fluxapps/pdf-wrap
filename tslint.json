@@ -19,6 +19,7 @@
         "no-misused-new": true,
         "no-duplicate-switch-case": true,
         "no-empty": true,
+        "no-empty-interface": false,
         "no-submodule-imports": false,
         "eofline": true,
         "await-promise": true,
@@ -38,7 +39,7 @@
             "variable-declaration"
         ],
         "no-require-imports": true,
-        "variable-name": true,
+        "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
         "trailing-comma": true,
         "prefer-const": true,
         "prefer-readonly": true,
@@ -46,6 +47,7 @@
         "ordered-imports": false,
         "no-duplicate-imports": true,
         "max-classes-per-file": 4,
+        "max-line-length": [true, 150],
         "interface-name": false
     },
     "rulesDirectory": [
