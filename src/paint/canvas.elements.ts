@@ -6,6 +6,7 @@ import {Dimension, Point} from "../api/draw/draw.basic";
 import {Observable} from "rxjs/internal/Observable";
 import {pairwise} from "../arrays";
 import * as log4js from "@log4js-node/log4js-api";
+import * as svgjs from "svgjs";
 
 const logger: log4js.Logger = log4js.getLogger("pdf-wrap");
 
