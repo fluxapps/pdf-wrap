@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Viewer</title>
+
+    <link rel="stylesheet" href="assets/libs/pdfjs-dist/web/pdf_viewer.css"/>
+
+    <style>
+
+        .container {
+            border: aqua solid 1px;
+            width: 100%;
+            background-color: aqua;
+        }
+
+        .pdf-container {
+            background-color: #333333;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>My awesome PDF viewer</h1>
+
+    </div>
+
+    <div id="viewerContainer" class="pdf-container">
+
+        <div id="viewer" class="pdfViewer"></div>
+
+    </div>
+
+    <script src="main.js"></script>
+
+</body>
+</html>

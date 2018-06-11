@@ -6,8 +6,10 @@
   "author": "studer + raimann ag",
   "license": "GPL-3.0",
   "scripts": {
-    "copyResources": "cp src/index.html build/www && cp -r src/assets/* build/www",
-    "build": "yarn webpack && yarn run copyResources",
+    "copyPDFjs": "mkdir -p build/www/assets/libs && cp -r node_modules/pdf-wrap/node_modules/pdfjs-dist build/www/assets/libs",
+    "copyResources": "cp src/index.html build/www && cp -r src/assets/* build/www/assets",
+    "build": "yarn webpack && yarn run copyResources && yarn run copyPDFjs",
+    "clean": "rm -r build",
     "start": "yarn run build && yarn light-server -s build/www"
   },
   "devDependencies": {

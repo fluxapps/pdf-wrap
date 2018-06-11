@@ -42,7 +42,7 @@ gulp.task("package", ["uglifyJS", "copyDependencies", "transformPackageJSON"], f
             `${appProperties.root}/README.md`,
             `${appProperties.root}/LICENSE.md`,
             `${appProperties.root}/CHANGELOG.md`,
-            `${appProperties.build.dirs.libs}/pdf-wrap/**/*`
+            `${appProperties.build.dirs.libs}/pdf-wrap/**/*`,
         ])
         .pipe(gulp.dest(`${appProperties.build.dirs.dist}/npm`));
 });
@@ -206,6 +206,23 @@ gulp.task("publish", ["repackage"], function (done) {
  */
 gulp.task("test", ["transpileTypescript"], function (done) {
     spawn("yarn", ["mocha"], {stdio: "inherit"})
+        .once("exit", function (code) {
+            if (code === 0) {
+                done();
+            } else {
+                done(`Process finished with exit code ${code}`);
+            }
+        });
+});
+
+// development ----------------------------------------------
+
+// --- run
+/*
+ * Runs a development project to test the features.
+ */
+gulp.task("start", ["repackage"], (done) => {
+    spawn("yarn", ["run", "build"], {stdio: "inherit", cwd: `${appProperties.root}/examples/dev-viewer`})
         .once("exit", function (code) {
             if (code === 0) {
                 done();
