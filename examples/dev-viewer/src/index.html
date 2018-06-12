@@ -4,18 +4,19 @@
     <meta charset="UTF-8">
     <title>Simple Viewer</title>
 
+    <link rel="stylesheet" href="css/normalize.css"/>
+    <link rel="stylesheet" href="css/skeleton.css"/>
+
     <link rel="stylesheet" href="assets/libs/pdf-wrap/pdf_viewer.css"/>
 
     <style>
 
-        .container {
-            border: aqua solid 1px;
-            width: 100%;
-            background-color: aqua;
-        }
-
         .pdf-container {
             background-color: #333333;
+        }
+
+        .middle.aligned {
+            text-align: center;
         }
 
     </style>
@@ -24,7 +25,22 @@
 
     <div class="container">
 
-        <h1>My awesome PDF viewer</h1>
+        <div class="row">
+
+            <div class="twelve columns">
+                <h1 class="middle aligned">Dev PDF viewer</h1>
+            </div>
+
+            <div class="twelve middle aligned columns">
+
+                <button>Highlight</button>
+                <button>Clear</button>
+                <button>Pen</button>
+                <button>Eraser</button>
+
+            </div>
+
+        </div>
 
     </div>
 

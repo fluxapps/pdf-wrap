@@ -115,6 +115,29 @@ gulp.task("copyDependencies", function (done) {
     });
 });
 
+// --- copyCMaps
+/*
+ * Copies the cmaps used in pdfjs.
+ */
+gulp.task("copyCMaps", () => {
+
+    return gulp.src(`${appProperties.root}/node_modules/pdfjs-dist/cmaps/**/*`)
+        .pipe(gulp.dest(`${appProperties.build.dirs.dist}/npm/assets/cmaps`));
+});
+
+// --- copyPDFJS
+/*
+ * Copies pdf-js files which are needed in order to use it.
+ */
+gulp.task("copyPDFJS", ["copyCMaps"], () => {
+    return gulp
+        .src([
+            `${appProperties.root}/node_modules/pdfjs-dist/build/pdf.worker.js`,
+            `${appProperties.root}/node_modules/pdfjs-dist/web/pdf_viewer.css`
+        ])
+        .pipe(gulp.dest(`${appProperties.build.dirs.dist}/npm/assets`));
+});
+
 // --- lint
 /*
  * Lints the typescript code
@@ -162,20 +185,6 @@ gulp.task("transpileTypescript", function () {
         .pipe(tsProject())
         .pipe(sourcemaps.write())
         .pipe(gulp.dest(appProperties.build.dirs.javascript));
-});
-
-// --- copyPDFJS
-/*
- * Copies pdf-js files which are needed in order to use it.
- */
-gulp.task("copyPDFJS", () => {
-    return gulp
-        .src([
-            `${appProperties.root}/node_modules/pdfjs-dist/build/pdf.worker.js`,
-            `${appProperties.root}/node_modules/pdfjs-dist/cmaps/*`,
-            `${appProperties.root}/node_modules/pdfjs-dist/web/*`
-        ])
-        .pipe(gulp.dest(`${appProperties.build.dirs.dist}/npm/assets`));
 });
 
 // npm ------------------------------------------------------
