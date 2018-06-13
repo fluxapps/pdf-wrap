@@ -115,6 +115,23 @@ describe("a color class", () => {
             });
         });
 
+        describe('on leading #', () => {
+
+            it('should create a new color instance', () => {
+
+                const hex: string = "#9f00";
+
+
+                const color: Color = colorFromHex(hex);
+
+
+                chai.expect(color.red).to.equal(255);
+                chai.expect(color.green).to.equal(0);
+                chai.expect(color.blue).to.equal(0);
+                chai.expect(color.alpha).to.equal(0.6);
+            });
+        });
+
         describe('on illegal hex value', () => {
 
             it('should throw a illegal color value error', () => {

@@ -119,9 +119,11 @@ export function colorFromRgba(red: number, green: number, blue: number, alpha: n
  */
 export function colorFromHex(value: string): Color {
 
-    if (HEX_COLOR_SHORT_REGX.test(value)) {
+    const hex: string = (value.charAt(0) === "#") ? value.substring(1, value.length) : value;
 
-        const groups: RegExpMatchArray = value.match(HEX_COLOR_SHORT_REGX) as RegExpMatchArray;
+    if (HEX_COLOR_SHORT_REGX.test(hex)) {
+
+        const groups: RegExpMatchArray = hex.match(HEX_COLOR_SHORT_REGX) as RegExpMatchArray;
 
         const redHex: string = `${groups[1]}${groups[1]}`;
         const greenHex: string = `${groups[2]}${groups[2]}`;
@@ -130,9 +132,9 @@ export function colorFromHex(value: string): Color {
         return colorFromRgba(parseInt(redHex, 16), parseInt(greenHex, 16), parseInt(blueHex, 16));
     }
 
-    if (HEX_COLOR_SHORT_ALPHA_REGX.test(value)) {
+    if (HEX_COLOR_SHORT_ALPHA_REGX.test(hex)) {
 
-        const groups: RegExpMatchArray = value.match(HEX_COLOR_SHORT_ALPHA_REGX) as RegExpMatchArray;
+        const groups: RegExpMatchArray = hex.match(HEX_COLOR_SHORT_ALPHA_REGX) as RegExpMatchArray;
 
         const alpha: number = Math.floor(hexToDec(`${groups[1]}${groups[1]}`) / 2.55) / 100;
         const redHex: string = `${groups[2]}${groups[2]}`;
@@ -142,9 +144,9 @@ export function colorFromHex(value: string): Color {
         return colorFromRgba(parseInt(redHex, 16), parseInt(greenHex, 16), parseInt(blueHex, 16), alpha);
     }
 
-    if (HEX_COLOR_ALPHA_REGX.test(value)) {
+    if (HEX_COLOR_ALPHA_REGX.test(hex)) {
 
-        const groups: RegExpMatchArray = value.match(HEX_COLOR_ALPHA_REGX) as RegExpMatchArray;
+        const groups: RegExpMatchArray = hex.match(HEX_COLOR_ALPHA_REGX) as RegExpMatchArray;
 
         const alpha: number = Math.floor(hexToDec(groups[1]) / 2.55) / 100;
         const redHex: string = `${groups[2]}`;
@@ -154,9 +156,9 @@ export function colorFromHex(value: string): Color {
         return colorFromRgba(parseInt(redHex, 16), parseInt(greenHex, 16), parseInt(blueHex, 16), alpha);
     }
 
-    if (HEX_COLOR_REGX.test(value)) {
+    if (HEX_COLOR_REGX.test(hex)) {
 
-        const groups: RegExpMatchArray = value.match(HEX_COLOR_REGX) as RegExpMatchArray;
+        const groups: RegExpMatchArray = hex.match(HEX_COLOR_REGX) as RegExpMatchArray;
 
         const redHex: string = `${groups[1]}`;
         const greenHex: string = `${groups[2]}`;
