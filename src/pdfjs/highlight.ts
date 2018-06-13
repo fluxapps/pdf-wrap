@@ -113,6 +113,7 @@ export class TextSelectionImpl implements TextSelection {
     clearHighlight(): void {
 
         this.targets
+            .map(this.toRelativePosition)
             .forEach((it) => {
 
                 const highlightManager: HighlightManager = new HighlightManager(this.page.highlightLayer, it);
@@ -133,6 +134,7 @@ export class TextSelectionImpl implements TextSelection {
     highlight(color: Color): void {
 
         this.targets
+            .map(this.toRelativePosition)
             .forEach((it) => {
 
                 const highlightManager: HighlightManager = new HighlightManager(this.page.highlightLayer, it);
@@ -142,6 +144,23 @@ export class TextSelectionImpl implements TextSelection {
 
                 new HighlightManager(this.page.highlightLayerTransparency, it).highlight(color);
             });
+    }
+
+    /**
+     * Calculates the relative position of the given {@code target} to
+     * the {@link Page#pagePosition}.
+     *
+     * @param {Target} target - the target to calculate
+     *
+     * @returns {Target} the relative positioned target
+     */
+    private readonly toRelativePosition: (target: Target) => Target = (target) => {
+        return {
+            height: target.height,
+            width: target.width,
+            x: target.x - this.page.pagePosition.x,
+            y: target.y - this.page.pagePosition.y
+        };
     }
 }
 
