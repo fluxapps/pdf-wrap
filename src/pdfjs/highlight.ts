@@ -217,7 +217,7 @@ export class HighlightManager {
             target.width
         );
 
-        this.highlights = this.canvas.select(".annotation")
+        this.highlights = this.canvas.select(".drawing")
             .map((it) => new HighlightData(it as CanvasRectangle));
     }
 
