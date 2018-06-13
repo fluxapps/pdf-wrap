@@ -221,7 +221,7 @@ export class IllegalPaintStateError extends Error {}
  */
 class SVGPolyLinePainter implements PolyLinePainter {
 
-    private _id: string = `$svg${uuid.create(4).toString()}`;
+    private _id: string = `svg${uuid.create(4).toString()}`;
     private _borderColor: Color = colorFrom(Colors.BLACK);
     private _borderWidth: number = 1;
     private _coordinates: Array<Point> = [];
@@ -327,7 +327,7 @@ class SVGPolyLinePainter implements PolyLinePainter {
             .fill("none")
             .attr("id", this._id)
             .addClass("drawing")
-            .stroke({width: this._borderWidth, color: `${this._borderColor.hex()}`});
+            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`});
     }
 }
 
@@ -341,7 +341,7 @@ class SVGPolyLinePainter implements PolyLinePainter {
  */
 class SVGRectanglePainter implements RectanglePainter {
 
-    private _id: string = `$svg${uuid.create(4).toString()}`;
+    private _id: string = `svg${uuid.create(4).toString()}`;
     private _borderColor: Color = colorFrom(Colors.NONE);
     private _borderWidth: number = 0;
     private _fillColor: Color = colorFrom(Colors.BLACK);
@@ -387,10 +387,10 @@ class SVGRectanglePainter implements RectanglePainter {
         logger.trace(`Draw rectangle on svg: rectangleId=${this._id}`);
 
         const rect: svgjs.Rect = this.svg.rect(this._dimension.width, this._dimension.height)
-            .fill(`${this._fillColor.hex()}`)
+            .fill(`${this._fillColor.hex("#XXXXXX")}`)
             .attr("id", this._id)
             .addClass("drawing")
-            .stroke({width: this._borderWidth, color: `${this._borderColor.hex()}`})
+            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`})
             .move(this._position.x, this._position.y);
 
         return new CanvasRectangle(rect);
