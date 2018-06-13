@@ -1,4 +1,4 @@
-import {cleanSelection, HighlightManager} from "../../src/pdfjs/highlight";
+import {HighlightManager, transformSelection} from "../../src/pdfjs/highlight";
 import * as chai from "chai";
 import {ClientRectangle} from "../../src/pdfjs/client-rectangle";
 import {Canvas, PolyLinePainter, RectanglePainter} from "../../src/paint/painters";
@@ -6,7 +6,8 @@ import {CanvasElement, CanvasRectangle} from "../../src/paint/canvas.elements";
 import {DrawElement, Rectangle} from "../../src/api/draw/elements";
 import {colorFrom, Colors} from "../../src/api/draw/color";
 import {Target} from "../../src/api/highlight/highlight.api";
-import {anyString, anything, deepEqual, instance, mock, verify, when} from "ts-mockito";
+import {anyNumber, anyString, anything, deepEqual, instance, mock, verify, when} from "ts-mockito";
+import {MockClientRectList, MockRange, MockSelection} from "./selection.mocks";
 
 function createMockRectangle(): Rectangle {
     return {
@@ -478,7 +479,22 @@ describe('a highlight manager', () => {
     });
 });
 
-describe('clean selections function', () => {
+describe('to text selection mapping', () => {
+
+    describe('on no selection at all', () => {
+
+        it('should return an empty array', () => {
+
+            const mockSelection: Selection = mock(MockSelection);
+            when(mockSelection.rangeCount).thenReturn(0);
+
+
+            const result: Array<Target> = transformSelection(instance(mockSelection));
+
+
+            chai.expect(result).to.deep.equal([]);
+        });
+    });
 
     describe('on more than 85% overlapping selections', () => {
 
@@ -487,13 +503,25 @@ describe('clean selections function', () => {
             const a: ClientRectangle = ClientRectangle.fromSize(5, 6, 5, 9);
             const b: ClientRectangle = ClientRectangle.fromSize(5, 7, 6, 10);
 
-            const rects: Array<ClientRect> = [a, b];
+            const clientRectList: ClientRectList = new MockClientRectList([a, b]);
+
+            const mockRange: Range = mock(MockRange);
+            when(mockRange.getClientRects()).thenReturn(clientRectList);
+
+            const mockSelection: Selection = mock(MockSelection);
+            when(mockSelection.rangeCount).thenReturn(1);
+            when(mockSelection.getRangeAt(anyNumber())).thenReturn(instance(mockRange));
 
 
-            const result: Array<ClientRect> = cleanSelection(rects);
+            const result: Array<Target> = transformSelection(instance(mockSelection));
 
 
-            const expected: Array<ClientRect> = [b];
+            const expected: Array<Target> = [{
+                height: 6,
+                width: 10,
+                x: 7,
+                y: 5
+            }];
             chai.expect(result).to.deep.equal(expected);
         });
     });
@@ -505,13 +533,33 @@ describe('clean selections function', () => {
             const a: ClientRectangle = ClientRectangle.fromSize(5, 6, 5, 9);
             const b: ClientRectangle = ClientRectangle.fromSize(6, 7, 6, 10);
 
-            const rects: Array<ClientRect> = [a, b];
+            const clientRectList: ClientRectList = new MockClientRectList([a, b]);
+
+            const mockRange: Range = mock(MockRange);
+            when(mockRange.getClientRects()).thenReturn(clientRectList);
+
+            const mockSelection: Selection = mock(MockSelection);
+            when(mockSelection.rangeCount).thenReturn(1);
+            when(mockSelection.getRangeAt(0)).thenReturn(instance(mockRange));
 
 
-            const result: Array<ClientRect> = cleanSelection(rects);
+            const result: Array<Target> = transformSelection(instance(mockSelection));
 
 
-            const expected: Array<ClientRect> = [a, b];
+            const expected: Array<Target> = [
+                {
+                    height: 5,
+                    width: 9,
+                    x: 6,
+                    y: 5
+                },
+                {
+                    height: 6,
+                    width: 10,
+                    x: 7,
+                    y: 6
+                }
+            ];
             chai.expect(result).to.deep.equal(expected);
         });
     });
@@ -523,10 +571,17 @@ describe('clean selections function', () => {
             const a: ClientRectangle = ClientRectangle.fromSize(5, 6, 0, 9);
             const b: ClientRectangle = ClientRectangle.fromSize(10, 7, 6, 0);
 
-            const rects: Array<ClientRect> = [a, b];
+            const clientRectList: ClientRectList = new MockClientRectList([a, b]);
+
+            const mockRange: Range = mock(MockRange);
+            when(mockRange.getClientRects()).thenReturn(clientRectList);
+
+            const mockSelection: Selection = mock(MockSelection);
+            when(mockSelection.rangeCount).thenReturn(1);
+            when(mockSelection.getRangeAt(0)).thenReturn(instance(mockRange));
 
 
-            const result: Array<ClientRect> = cleanSelection(rects);
+            const result: Array<Target> = transformSelection(instance(mockSelection));
 
 
             chai.expect(result).to.deep.equal([]);

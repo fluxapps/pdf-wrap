@@ -43,23 +43,12 @@ export class TextHighlighting implements Highlighting {
             (subscriber: Subscriber<Selection>): TeardownLogic => {
                             document.viewer.addEventListener("mouseup", (_) => subscriber.next(window.getSelection()));
         })
-            .pipe(filter((it) => it.rangeCount !== 0))
-            .pipe(map((it) =>
-                cleanSelection(Array.from(it.getRangeAt(0).getClientRects()))
-                    .map<Target>((selection) => {
-                        return {
-                            height: selection.height,
-                            width: selection.width,
-                            x: selection.left,
-                            y: selection.top
-                        };
-                    })
-            ))
+            .pipe(map(transformSelection))
             .pipe(filter((it) => it.length > 0));
 
         this.onTextSelection = zip(selections, page)
             .pipe(filter((_) => this.isEnabled))
-            .pipe(map((it) => new TextSelectionImpl(it[0], it[1])))
+            .pipe(map((it) => new TextSelectionImpl(it[1])))
             .pipe(share());
     }
 
@@ -91,11 +80,14 @@ export class TextSelectionImpl implements TextSelection {
     readonly onHighlighting: Observable<DrawEvent<Rectangle>>;
     readonly onRemoveHighlighting: Observable<DrawEvent<DrawElement>>;
 
+    get targets(): Array<Target> {
+        return transformSelection(window.getSelection());
+    }
+
     private readonly _onHighlighting: Subject<Rectangle> = new Subject();
     private readonly _onRemoveHighlighting: Subject<DrawElement> = new Subject();
 
     constructor(
-        readonly targets: Array<Target>,
         private readonly page: Page
     ) {
         this.onHighlighting = this._onHighlighting.asObservable()
@@ -112,7 +104,7 @@ export class TextSelectionImpl implements TextSelection {
      */
     clearHighlight(): void {
 
-        this.targets
+        transformSelection(window.getSelection())
             .map(this.toRelativePosition)
             .forEach((it) => {
 
@@ -133,7 +125,7 @@ export class TextSelectionImpl implements TextSelection {
      */
     highlight(color: Color): void {
 
-        this.targets
+        transformSelection(window.getSelection())
             .map(this.toRelativePosition)
             .forEach((it) => {
 
@@ -359,7 +351,7 @@ export class HighlightManager {
 }
 
 /**
- * Compares any rect in the given {@code rects} with each other.
+ * Compares any rect from the given {@code selection} with each other.
  * If any rect does overlap another rect by more than 85%, it will be
  * excluded in the returned array.
  *
@@ -367,34 +359,44 @@ export class HighlightManager {
  * in order to calculate the intersection. As a result, only smaller rects will
  * be removed in case of an overlap.
  *
- * @param {Array<ClientRect>} rects - the rects to compare
+ * @param {Selection} selection - the selection to transform
  *
- * @returns {Array<ClientRect>} the cleaned rect array
+ * @returns {Array<Target>} the cleaned selections
  *
  * @since 0.0.1
  * @internal
  */
-export function cleanSelection(rects: Array<ClientRect>): Array<ClientRect> {
+export function transformSelection(selection: Selection): Array<Target> {
 
-    const outArray: Array<ClientRect> = [];
+    const outArray: Array<Target> = [];
 
-    rects
-        .map((it) => ClientRectangle.from(it))
-        .filter(tooSmallRectangle)
-        .forEach((it, index) => {
+    if (selection.rangeCount !== 0) {
 
-            const others: Array<ClientRect> = rects.filter(notIndex.bind(index)); // remove the current rect
+        const rects: Array<ClientRect> = Array.from(selection.getRangeAt(0).getClientRects());
 
-            const exclude: boolean = others
-                .map((other) => ClientRectangle.from(other))
-                .filter((other) => it.area() < other.area()) // we only want exclude smaller rects
-                .map((other) => it.percentageIntersectionOf(other))
-                .filter((overlap) => overlap > 0.85).length > 0;
+        rects
+            .map((it) => ClientRectangle.from(it))
+            .filter(tooSmallRectangle)
+            .forEach((it, index) => {
 
-            if (!exclude) {
-                outArray.push(it);
-            }
-        });
+                const others: Array<ClientRect> = rects.filter(notIndex.bind(index)); // remove the current rect
+
+                const exclude: boolean = others
+                    .map((other) => ClientRectangle.from(other))
+                    .filter((other) => it.area() < other.area()) // we only want exclude smaller rects
+                    .map((other) => it.percentageIntersectionOf(other))
+                    .filter((overlap) => overlap > 0.85).length > 0;
+
+                if (!exclude) {
+                    outArray.push({
+                        height: it.height,
+                        width: it.width,
+                        x: it.left,
+                        y: it.top
+                    });
+                }
+            });
+    }
 
     return outArray;
 }
