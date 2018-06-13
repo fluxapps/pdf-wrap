@@ -515,4 +515,21 @@ describe('clean selections function', () => {
             chai.expect(result).to.deep.equal(expected);
         });
     });
+
+    describe('on less than 1 px width or height', () => {
+
+        it('should remove the selection from the output array', () => {
+
+            const a: ClientRectangle = ClientRectangle.fromSize(5, 6, 0, 9);
+            const b: ClientRectangle = ClientRectangle.fromSize(10, 7, 6, 0);
+
+            const rects: Array<ClientRect> = [a, b];
+
+
+            const result: Array<ClientRect> = cleanSelection(rects);
+
+
+            chai.expect(result).to.deep.equal([]);
+        });
+    });
 });

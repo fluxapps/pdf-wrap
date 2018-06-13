@@ -6,12 +6,12 @@ import {Canvas} from "../paint/painters";
 import {Subscriber} from "rxjs/internal-compatibility";
 import {TeardownLogic} from "rxjs/internal/types";
 import {filter, map, share} from "rxjs/operators";
-import {forkJoin} from "rxjs/internal/observable/forkJoin";
 import {DrawElement, Rectangle} from "../api/draw/elements";
 import {DrawEvent, PageLayer} from "../api/storage/page.event";
 import {CanvasRectangle} from "../paint/canvas.elements";
 import {ClientRectangle} from "./client-rectangle";
 import {Subject} from "rxjs/internal/Subject";
+import {zip} from "rxjs/internal/observable/zip";
 
 /**
  * Represents the text highlighting feature of a PDF.
@@ -31,6 +31,7 @@ export class TextHighlighting implements Highlighting {
     constructor(
         private readonly document: DocumentModel
     ) {
+
         const page: Observable<Page> = new Observable((subscriber: Subscriber<Event>): TeardownLogic => {
             document.viewer.addEventListener("mousedown", (evt) => subscriber.next(evt));
         })
@@ -53,9 +54,10 @@ export class TextHighlighting implements Highlighting {
                             y: selection.top
                         };
                     })
-            ));
+            ))
+            .pipe(filter((it) => it.length > 0));
 
-        this.onTextSelection = forkJoin(selections, page)
+        this.onTextSelection = zip(selections, page)
             .pipe(filter((_) => this.isEnabled))
             .pipe(map((it) => new TextSelectionImpl(it[0], it[1])))
             .pipe(share());
@@ -65,7 +67,6 @@ export class TextHighlighting implements Highlighting {
      * Disable the text selection for a user.
      */
     disable(): void {
-        this.document.viewer.style.userSelect = "none";
         this.isEnabled = false;
     }
 
@@ -73,7 +74,6 @@ export class TextHighlighting implements Highlighting {
      * Enables the text selection for a user.
      */
     enable(): void {
-        this.document.viewer.style.userSelect = "text";
         this.isEnabled = true;
     }
 }
@@ -121,7 +121,7 @@ export class TextSelectionImpl implements TextSelection {
                 highlightManager.clear();
 
                 new HighlightManager(this.page.highlightLayerTransparency, it).clear();
-            })
+            });
     }
 
     /**
@@ -361,9 +361,10 @@ export function cleanSelection(rects: Array<ClientRect>): Array<ClientRect> {
 
     rects
         .map((it) => ClientRectangle.from(it))
+        .filter(tooSmallRectangle)
         .forEach((it, index) => {
 
-            const others: Array<ClientRect> = rects.filter((_, ind) => ind !== index); // remove the current rect
+            const others: Array<ClientRect> = rects.filter(notIndex.bind(index)); // remove the current rect
 
             const exclude: boolean = others
                 .map((other) => ClientRectangle.from(other))
@@ -377,6 +378,14 @@ export function cleanSelection(rects: Array<ClientRect>): Array<ClientRect> {
         });
 
     return outArray;
+}
+
+function tooSmallRectangle(rect: ClientRectangle): boolean {
+    return !(rect.width < 1 || rect.height < 1);
+}
+
+function notIndex(this: number, _: ClientRect, index: number): boolean {
+    return index !== this;
 }
 
 /**
