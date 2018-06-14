@@ -47,6 +47,114 @@ You can download the PDF Wrap distribution from the npm repository.
 This section goes into more detail about how you should use PDF Wrap.
 It covers topics such as using the api, toolbox and how to provide your storage.
 
+## Setup HTML
+
+In order to use PDF Wrap properly you have to setup a minimalistic html.
+
+### Styles
+
+In order to display the PDF properly you should include the following css file.
+
+* <pdf-wrap-root>/assets/css/pdf-wrap.css
+
+### HTML container
+
+You have to setup a html container in a specific way.
+
+```html
+<div class="pdf-container">
+    <div class="pdfViewer"></div>
+</div>
+```
+
+Where the `div` with the class `pdf-container` is your viewport and
+the `div` with the class `pdfViewer` wil contain all the pages of your PDF file.
+
+## Using the PDF Document Service
+
+The `PDFDocumentService` is your entry point to PDF Wrap. It provides a load method
+to load and display your PDF file.
+
+Create an instance of a `PDFDocumentService`
+
+```typescript
+const documentService: PDFDocumentService = new PDFjsDocumentService();
+```
+
+> Note that `PDFDocumentService` is the interface and `PDFjsDocumentService` is an implementation of it.
+
+Load your PDF file
+
+```typescript
+documentService.loadWith({
+    container: document.getElementById("viewerContainer"),
+    pdf: "assets/resources/chicken.pdf",
+    layerStorage: URI.from("file://my-pdf")
+}).then(pdf => {
+    // you'll get a PDFDocument instance
+});
+```
+
+Options:
+
+* container: your div with the `pdf-container` class.
+* pdf: a `Blob` representing your PDF file.    
+* layerStorage: an `URI` to use for the storage adapter
+
+Learn more about the [StorageAdapter](#provide-your-storage-adapter)
+
+## Using the toolbox
+
+Once you have loaded the PDF, you can access its toolbox.
+
+## Using the highlighting
+
+**The highlight feature can not highlight text over multiple PDF pages at once.**
+
+Once you have loaded the PDF, you can use its highlighting feature.
+
+The highlighting feature is disabled by default. You have to enable it if you want to provide it to your users.
+
+Enable highlighting
+
+```typescript
+pdf.highlighting.enable();
+```
+
+This will register several event listeners in order to enable the highlighting feature.
+
+To actually highlight a text selection you have to use the `onTextSelection` Observable.
+It'll will emit a `TextSelection` instance, whenever a text selection is performed by the user.
+
+In contrast to the `onTextSelection`, the `onTextUnselection` Observable emits
+whenever a text selection is cleared.
+
+```typescript
+pdf.highlighting.onTextSelection
+    .subscribe(textSelection => {
+        // use the textSelection here
+    });
+
+pdf.highlighting.onTextUnselection
+    .subscribe(() => {
+        // disable button
+    })
+```
+
+This can be useful, if you want to enable or disable a button to highlight or to clear the text selection.
+
+The `TextSelection` instance provides a `clearHighlight` or `highlight` method.
+
+* `clearHighlight` will remove any highlight of the selected text
+* `highlight` accepts a `Color` instance and highlights the selection with it
+
+Learn more about using colors: [Using colors](#using-colors)
+
+> PDF Wrap only adds or remove event listeners for the text selection.
+It does not actually disable the text select feature from a html page. If you want
+to disable it, you have to disable or enable it
+yourself through [CSS](https://css-tricks.com/almanac/properties/u/user-select/).
+
 ## Provide your storage adapter
 
 In order to use PDF Wrap, you must provide a storage adapter. A storage adapter
@@ -176,7 +284,17 @@ const polyLine: PolyLine = elementBuilder.polyLine()
 
 ```
 
-### Using colors
+# PDF Wrap Features
+
+## Search Feature
+
+## Outline Feature
+
+## Page Thumbnails
+
+# Miscellaneous
+
+## Using colors
 
 To use colors on the elements you can use the `Color` type. To create a `Color`
 use one of the following functions.
@@ -188,15 +306,3 @@ use one of the following functions.
 > There are predefined colors with the `Colors` enumerator available.
 
 If you're looking for valid values of these functions, please consider the typedoc [API](api).
-
-## Using the toolbox
-
-## Using the PDF Document Service
-
-# PDF Wrap Features
-
-## Search Feature
-
-## Outline Feature
-
-## Page Thumbnails
