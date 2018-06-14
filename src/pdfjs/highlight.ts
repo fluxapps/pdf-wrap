@@ -101,6 +101,7 @@ export class TextSelectionImpl implements TextSelection {
 
     /**
      * Clears the highlight on the {@code targets} given in the constructor.
+     * Any text selection will be removed by this method.
      */
     clearHighlight(): void {
 
@@ -115,11 +116,15 @@ export class TextSelectionImpl implements TextSelection {
 
                 new HighlightManager(this.page.highlightLayerTransparency, it).clear();
             });
+
+        this.removeSelection();
     }
 
     /**
      * Highlights the {@code targets} given in the constructor
      * with the given {@code color}.
+     *
+     * Any text selection will be removed by this method.
      *
      * @param {Color} color - the color to highlight the selection
      */
@@ -136,6 +141,8 @@ export class TextSelectionImpl implements TextSelection {
 
                 new HighlightManager(this.page.highlightLayerTransparency, it).highlight(color);
             });
+
+        this.removeSelection();
     }
 
     /**
@@ -153,6 +160,17 @@ export class TextSelectionImpl implements TextSelection {
             x: target.x - this.page.pagePosition.x,
             y: target.y - this.page.pagePosition.y
         };
+    }
+
+    private removeSelection(): void {
+
+        if (window.getSelection) {
+            if (window.getSelection().empty) {  // Chrome
+                window.getSelection().empty();
+            } else if (window.getSelection().removeAllRanges) {  // Firefox
+                window.getSelection().removeAllRanges();
+            }
+        }
     }
 }
 
