@@ -7,6 +7,7 @@ import {Observable} from "rxjs/internal/Observable";
 import {pairwise} from "../arrays";
 import * as log4js from "@log4js-node/log4js-api";
 import * as svgjs from "svgjs";
+import {TeardownLogic} from "rxjs/internal/types";
 
 const logger: log4js.Logger = log4js.getLogger("pdf-wrap");
 
@@ -85,7 +86,7 @@ export class CanvasPolyLine implements CanvasElement<PolyLine> {
     ) {}
 
     on<T extends keyof HTMLElementEventMap>(event: T): Observable<T> {
-        return Observable.create((subscriber: Subscriber<T>) => {
+        return new Observable((subscriber: Subscriber<T>): TeardownLogic => {
             this.element.on(event, () => subscriber.next(event));
         });
     }
@@ -139,7 +140,7 @@ export class CanvasRectangle implements CanvasElement<Rectangle> {
     ) {}
 
     on<T extends keyof HTMLElementEventMap>(event: T): Observable<T> {
-        return Observable.create((subscriber: Subscriber<T>) => {
+        return new Observable((subscriber: Subscriber<T>): TeardownLogic => {
             this.element.on(event, () => subscriber.next(event));
         });
     }
