@@ -7,8 +7,9 @@ import {Subscriber} from "rxjs/internal-compatibility";
 import {Point} from "../../api/draw/draw.basic";
 import {Eraser, Freehand} from "../../api/tool/toolbox";
 import {Color, colorFrom, Colors} from "../../api/draw/color";
-import {share, takeWhile} from "rxjs/operators";
+import {map, share, takeWhile} from "rxjs/operators";
 import {TeardownLogic} from "rxjs/internal/types";
+import {PolyLinePainter} from "../../paint/painters";
 
 /**
  * Allows to draw with the mouse on a PDF page.
@@ -24,8 +25,15 @@ export class FreehandTool extends DrawingTool implements Freehand {
      */
     readonly afterLineRendered: Observable<DrawEvent<PolyLine>>;
 
+    protected readonly onFinish: Observable<void>;
+
     private color: Color = colorFrom(Colors.BLACK);
     private strokeWidth: number = 1;
+
+    /**
+     * Poly line painter instance used during mousedown, mousemove and mouseup.
+     */
+    private polyLinePainter?: PolyLinePainter;
 
     constructor(
         document: DocumentModel
@@ -35,28 +43,38 @@ export class FreehandTool extends DrawingTool implements Freehand {
         this.afterLineRendered = new Observable((subscriber: Subscriber<DrawEvent<PolyLine>>): TeardownLogic => {
 
             this.mouseDown.subscribe((it) => {
+
+                // we store the painter, because we need the same one in the other observables
+                this.polyLinePainter = this.page.drawLayer.polyLine();
+
                 const position: Point = this.calcRelativePosition(it);
 
-                this.page.drawLayer.polyLine()
+                this.polyLinePainter
                     .borderColor(this.color)
                     .borderWidth(this.strokeWidth)
                     .beginLine(position);
             });
 
-            this.mouseOver.subscribe((it) => {
+            this.mouseMove.subscribe((it) => {
                 const position: Point = this.calcRelativePosition(it);
-                this.page.drawLayer.polyLine().drawTo(position);
+                this.polyLinePainter!.drawTo(position);
             });
 
             this.mouseUp.subscribe((it) => {
+
                 const position: Point = this.calcRelativePosition(it);
-                const createdPolyLine: PolyLine = this.page.drawLayer.polyLine()
+                const createdPolyLine: PolyLine = this.polyLinePainter!
                     .endLine(position)
                     .transform();
 
                 subscriber.next(new DrawEvent<PolyLine>(createdPolyLine, this.page.pageNumber, PageLayer.DRAWING));
+
+                this.polyLinePainter = undefined; // now we can clear the painter, because the mousedown, mousemove, mouseup chain is finished
             });
         }).pipe(share());
+
+        // use our after line rendered observable and map it to void in order to emit on the onFinish observable
+        this.onFinish = this.afterLineRendered.pipe(map((_) => {/* return void */}));
     }
 
     setColor(color: Color): Freehand {
@@ -81,6 +99,8 @@ export class FreehandTool extends DrawingTool implements Freehand {
 export class EraserTool extends DrawingTool implements Eraser {
 
     readonly afterElementRemoved: Observable<DrawEvent<DrawElement>>;
+
+    protected readonly onFinish: Observable<void>;
 
     constructor(
         document: DocumentModel
@@ -110,5 +130,8 @@ export class EraserTool extends DrawingTool implements Eraser {
                 });
             });
         });
+
+        // use our after element removed observable and map it to void in order to emit on the onFinish observable
+        this.onFinish = this.afterElementRemoved.pipe(map((_) => {/* return void */}));
     }
 }

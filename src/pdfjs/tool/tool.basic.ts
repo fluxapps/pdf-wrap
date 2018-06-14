@@ -1,12 +1,12 @@
 import {Tool} from "../../api/tool/toolbox";
 import {StateChangeEvent} from "../../api/event/event.api";
 import {Observable} from "rxjs/internal/Observable";
-import {Subscriber} from "rxjs/internal-compatibility";
 import {DocumentModel, getPageNumberByEvent, Page} from "../document.model";
 import {Point} from "../../api/draw/draw.basic";
 import * as log4js from "@log4js-node/log4js-api";
-import {filter, share, tap} from "rxjs/operators";
-import {TeardownLogic} from "rxjs/internal/types";
+import {delayWhen, filter, share, tap} from "rxjs/operators";
+import {Subject} from "rxjs/internal/Subject";
+import {fromEvent} from "rxjs/internal/observable/fromEvent";
 
 const logger: log4js.Logger = log4js.getLogger("pdf-wrap");
 
@@ -31,12 +31,10 @@ export abstract class BaseTool implements Tool {
 
     private _isActive: boolean = false;
 
-    private stateChangeEvent?: Subscriber<StateChangeEvent>;
+    private readonly stateChangeEvent: Subject<StateChangeEvent> = new Subject();
 
     protected constructor() {
-        this.stateChange = new Observable((subscriber: Subscriber<StateChangeEvent>): TeardownLogic => {
-            this.stateChangeEvent = subscriber;
-        }).pipe(share());
+        this.stateChange = this.stateChangeEvent.asObservable().pipe(share());
     }
 
     activate(): void {
@@ -66,7 +64,7 @@ export abstract class BaseTool implements Tool {
  *    Determines the clicked page. If no page can be determined, every other process will never be consumed.
  *    If a page is already defined, this process will reset itself before continue.
  *
- * 2. mouseover
+ * 2. mousemove
  *    Will only be consumed, if a page could be determined by the 1. process.
  *
  * 3. mouseup
@@ -100,17 +98,49 @@ export abstract class DrawingTool extends BaseTool {
     /**
      * A hot observable which emits on mousedown event.
      */
-    protected readonly mouseDown: Observable<DocumentEventMap["mousedown"]>;
+    protected readonly mouseDown: Observable<MouseEvent>;
 
     /**
-     * A hot observable which emits only a mouseover event, if the mousdown event could be consumed properly.
+     * A hot observable which emits only a mousemove event, if the mousdown event could be consumed properly.
      */
-    protected readonly mouseOver: Observable<DocumentEventMap["mouseover"]>;
+    protected readonly mouseMove: Observable<MouseEvent>;
 
     /**
      * A hot observable which emits only a mouseup event, if the mousedown event could be consumed properly.
      */
-    protected readonly mouseUp: Observable<DocumentEventMap["mouseup"]>;
+    protected readonly mouseUp: Observable<MouseEvent>;
+
+    /**
+     * A class extending this class have to implement this observable
+     * and emit nothing whenever the extending class is finished
+     * with the mousedown, mousemove, mouseup chain.
+     *
+     * e.g.
+     *
+     * {@code
+     *
+     *  class MyDrawingTool extends DrawingTool {
+     *
+     *      protected readonly onFinish: Observable<void>;
+     *
+     *      constructor(
+     *          document: DocumentModel
+     *      ) {
+     *          super(document);
+     *
+     *          this.mousedown.subscribe((it) => { ... });
+     *
+     *          this.mousemove.subscribe((it) => { ... });
+     *
+     *          this.onFinish = this.mousup
+     *          .pipe(tap((it) => { ... })) // do whatever you have to do
+     *          .pipe(map((_) => { }); // map it to void when your finished
+     *      }
+     *  }
+     *
+     * }
+     */
+    protected abstract readonly onFinish: Observable<void>;
 
     private _page?: Page;
 
@@ -119,28 +149,30 @@ export abstract class DrawingTool extends BaseTool {
     ) {
         super();
 
-        this.mouseDown = new Observable((subscriber: Subscriber<DocumentEventMap["mousedown"]>): TeardownLogic => {
-            this.document.viewer.addEventListener("mousedown", (ev) => subscriber.next(ev));
-        })
+        this.mouseDown = fromEvent<MouseEvent>(document.viewer, "mousedown")
             .pipe(filter(() => this.isActive))
             .pipe(tap((it) => this.setPageByEvent(it)))
+            .pipe(tap((it) => logger.trace(`Mouse down event from drawing tool: event=${JSON.stringify(it)}`)))
             .pipe(share());
 
-        this.mouseOver = new Observable((subscriber: Subscriber<DocumentEventMap["mouseover"]>): TeardownLogic => {
-            this.document.viewer.addEventListener("mouseover", (ev) => subscriber.next(ev));
-        })
+        this.mouseMove = fromEvent<MouseEvent>(document.viewer, "mousemove")
             .pipe(filter(() => this.hasPage))
-            .pipe(tap((it) => logger.trace(`Mouse over event from drawing tool: event=${JSON.stringify(it)}`)))
+            .pipe(tap((it) => logger.trace(`Mouse move event from drawing tool: event=${JSON.stringify(it)}`)))
             .pipe(share());
 
-        this.mouseUp = new Observable((subscriber: Subscriber<DocumentEventMap["mouseup"]>): TeardownLogic => {
-            this.document.viewer.addEventListener("mouseup", (ev) => subscriber.next(ev));
-        })
+        this.mouseUp = fromEvent<MouseEvent>(document.viewer, "mouseup")
             .pipe(filter(() => this.hasPage))
             .pipe(tap((it) => {
                 logger.trace(`Mouse up event from drawing tool: event=${JSON.stringify(it)}`);
             }))
             .pipe(share());
+
+        // We use our mouse up observable and delay it until the onFinish observable emits
+        this.mouseUp
+            .pipe(delayWhen((_) => this.onFinish))
+            .subscribe(() => {
+                this._page = undefined;
+            });
     }
 
     /**
@@ -159,7 +191,7 @@ export abstract class DrawingTool extends BaseTool {
 
     private setPageByEvent(evt: Event): void {
 
-        logger.trace(`Mouse down event from drawing tool: event=${JSON.stringify(evt)}`);
+        logger.trace(`Try to get a page number by an event: event=${JSON.stringify(evt)}`);
 
         const pageNumber: number | undefined = getPageNumberByEvent(evt);
 
