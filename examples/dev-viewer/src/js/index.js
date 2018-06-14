@@ -29,10 +29,12 @@ class HighlightService {
 
     highlight(color) {
         this.textSelection.highlight(colorFromHex(color));
+        this._textSelection = undefined;
     }
 
     clear() {
         this.textSelection.clearHighlight();
+        this._textSelection = undefined;
     }
 }
 
@@ -40,7 +42,7 @@ export class HighlightButton {
 
     constructor(highlightService) {
         this._button = document.getElementById("highlight-button");
-        this.enabled = false;
+        this._button.disabled = true;
         this.highlightService = highlightService;
 
         this._onClick = () => {
@@ -50,12 +52,12 @@ export class HighlightButton {
     }
 
     enable() {
-        this.enabled = true;
+        this._button.disabled = false;
         this._button.addEventListener("click", this._onClick);
     }
 
     disable() {
-        this.enabled = false;
+        this._button.disabled = true;
         this._button.removeEventListener("click", this._onClick);
     }
 }
@@ -64,7 +66,7 @@ export class ClearButton {
 
     constructor(highlightService) {
         this._button = document.getElementById("clear-button");
-        this.enabled = false;
+        this._button.disabled = true;
         this.highlightService = highlightService;
 
         this._onClick = () => {
@@ -73,12 +75,12 @@ export class ClearButton {
     }
 
     enable() {
-        this.enabled = true;
+        this._button.disabled = false;
         this._button.addEventListener("click", this._onClick);
     }
 
     disable() {
-        this.enabled = false;
+        this._button.disabled = true;
         this._button.removeEventListener("click", this._onClick);
     }
 }
@@ -103,6 +105,12 @@ const pdf = documentService.loadWith({
             highlightService.textSelection = it;
             highlightButton.enable();
             clearButton.enable();
+        });
+
+    it.highlighting.onTextUnselection
+        .subscribe(() => {
+            highlightButton.disable();
+            clearButton.disable();
         });
 });
 
