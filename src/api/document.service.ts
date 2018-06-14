@@ -1,34 +1,71 @@
+import {PDFDocument} from "./document/pdf.document";
+
 /**
- *
+ * Describes the service to load a PDF document.
  *
  * @author Nicols Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
  */
-// export interface PDFDocumentService {
-//
-//     loadWith(optinos: LoadingOptions): Promise<any>
-// }
+export interface PDFDocumentService {
+
+    /**
+     * Loads a PDF by the given loading options, displays it
+     * and returns a {@link PDFDocument} to operate with the document.
+     *
+     * @param {LoadingOptions} options - the options to determine how to load the document
+     *
+     * @returns {Promise<PDFDocument>} the resulting document
+     */
+    loadWith(options: LoadingOptions): Promise<PDFDocument>;
+}
 
 /**
- *
+ * Describes the options to load a PDF document.
  *
  * @author Nicols Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
  */
 export interface LoadingOptions {
+
+    /**
+     * The html container where the document will be displayed.
+     */
     readonly container: HTMLElement;
+
+    /**
+     * The PDF document which should be loaded
+     */
     readonly pdf: Blob;
+
+    /**
+     * The uri to the PDF annotations location.
+     * This value will be passed in to all registered {@code StorageAdapter}.
+     */
     readonly layerStorage: URI;
 }
 
 /**
- *
+ * Represents a Uniform Resource Identifier (URI) reference.
  *
  * @author Nicols Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
  */
 export class URI {
 
+    /**
+     * Creates a new {@link URI} from string.
+     *
+     * URI syntax
+     *
+     * schema:[authority][path]?[query]#[fragment]
+     *
+     * where square brackets [...] delineate optional parts.
+     *
+     * @param {string} uri - the uri as string
+     *
+     * @returns {URI} the resulting uri
+     * @throws {IllegalURIError} if the given value is invalid
+     */
     static from(uri: string): URI {
         return new URI(uri);
     }

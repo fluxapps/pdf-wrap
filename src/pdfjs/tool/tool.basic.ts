@@ -2,7 +2,7 @@ import {Tool} from "../../api/tool/toolbox";
 import {StateChangeEvent} from "../../api/event/event.api";
 import {Observable} from "rxjs/internal/Observable";
 import {Subscriber} from "rxjs/internal-compatibility";
-import {DocumentModel, Page} from "../document.model";
+import {DocumentModel, getPageNumberByEvent, Page} from "../document.model";
 import {Point} from "../../api/draw/draw.basic";
 import * as log4js from "@log4js-node/log4js-api";
 import {filter, share, tap} from "rxjs/operators";
@@ -29,7 +29,7 @@ export abstract class BaseTool implements Tool {
         return this._isActive;
     }
 
-    private _isActive: boolean = false; // tslint:disable-line: variable-name
+    private _isActive: boolean = false;
 
     private stateChangeEvent?: Subscriber<StateChangeEvent>;
 
@@ -112,7 +112,7 @@ export abstract class DrawingTool extends BaseTool {
      */
     protected readonly mouseUp: Observable<DocumentEventMap["mouseup"]>;
 
-    private _page?: Page; // tslint:disable-line: variable-name
+    private _page?: Page;
 
     protected constructor(
         protected readonly document: DocumentModel
@@ -161,15 +161,8 @@ export abstract class DrawingTool extends BaseTool {
 
         logger.trace(`Mouse down event from drawing tool: event=${JSON.stringify(evt)}`);
 
-        const dataPageNumber: string | undefined = evt.srcElement!.parentElement!.parentElement!.dataset.pageNumber
-            || evt.srcElement!.parentElement!.dataset.pageNumber || undefined;
+        const pageNumber: number | undefined = getPageNumberByEvent(evt);
 
-        if (dataPageNumber !== undefined) {
-
-            const pageNumber: number = parseInt(dataPageNumber!, 10);
-            this._page = this.document.getPage(pageNumber);
-        } else {
-            this._page = undefined; // make sure no cached page is available
-        }
+        this._page = (pageNumber !== undefined) ? this.document.getPage(pageNumber) : undefined;
     }
 }
