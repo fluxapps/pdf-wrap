@@ -304,13 +304,7 @@ export class HighlightManager {
                 .filter(this.isSameColor)
                 .filter(this.isIntersected)
                 .forEach((it) => {
-                    const adjustedHighlight: ClientRectangle = ClientRectangle.fromCoordinates(
-                        it.clientRectangle.left,
-                        it.clientRectangle.right,
-                        this.target.top,
-                        this.target.bottom
-                    );
-                    highlight = highlight.unite(adjustedHighlight);
+                    highlight = highlight.unite(this.adjustHeight(it.clientRectangle));
                     this.remove(it);
                 });
 
@@ -322,8 +316,8 @@ export class HighlightManager {
                 .forEach((it) => {
                     // because no intersection, we calculate the combined rectangle ourself
                     highlight = ClientRectangle.fromCoordinates(
-                        Math.min(this.target.left, it.clientRectangle.left),
-                        Math.max(this.target.right, it.clientRectangle.right),
+                        Math.min(highlight.left, it.clientRectangle.left),
+                        Math.max(highlight.right, it.clientRectangle.right),
                         this.target.top,
                         this.target.bottom
                     );
