@@ -18,6 +18,11 @@ export interface Highlighting {
     readonly onTextSelection: Observable<TextSelection>;
 
     /**
+     * A hot {@code Observable} which emits when a text selection is removed.
+     */
+    readonly onTextUnselection: Observable<void>;
+
+    /**
      * Enables the text highlighting feature.
      */
     enable(): void;

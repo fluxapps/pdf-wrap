@@ -62,9 +62,9 @@ describe('a highlight manager', () => {
 
     describe('clear selection', () => {
 
-        describe('on intersection with existing highlights', () => {
+        describe('on intersection with existing highlights with slightly bigger height', () => {
 
-            it('should reduce the highlights by the selection', () => {
+            it('should reduce the highlights by the selection and use the height of the selection', () => {
 
                 const target: Target = {height: 2, width: 4, x: 5, y: 3};
 
@@ -74,7 +74,50 @@ describe('a highlight manager', () => {
                 when(mockCanvas.select(anyString())).thenReturn([instance(existingHighlight)]);
                 when(existingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
-                    dimension: {width: 5, height: 2},
+                    dimension: {width: 5, height: 2.04}, // 2% tolerance
+                    fillColor: colorFrom(Colors.YELLOW),
+                    id: "svg-to-remove",
+                    position: {x: 2, y: 3}
+                });
+
+                const newHighlight: CanvasRectangle = mock(CanvasRectangle);
+                when(newHighlight.transform()).thenReturn(createMockRectangle());
+
+                const mockRectanglePainter: RectanglePainter = mock(MockRectanglePainter);
+                const mockRectanglePainterInst: RectanglePainter = instance(mockRectanglePainter);
+                when(mockRectanglePainter.dimension(anything())).thenReturn(mockRectanglePainterInst);
+                when(mockRectanglePainter.position(anything())).thenReturn(mockRectanglePainterInst);
+                when(mockRectanglePainter.fillColor(anything())).thenReturn(mockRectanglePainterInst);
+                when(mockRectanglePainter.borderColor(anything())).thenReturn(mockRectanglePainterInst);
+                when(mockRectanglePainter.paint()).thenReturn(instance(newHighlight));
+
+                when(mockCanvas.rectangle()).thenReturn(mockRectanglePainterInst);
+
+
+                const manager: HighlightManager = new HighlightManager(instance(mockCanvas), target);
+                manager.clear();
+
+
+                verify(existingHighlight.remove()).once();
+                verify(mockRectanglePainter.dimension(deepEqual({width: 3, height: 2}))).once();
+                verify(mockRectanglePainter.fillColor(deepEqual(colorFrom(Colors.YELLOW)))).once();
+                verify(mockRectanglePainter.position(deepEqual({x: 2, y: 3}))).once();
+            });
+        });
+
+        describe('on intersection with existing highlights with slightly smaller height', () => {
+
+            it('should reduce the highlight by the selection and use the selections height', () => {
+
+                const target: Target = {height: 2, width: 4, x: 5, y: 3};
+
+                const mockCanvas: Canvas = mock(MockCanvas);
+                const existingHighlight: CanvasRectangle = mock(CanvasRectangle);
+
+                when(mockCanvas.select(anyString())).thenReturn([instance(existingHighlight)]);
+                when(existingHighlight.transform()).thenReturn({
+                    borderColor: colorFrom(Colors.NONE),
+                    dimension: {width: 5, height: 1.97}, // 2% tolerance
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
                     position: {x: 2, y: 3}
@@ -221,7 +264,7 @@ describe('a highlight manager', () => {
                 when(mockCanvas.select(anyString())).thenReturn([instance(existingHighlight)]);
                 when(existingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
-                    dimension: {width: 2, height: 2},
+                    dimension: {width: 2, height: 1.97},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
                     position: {x: 4, y: 9}
@@ -252,9 +295,52 @@ describe('a highlight manager', () => {
             });
         });
 
-        describe('on intersection with existing highlights', () => {
+        describe('on intersection with existing highlights with slightly bigger height', () => {
 
-            it('should remove the existing highlight and create a new combined highlight', () => {
+            it('should remove the existing highlight and create a new combined one with the height of the selection', () => {
+
+                const target: Target = {x: 5, y: 3, width: 4, height: 2};
+
+                const mockCanvas: Canvas = mock(MockCanvas);
+                const existingHighlight: CanvasRectangle = mock(CanvasRectangle);
+
+                when(mockCanvas.select(anyString())).thenReturn([instance(existingHighlight)]);
+                when(existingHighlight.transform()).thenReturn({
+                    borderColor: colorFrom(Colors.NONE),
+                    dimension: {width: 2, height: 2.04}, // 2% tolerance
+                    fillColor: colorFrom(Colors.YELLOW),
+                    id: "svg-to-remove",
+                    position: {x: 4, y: 3}
+                });
+
+                const newHighlight: CanvasRectangle = mock(CanvasRectangle);
+                when(newHighlight.transform()).thenReturn(createMockRectangle());
+
+                const mockRectanglePainter: RectanglePainter = mock(MockRectanglePainter);
+                const mockRectanglePainterInst: RectanglePainter = instance(mockRectanglePainter);
+                when(mockRectanglePainter.dimension(anything())).thenReturn(mockRectanglePainterInst);
+                when(mockRectanglePainter.position(anything())).thenReturn(mockRectanglePainterInst);
+                when(mockRectanglePainter.fillColor(anything())).thenReturn(mockRectanglePainterInst);
+                when(mockRectanglePainter.borderColor(anything())).thenReturn(mockRectanglePainterInst);
+                when(mockRectanglePainter.paint()).thenReturn(instance(newHighlight));
+
+                when(mockCanvas.rectangle()).thenReturn(mockRectanglePainterInst);
+
+
+                const manager: HighlightManager = new HighlightManager(instance(mockCanvas), target);
+                manager.highlight(colorFrom(Colors.YELLOW));
+
+
+                verify(existingHighlight.remove()).once();
+                verify(mockRectanglePainter.dimension(deepEqual({width: 5, height: 2}))).once();
+                verify(mockRectanglePainter.fillColor(deepEqual(colorFrom(Colors.YELLOW)))).once();
+                verify(mockRectanglePainter.position(deepEqual({x: 4, y: 3}))).once();
+            });
+        });
+
+        describe('on intersection with existing highlights with slightly smaller height', () => {
+
+            it('should remove the existing highlight and create a new combined one with the height of the selection', () => {
 
                 const target: Target = {x: 5, y: 3, width: 4, height: 2};
 
@@ -265,7 +351,7 @@ describe('a highlight manager', () => {
                 when(mockCanvas.select(anyString())).thenReturn([instance(existingHighlight), instance(secondExistingHighlight)]);
                 when(existingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
-                    dimension: {width: 4, height: 2},
+                    dimension: {width: 4, height: 1.97}, // 2% tolerance
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
                     position: {x: 2, y: 3}

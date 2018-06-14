@@ -3,15 +3,15 @@ import {Observable} from "rxjs/internal/Observable";
 import {Color} from "../api/draw/color";
 import {DocumentModel, getPageNumberByEvent, Page} from "./document.model";
 import {Canvas} from "../paint/painters";
-import {Subscriber} from "rxjs/internal-compatibility";
-import {TeardownLogic} from "rxjs/internal/types";
-import {filter, map, share} from "rxjs/operators";
+import {filter, map, mergeMap, share} from "rxjs/operators";
 import {DrawElement, Rectangle} from "../api/draw/elements";
 import {DrawEvent, PageLayer} from "../api/storage/page.event";
 import {CanvasRectangle} from "../paint/canvas.elements";
 import {ClientRectangle} from "./client-rectangle";
 import {Subject} from "rxjs/internal/Subject";
 import {zip} from "rxjs/internal/observable/zip";
+import {fromEvent} from "rxjs/internal/observable/fromEvent";
+import {merge} from "rxjs/internal/observable/merge";
 
 /**
  * Represents the text highlighting feature of a PDF.
@@ -26,30 +26,50 @@ export class TextHighlighting implements Highlighting {
      */
     readonly onTextSelection: Observable<TextSelection>;
 
+    readonly onTextUnselection: Observable<void>;
+
     private isEnabled: boolean = false;
 
     constructor(
         private readonly document: DocumentModel
     ) {
 
-        const page: Observable<Page> = new Observable((subscriber: Subscriber<Event>): TeardownLogic => {
-            document.viewer.addEventListener("mousedown", (evt) => subscriber.next(evt));
-        })
+        // get the page where the mouse down event was
+        const page: Observable<Page> = fromEvent(document.viewer, "mousedown")
             .pipe(map((it) => getPageNumberByEvent(it)))
             .pipe(filter((it) => it !== undefined))
             .pipe(map((it) => this.document.getPage(it!)));
 
-        const selections: Observable<Array<Target>> = new Observable(
-            (subscriber: Subscriber<Selection>): TeardownLogic => {
-                            document.viewer.addEventListener("mouseup", (_) => subscriber.next(window.getSelection()));
-        })
+        // transformed selection on mouse up only inside the viewer
+        const selections: Observable<Array<Target>> = fromEvent(document.viewer, "mouseup")
+            .pipe(map((_) => window.getSelection()))
             .pipe(map(transformSelection))
             .pipe(filter((it) => it.length > 0));
 
+        // page and selections observable zipped determines a valid text selection
         this.onTextSelection = zip(selections, page)
             .pipe(filter((_) => this.isEnabled))
             .pipe(map((it) => new TextSelectionImpl(it[1])))
             .pipe(share());
+
+
+        // the actions when noting is selected
+        const onHighlight: Observable<void> = this.onTextSelection
+            .pipe(mergeMap((it: TextSelection) => it.onHighlighting))
+            .pipe(map((_) => {/* return void */}));
+
+        const onRemoveHighlight: Observable<void> = this.onTextSelection
+            .pipe(mergeMap((it: TextSelection) => it.onRemoveHighlighting))
+            .pipe(map((_) => {/* return void */}));
+
+        const onMouseUpUnselection: Observable<void> = fromEvent(window, "mouseup")
+            .pipe(map((_) => window.getSelection()))
+            .pipe(map(transformSelection))
+            .pipe(filter((it) => it.length < 1))
+            .pipe(map((_) => {/* return void */}));
+
+        // if one of them emits, nothing is selected
+        this.onTextUnselection = merge(onHighlight, onRemoveHighlight, onMouseUpUnselection);
     }
 
     /**
@@ -284,7 +304,13 @@ export class HighlightManager {
                 .filter(this.isSameColor)
                 .filter(this.isIntersected)
                 .forEach((it) => {
-                    highlight = highlight.unite(it.clientRectangle);
+                    const adjustedHighlight: ClientRectangle = ClientRectangle.fromCoordinates(
+                        it.clientRectangle.left,
+                        it.clientRectangle.right,
+                        this.target.top,
+                        this.target.bottom
+                    );
+                    highlight = highlight.unite(adjustedHighlight);
                     this.remove(it);
                 });
 
@@ -330,8 +356,10 @@ export class HighlightManager {
     }
 
     private readonly isAtSameHeight: (data: HighlightData) => boolean = (data) => {
-        return data.clientRectangle.top === this.target.top
-            && data.clientRectangle.bottom === this.target.bottom;
+        const slightlySmaller: boolean = data.clientRectangle.height > this.target.height * 0.98;
+        const slightlyBigger: boolean = data.clientRectangle.height <= this.target.height * 1.02;
+
+        return slightlySmaller && slightlyBigger;
     }
 
     private readonly isNotIntersected: (data: HighlightData) => boolean = (data) => !this.isIntersected(data);
@@ -340,7 +368,7 @@ export class HighlightManager {
 
         this.remove(data);
 
-        data.clientRectangle.subtract(this.target)
+        this.adjustHeight(data.clientRectangle).subtract(this.target)
             .forEach((result) => {
 
                 const newRect: CanvasRectangle = this.canvas.rectangle()
@@ -365,6 +393,15 @@ export class HighlightManager {
 
     private readonly isNotSameColor: (data: HighlightData) => boolean = (data) => {
         return !this.isSameColor(data);
+    }
+
+    private adjustHeight(clientRect: ClientRectangle): ClientRectangle {
+        return ClientRectangle.fromCoordinates(
+            clientRect.left,
+            clientRect.right,
+            this.target.top,
+            this.target.bottom
+        );
     }
 }
 
