@@ -61,7 +61,8 @@
 
   "include": [
     "src/**/*.ts",
-    "test/**/*.spec.ts"
+    "test/**/*.spec.ts",
+    "test/**/*.mocks.ts"
   ],
 
   "exclude": [
