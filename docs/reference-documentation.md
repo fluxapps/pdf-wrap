@@ -107,9 +107,77 @@ Learn more about the [StorageAdapter](#provide-your-storage-adapter)
 
 Once you have loaded the PDF, you can access its toolbox.
 
+The toolbox contains the following tools:
+
+* Freehand - to draw with the mouse on a PDF page
+* Eraser - to remove drawings made with the Freehand tool
+
+```typescript
+pdf.toolbox.freehand; // get the freehand tool instance
+pdf.toolbox.eraser; // get the eraser tool instance
+```
+
+All tools can be activated, deactivated or toggled
+
+```typescript
+pdf.toolbox.freehand.activate();
+pdf.toolbox.freehand.deactivate();
+pdf.toolbox.freehand.toggle();
+```
+
+All tools provide the current state through a property
+
+```typescript
+const isFreehandActive: boolean = pdf.toolbox.freehand.isActive;
+```
+
+All tools provide an `Observable` which emits the new state in case of a state change
+
+```typescript
+pdf.toolbox.freehand.stateChange
+    .subscribe(state => {
+        if (state.isActive) {
+            ...
+        } else {
+            ...
+        }
+    })
+```
+
+### Freehand
+
+**Limitations:**
+
+* The Freehand tool can **not** draw over multiple PDF pages at once
+* The Freehand tool does **not** work with touchscreen
+
+The Freehand tool as additional setters:
+
+* `setColor` - accepts a `Color` instance and defines the color of the stroke
+* `setStrokeWidth` - accepts a number in px and defines the width of the stroke
+
+These setters can be chained
+
+```typescript
+pdf.toolbox.freehand
+    .setColor(colorFromHex("#000"))
+    .setStrokeWidth(2);
+```
+
+Learn more about colors: [Using colors](#using-colors)
+
+### Eraser
+
+The Eraser can only remove strokes made with the Freehand tool.
+
+In order to remove a stroke, the eraser tool needs to be activated
+and the stroke needs to be crossed with the mouse while the mouse is pressed.
+
 ## Using the highlighting
 
-**The highlight feature can not highlight text over multiple PDF pages at once.**
+**Limitations:**
+
+* The highlight feature can **not** highlight text over multiple PDF pages at once.
 
 Once you have loaded the PDF, you can use its highlighting feature.
 
@@ -148,7 +216,7 @@ The `TextSelection` instance provides a `clearHighlight` or `highlight` method.
 * `clearHighlight` will remove any highlight of the selected text
 * `highlight` accepts a `Color` instance and highlights the selection with it
 
-Learn more about using colors: [Using colors](#using-colors)
+Learn more about colors: [Using colors](#using-colors)
 
 > PDF Wrap only adds or remove event listeners for the text selection.
 It does not actually disable the text select feature from a html page. If you want
@@ -296,8 +364,11 @@ const polyLine: PolyLine = elementBuilder.polyLine()
 
 ## Using colors
 
-To use colors on the elements you can use the `Color` type. To create a `Color`
-use one of the following functions.
+Whenever a color can be set in PDF Wrap, a `Color` instance is required.
+
+To create a `Color` instances use one of the following functions.
+
+Module: `api/draw/color`
 
 * `colorFrom`
 * `colorFromHex`
