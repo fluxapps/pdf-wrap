@@ -6,6 +6,12 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, "build/www"),
         filename: "main.js"
-    }
+    },
 
+    mode: "development",
+
+    node: {
+        fs: "empty",
+        cluster: "empty"
+    }
 };

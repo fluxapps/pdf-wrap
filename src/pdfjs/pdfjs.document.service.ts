@@ -2,11 +2,11 @@ import {LoadingOptions, PDFDocumentService} from "../api/document.service";
 import {PDFDocument} from "../api/document/pdf.document";
 import {Outline, PageThumbnail} from "../api/document/document.info";
 import {Observable} from "rxjs/internal/Observable";
-import {Eraser, Freehand, Toolbox} from "../api/tool/toolbox";
+import {Toolbox} from "../api/tool/toolbox";
 import {PageChangeEvent} from "../api/event/event.api";
 import {Highlighting} from "../api/highlight/highlight.api";
-import {PDFViewer, EventBus, PageChangingEvent, PageRenderedEvent, PageView} from "pdfjs-dist/web/pdf_viewer";
-import {GlobalWorkerOptions, getDocument, PDFDocumentProxy} from "pdfjs-dist";
+import {EventBus, PageChangingEvent, PageRenderedEvent, PageView, PDFViewer} from "pdfjs-dist/web/pdf_viewer";
+import {getDocument, GlobalWorkerOptions, PDFDocumentProxy} from "pdfjs-dist";
 import {Subscriber} from "rxjs/internal-compatibility";
 import {DocumentModel, Page} from "./document.model";
 import {map} from "rxjs/operators";
@@ -55,8 +55,46 @@ export class PDFjsDocumentService implements PDFDocumentService {
         const documentModel: DocumentModel = new DocumentModel(options.container);
 
         const highlighting: Highlighting = new TextHighlighting(documentModel);
-        const freehand: Freehand = new FreehandTool(documentModel);
-        const eraser: Eraser = new EraserTool(documentModel);
+        const freehand: FreehandTool = new FreehandTool(documentModel);
+        const eraser: EraserTool = new EraserTool(documentModel);
+
+        freehand.afterLineRendered.subscribe((_) => {/* just a test */});
+
+        freehand.stateChange.subscribe((it) => {
+
+            const drawLayerList: Array<Element> = Array.from(document.getElementsByClassName("draw-layer"));
+
+            if (it.isActive) {
+                drawLayerList
+                    .forEach((drawLayer) => {
+                        drawLayer.classList.add("in-front");
+                    });
+            } else {
+                drawLayerList
+                    .forEach((drawLayer) => {
+                        drawLayer.classList.remove("in-front");
+                    });
+            }
+        });
+
+        eraser.afterElementRemoved.subscribe((_) => {/* just a test */});
+
+        eraser.stateChange.subscribe((it) => {
+
+            const drawLayerList: Array<Element> = Array.from(document.getElementsByClassName("draw-layer"));
+
+            if (it.isActive) {
+                drawLayerList
+                    .forEach((drawLayer) => {
+                        drawLayer.classList.add("in-front");
+                    });
+            } else {
+                drawLayerList
+                    .forEach((drawLayer) => {
+                        drawLayer.classList.remove("in-front");
+                    });
+            }
+        });
 
         const pdfDocument: PDFDocument = new PDFjsDocument(viewer, highlighting, {freehand, eraser});
 
@@ -115,6 +153,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
 
                 const drawDiv: HTMLDivElement = createLayerDiv(height, width);
                 drawDiv.setAttribute("id", `draw-layer-page-${it.pageNumber}`);
+                drawDiv.classList.add("draw-layer");
 
                 pageContainer.insertBefore(drawDiv, textLayer);
 

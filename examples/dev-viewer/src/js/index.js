@@ -5,6 +5,7 @@ const {colorFromHex} = require("pdf-wrap/api/draw/color");
 const {PDFjsDocumentService, setWorkerSrc, setMapUrl} = require("pdf-wrap/pdfjs/pdfjs.document.service");
 const {URI} = require("pdf-wrap/api/document.service");
 
+
 setWorkerSrc("assets/libs/pdf-wrap/pdf.worker.js");
 setMapUrl("assets/libs/pdf-wrap");
 
@@ -85,18 +86,62 @@ export class ClearButton {
     }
 }
 
-const highlightService = new HighlightService();
+export class PenButton {
 
-const highlightButton = new HighlightButton(highlightService);
-const clearButton = new ClearButton(highlightService);
+    constructor(freehand) {
+        this.freehand = freehand;
+        this._button = document.getElementById("pen-button");
+
+        this.freehand.stateChange.subscribe(it => {
+
+            if (it.isActive) {
+                this._button.classList.add("button-primary");
+            } else {
+                this._button.classList.remove("button-primary");
+            }
+        });
+
+        this._button.addEventListener("click", () => {
+            this.freehand.toggle();
+        });
+    }
+}
+
+export class EraserButton {
+
+    constructor(eraser) {
+        this.eraser = eraser;
+        this._button = document.getElementById("eraser-button");
+
+        this.eraser.stateChange.subscribe(it => {
+
+            if (it.isActive) {
+                this._button.classList.add("button-primary");
+            } else {
+                this._button.classList.remove("button-primary");
+            }
+        });
+
+        this._button.addEventListener("click", () => {
+            this.eraser.toggle();
+        });
+    }
+}
 
 const documentService = new PDFjsDocumentService();
 
-const pdf = documentService.loadWith({
+documentService.loadWith({
     container: document.getElementById("viewerContainer"),
     pdf: "assets/resources/chicken.pdf",
     layerStorage: URI.from("ex://")
 }).then(it => {
+
+    const highlightService = new HighlightService();
+
+    const highlightButton = new HighlightButton(highlightService);
+    const clearButton = new ClearButton(highlightService);
+    const penButton = new PenButton(it.toolbox.freehand);
+    const eraserButton = new EraserButton(it.toolbox.eraser);
 
     it.highlighting.enable();
 
