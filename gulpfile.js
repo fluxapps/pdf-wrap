@@ -10,6 +10,7 @@ const sequence = require("gulp-sequence");
 const gulpTslint = require("gulp-tslint");
 const tslint = require("tslint");
 const typedoc = require("gulp-typedoc");
+const concat = require("gulp-concat");
 
 const appProperties = require("./app.properties");
 
@@ -35,7 +36,7 @@ gulp.task("build", ["test", "lint"], function (done) {
 /*
  * Copies javascript files, README.md, LICENSE.md and package.json to the libs directory.
  */
-gulp.task("package", ["uglifyJS", "copyDependencies", "copyPDFJS", "transformPackageJSON"], function () {
+gulp.task("package", ["uglifyJS", "copyDependencies", "copyPDFJS", "copyCSS", "transformPackageJSON"], function () {
 
     return gulp
         .src([
@@ -105,7 +106,7 @@ gulp.task("typedoc", () => {
  */
 gulp.task("copyDependencies", function (done) {
 
-    copyNodeModules(appProperties.root, `${appProperties.build.dirs.dist}/npm`, {devDependencies: false}, function (err, _) {
+    copyNodeModules(appProperties.root, `${appProperties.build.dirs.libs}/pdf-wrap`, {devDependencies: false}, function (err, _) {
 
         if (err) {
             done(err);
@@ -122,7 +123,7 @@ gulp.task("copyDependencies", function (done) {
 gulp.task("copyCMaps", () => {
 
     return gulp.src(`${appProperties.root}/node_modules/pdfjs-dist/cmaps/**/*`)
-        .pipe(gulp.dest(`${appProperties.build.dirs.dist}/npm/assets/cmaps`));
+        .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap/assets/cmaps`));
 });
 
 // --- copyPDFJS
@@ -132,10 +133,22 @@ gulp.task("copyCMaps", () => {
 gulp.task("copyPDFJS", ["copyCMaps"], () => {
     return gulp
         .src([
-            `${appProperties.root}/node_modules/pdfjs-dist/build/pdf.worker.js`,
-            `${appProperties.root}/node_modules/pdfjs-dist/web/pdf_viewer.css`
+            `${appProperties.root}/node_modules/pdfjs-dist/build/pdf.worker.js`
         ])
-        .pipe(gulp.dest(`${appProperties.build.dirs.dist}/npm/assets`));
+        .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap/assets`));
+});
+
+// -- copyCSS
+/*
+ * Copies the css needed for the viewer.
+ */
+gulp.task("copyCSS", () => {
+    return gulp.src([
+        `${appProperties.root}/node_modules/pdfjs-dist/web/pdf_viewer.css`,
+        `${appProperties.root}/src/assets/css/pdf-wrap.css`
+    ])
+        .pipe(concat("pdf-wrap.css"))
+        .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap/assets`))
 });
 
 // --- lint

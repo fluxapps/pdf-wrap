@@ -1,0 +1,17 @@
+.pdf-container {
+    background-color: #333333;
+}
+
+.page-layer, .canvasWrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.page-layer.transparent {
+    opacity: 0.4;
+}
+
+.page-layer.in-front {
+    z-index: 99;
+}
