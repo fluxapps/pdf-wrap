@@ -1,5 +1,5 @@
 import {URI} from "../document.service";
-import {BorderElement, Rectangle} from "../draw/elements";
+import {PolyLine, Rectangle} from "../draw/elements";
 import {PageEventCollection} from "./page.event";
 import * as log4js from "@log4js-node/log4js-api";
 
@@ -84,7 +84,7 @@ export class PageOverlay {
     constructor(
         readonly pageNumber: number,
         readonly highlightings: Array<Rectangle>,
-        readonly drawings: Array<BorderElement>
+        readonly drawings: Array<PolyLine>
     ) {}
 }
 
@@ -96,3 +96,29 @@ export class PageOverlay {
  * @since 0.0.1
  */
 export class UnfinishedExecutionError extends Error {}
+
+/**
+ * An {@link EmptyStorageAdapter} can be used as a dummy
+ * adapter which does not perform any operation or provide any data.
+ *
+ * @author Nicolas Märchy <nm@studer-raimann.ch>
+ * @since 0.0.1
+ */
+export class EmptyStorageAdapter implements StorageAdapter {
+
+    constructor(
+        private readonly uri: URI
+    ) {}
+
+    async loadPage(_: URI, pageNumber: number): Promise<PageOverlay> {
+        return new PageOverlay(pageNumber, [], []);
+    }
+
+    register(): URI {
+        return this.uri;
+    }
+
+    start(_: URI, __: PageEventCollection): void {
+        // empty implementation
+    }
+}

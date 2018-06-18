@@ -4,7 +4,10 @@
 const {colorFromHex} = require("pdf-wrap/api/draw/color");
 const {PDFjsDocumentService, setWorkerSrc, setMapUrl} = require("pdf-wrap/pdfjs/pdfjs.document.service");
 const {URI} = require("pdf-wrap/api/document.service");
+const {StorageRegistry} = require("pdf-wrap/api/storage/adapter.registry");
+const {EmptyStorageAdapter} = require("pdf-wrap/api/storage/adapter");
 
+StorageRegistry.instance.add(new EmptyStorageAdapter(URI.from("ex://")));
 
 setWorkerSrc("assets/libs/pdf-wrap/pdf.worker.js");
 setMapUrl("assets/libs/pdf-wrap");

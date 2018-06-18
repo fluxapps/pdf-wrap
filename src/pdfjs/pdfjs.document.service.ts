@@ -3,7 +3,7 @@ import {PDFDocument} from "../api/document/pdf.document";
 import {Outline, PageThumbnail} from "../api/document/document.info";
 import {Observable} from "rxjs/internal/Observable";
 import {Toolbox} from "../api/tool/toolbox";
-import {PageChangeEvent} from "../api/event/event.api";
+import {PageChangeEvent, StateChangeEvent} from "../api/event/event.api";
 import {Highlighting} from "../api/highlight/highlight.api";
 import {EventBus, PageChangingEvent, PageRenderedEvent, PageView, PDFViewer} from "pdfjs-dist/web/pdf_viewer";
 import {getDocument, GlobalWorkerOptions, PDFDocumentProxy} from "pdfjs-dist";
@@ -16,6 +16,12 @@ import {TeardownLogic} from "rxjs/internal/types";
 import {Canvas, SVGCanvas} from "../paint/painters";
 import svgjs from "svgjs";
 import {Point} from "../api/draw/draw.basic";
+import {StorageRegistry} from "../api/storage/adapter.registry";
+import {StorageAdapterWrapper} from "./storage-adapter-wrapper";
+import {PageEventCollection} from "../api/storage/page.event";
+import {PDFjsPageEvenCollection} from "./page-event-collection";
+import {merge} from "rxjs/internal/observable/merge";
+import {PolyLine, Rectangle} from "../api/draw/elements";
 
 GlobalWorkerOptions.workerSrc = "assets/pdf.worker.js";
 let mapUrl: string = "assets/cmaps";
@@ -58,121 +64,56 @@ export class PDFjsDocumentService implements PDFDocumentService {
         const freehand: FreehandTool = new FreehandTool(documentModel);
         const eraser: EraserTool = new EraserTool(documentModel);
 
-        freehand.afterLineRendered.subscribe((_) => {/* just a test */});
+        const pageEventCollection: PageEventCollection = new PDFjsPageEvenCollection(
+            freehand.afterLineRendered,
+            eraser.afterElementRemoved,
+            highlighting.onTextSelection
+        );
+        const storageAdapter: StorageAdapterWrapper = new StorageAdapterWrapper(StorageRegistry.instance);
 
-        freehand.stateChange.subscribe((it) => {
+        storageAdapter.start(options.layerStorage, pageEventCollection);
 
-            const drawLayerList: Array<Element> = Array.from(document.getElementsByClassName("draw-layer"));
-
-            if (it.isActive) {
-                drawLayerList
-                    .forEach((drawLayer) => {
-                        drawLayer.classList.add("in-front");
-                    });
-            } else {
-                drawLayerList
-                    .forEach((drawLayer) => {
-                        drawLayer.classList.remove("in-front");
-                    });
-            }
-        });
-
-        eraser.afterElementRemoved.subscribe((_) => {/* just a test */});
-
-        eraser.stateChange.subscribe((it) => {
-
-            const drawLayerList: Array<Element> = Array.from(document.getElementsByClassName("draw-layer"));
-
-            if (it.isActive) {
-                drawLayerList
-                    .forEach((drawLayer) => {
-                        drawLayer.classList.add("in-front");
-                    });
-            } else {
-                drawLayerList
-                    .forEach((drawLayer) => {
-                        drawLayer.classList.remove("in-front");
-                    });
-            }
-        });
-
-        const pdfDocument: PDFDocument = new PDFjsDocument(viewer, highlighting, {freehand, eraser});
+        // move draw layers to front in order to make the mouse listeners work
+        merge(freehand.stateChange, eraser.stateChange).subscribe(this.moveDrawLayerToFront);
 
         new Observable((subscriber: Subscriber<PageRenderedEvent>): TeardownLogic => {
             viewer.eventBus.on("pagerendered", (ev) => subscriber.next(ev));
         })
+            .pipe(map((it) => new LayerManager(it)))
             .subscribe((it) => {
 
-                const pageContainer: HTMLDivElement = it.source.div;
+                const highlightLayer: Canvas = it.createHighlightLayer();
+                const searchLayer: Canvas = it.createSearchLayer();
+                const highlightTransparencyLayer: Canvas = it.createHighlightTransparencyLayer();
+                const searchTransparencyLayer: Canvas = it.createSearchTransparencyLayer();
+                const drawLayer: Canvas = it.createDrawingLayer();
 
-                const height: number = it.source.viewport.height;
-                const width: number = it.source.viewport.width;
+                // this can easily made async without awaiting it
+                storageAdapter.loadPage(options.layerStorage, it.pageNumber).then((pageData) => {
 
-                // textLayer and canvas are already rendered at this point
-                const textLayer: HTMLDivElement = pageContainer.getElementsByClassName("textLayer").item(0) as HTMLDivElement;
-                const pdfLayer: HTMLDivElement = pageContainer.getElementsByClassName("canvasWrapper").item(0) as HTMLDivElement;
+                    pageData.highlightings
+                        .forEach((highlight) => {
+                            this.drawHighlight(highlightLayer, highlight);
+                            this.drawHighlight(highlightTransparencyLayer, highlight);
+                        });
 
-
-                const highlightDiv: HTMLDivElement = createLayerDiv(height, width);
-                highlightDiv.setAttribute("id", `highlight-layer-page-${it.pageNumber}`);
-
-                pageContainer.insertBefore(highlightDiv, pdfLayer);
-
-                const highlightSVG: svgjs.Doc = svgjs(`${highlightDiv.id}`);
-                const highlightLayer: Canvas = new SVGCanvas(highlightSVG);
-
-
-                const searchDiv: HTMLDivElement = createLayerDiv(height, width);
-                searchDiv.setAttribute("id", `search-layer-page-${it.pageNumber}`);
-
-                pageContainer.insertBefore(searchDiv, pdfLayer);
-
-                const searchSVG: svgjs.Doc = svgjs(`${searchDiv.id}`);
-                const searchLayer: Canvas = new SVGCanvas(searchSVG);
-
-
-                const highlightTransparencyDiv: HTMLDivElement = createLayerDiv(height, width);
-                highlightTransparencyDiv.setAttribute("id", `highlight-transparency-layer-page-${it.pageNumber}`);
-                highlightTransparencyDiv.classList.add("transparent");
-
-                pageContainer.insertBefore(highlightTransparencyDiv, textLayer);
-
-                const highlightTransparencySVG: svgjs.Doc = svgjs(`${highlightTransparencyDiv.id}`);
-                const highlightTransparencyLayer: Canvas = new SVGCanvas(highlightTransparencySVG);
-
-
-                const searchTransparencyDiv: HTMLDivElement = createLayerDiv(height, width);
-                searchTransparencyDiv.setAttribute("id", `search-transparency-layer-page-${it.pageNumber}`);
-                searchTransparencyDiv.classList.add("transparent");
-
-                pageContainer.insertBefore(searchTransparencyDiv, textLayer);
-
-                const searchTransparencySVG: svgjs.Doc = svgjs(`${searchTransparencyDiv.id}`);
-                const searchTransparencyLayer: Canvas = new SVGCanvas(searchTransparencySVG);
-
-
-                const drawDiv: HTMLDivElement = createLayerDiv(height, width);
-                drawDiv.setAttribute("id", `draw-layer-page-${it.pageNumber}`);
-                drawDiv.classList.add("draw-layer");
-
-                pageContainer.insertBefore(drawDiv, textLayer);
-
-                const drawSVG: svgjs.Doc = svgjs(`${drawDiv.id}`);
-                const drawLayer: Canvas = new SVGCanvas(drawSVG);
+                    pageData.drawings
+                        .forEach((drawing) => this.draw(drawLayer, drawing));
+                });
 
                 const page: Page = new Page(
                     it.pageNumber,
-                    pageContainer,
+                    it.pageContainer,
                     highlightLayer,
                     searchLayer,
-                    pdfLayer,
+                    it.pdfLayer,
                     highlightTransparencyLayer,
                     searchTransparencyLayer,
                     drawLayer,
-                    textLayer,
-                    {height, width},
+                    it.textLayer,
+                    {height: it.height, width: it.width},
                     (): Point => {
-                        const pageView: PageView = viewer.getPageView(it.pageNumber - 1);
+                        const pageView: PageView = viewer.getPageView(it.pageIndex);
                         const pageRects: ClientRect = pageView.svg.getClientRects()[0];
                         return {
                             x: pageRects.left,
@@ -184,8 +125,43 @@ export class PDFjsDocumentService implements PDFDocumentService {
                 documentModel.addPage(page);
             });
 
+        return new PDFjsDocument(viewer, highlighting, {freehand, eraser});
+    }
 
-        return pdfDocument;
+    private moveDrawLayerToFront(stateEvent: StateChangeEvent): void {
+
+        const drawLayerList: Array<Element> = Array.from(document.getElementsByClassName("draw-layer"));
+
+        if (stateEvent.isActive) {
+            drawLayerList
+                .forEach((drawLayer) => {
+                    drawLayer.classList.add("in-front");
+                });
+        } else {
+            drawLayerList
+                .forEach((drawLayer) => {
+                    drawLayer.classList.remove("in-front");
+                });
+        }
+    }
+
+    private drawHighlight(on: Canvas, highlight: Rectangle): void {
+
+        on.rectangle()
+            .id(highlight.id)
+            .dimension(highlight.dimension)
+            .position(highlight.position)
+            .fillColor(highlight.fillColor)
+            .borderColor(highlight.borderColor)
+            .paint();
+    }
+
+    private draw(on: Canvas, drawing: PolyLine): void {
+        on.polyLine()
+            .id(drawing.id)
+            .borderColor(drawing.borderColor)
+            .coordinates(drawing.coordinates)
+            .paint();
     }
 }
 
@@ -239,11 +215,106 @@ export class PDFjsDocument implements PDFDocument {
     }
 }
 
-function createLayerDiv(height: number, width: number): HTMLDivElement {
+/**
+ *
+ *
+ * @author Nicolas Märchy <nm@studer-raimann.ch>
+ * @since 0.0.1
+ * @internal
+ */
+class LayerManager {
 
-    const div: HTMLElementTagNameMap["div"] = window.document.createElement("div");
-    div.setAttribute("style", `width: ${width}px; height: ${height}px`);
-    div.classList.add("page-layer");
+    readonly pageContainer: HTMLDivElement;
+    readonly pdfLayer: HTMLDivElement;
+    readonly textLayer: HTMLDivElement;
 
-    return div;
+    readonly width: number;
+    readonly height: number;
+
+    readonly pageNumber: number;
+
+    get pageIndex(): number {
+        return this.pageNumber - 1;
+    }
+
+    constructor(
+        pageRenderedEvent: PageRenderedEvent
+    ) {
+        this.pageNumber = pageRenderedEvent.pageNumber;
+        this.pageContainer = pageRenderedEvent.source.div;
+
+        this.width = pageRenderedEvent.source.viewport.width;
+
+        this.height = pageRenderedEvent.source.viewport.height;
+
+        this.pdfLayer = this.pageContainer.getElementsByClassName("canvasWrapper").item(0) as HTMLDivElement;
+        this.textLayer = this.pageContainer.getElementsByClassName("textLayer").item(0) as HTMLDivElement;
+    }
+
+    createHighlightLayer(): Canvas {
+
+        const highlightDiv: HTMLDivElement = this.createLayerDiv(this.height, this.width);
+        highlightDiv.setAttribute("id", `highlight-layer-page-${this.pageNumber}`);
+
+        this.pageContainer.insertBefore(highlightDiv, this.pdfLayer);
+
+        const highlightSVG: svgjs.Doc = svgjs(`${highlightDiv.id}`);
+        return new SVGCanvas(highlightSVG);
+    }
+
+    createSearchLayer(): Canvas {
+
+        const searchDiv: HTMLDivElement = this.createLayerDiv(this.height, this.width);
+        searchDiv.setAttribute("id", `search-layer-page-${this.pageNumber}`);
+
+        this.pageContainer.insertBefore(searchDiv, this.pdfLayer);
+
+        const searchSVG: svgjs.Doc = svgjs(`${searchDiv.id}`);
+        return new SVGCanvas(searchSVG);
+    }
+
+    createHighlightTransparencyLayer(): Canvas {
+
+        const highlightTransparencyDiv: HTMLDivElement = this.createLayerDiv(this.height, this.width);
+        highlightTransparencyDiv.setAttribute("id", `highlight-transparency-layer-page-${this.pageNumber}`);
+        highlightTransparencyDiv.classList.add("transparent");
+
+        this.pageContainer.insertBefore(highlightTransparencyDiv, this.textLayer);
+
+        const highlightTransparencySVG: svgjs.Doc = svgjs(`${highlightTransparencyDiv.id}`);
+        return new SVGCanvas(highlightTransparencySVG);
+    }
+
+    createSearchTransparencyLayer(): Canvas {
+
+        const searchTransparencyDiv: HTMLDivElement = this.createLayerDiv(this.height, this.width);
+        searchTransparencyDiv.setAttribute("id", `search-transparency-layer-page-${this.pageNumber}`);
+        searchTransparencyDiv.classList.add("transparent");
+
+        this.pageContainer.insertBefore(searchTransparencyDiv, this.textLayer);
+
+        const searchTransparencySVG: svgjs.Doc = svgjs(`${searchTransparencyDiv.id}`);
+        return new SVGCanvas(searchTransparencySVG);
+    }
+
+    createDrawingLayer(): Canvas {
+
+        const drawDiv: HTMLDivElement = this.createLayerDiv(this.height, this.width);
+        drawDiv.setAttribute("id", `draw-layer-page-${this.pageNumber}`);
+        drawDiv.classList.add("draw-layer");
+
+        this.pageContainer.insertBefore(drawDiv, this.textLayer);
+
+        const drawSVG: svgjs.Doc = svgjs(`${drawDiv.id}`);
+        return new SVGCanvas(drawSVG);
+    }
+
+    private  createLayerDiv(height: number, width: number): HTMLDivElement {
+
+        const div: HTMLElementTagNameMap["div"] = window.document.createElement("div");
+        div.setAttribute("style", `width: ${width}px; height: ${height}px`);
+        div.classList.add("page-layer");
+
+        return div;
+    }
 }
