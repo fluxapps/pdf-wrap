@@ -356,6 +356,37 @@ const polyLine: PolyLine = elementBuilder.polyLine()
 
 ## Search Feature
 
+PDF Wrap provides a full text search over a PDF document. To access the `DocumentSearch`
+you have to load a PDF.
+
+Once you have loaded the PDF, you can access the `SearchDocument`
+
+```typescript
+pdf.searchController;
+```
+
+A `DocumentSearch` provides you with different methods:
+
+* `search` - to start a search against a term
+* `previous` - to select the previous search result found by `search`
+* `next` - to select the next search result found by `search`
+
+The `search` methods accepts two parameters, `query` and `options`
+where `query` is self explained and `options` are different flags for the search.
+
+* `searchPhrase` - if `true` the search term will be used as a phrase, otherwise as a term
+* `fuzzy` - if `true` the search operation is performed case insensitive, otherwise case sensitive
+* `highlightAll` - if `true` highlights all search results, otherwise only the active selected
+
+### Example Search
+
+```typescript
+pdf.searchController.search("example", {
+    highlightAll: true,
+    searchPhrase: false,
+    fuzzy: true});
+```
+
 ## Outline Feature
 
 ## Page Thumbnails
