@@ -3,6 +3,7 @@ import {PageChangeEvent} from "../event/event.api";
 import {Outline, PageThumbnail} from "./document.info";
 import {Toolbox} from "../tool/toolbox";
 import {Highlighting} from "../highlight/highlight.api";
+import {DocumentSearch} from "../search/search.api";
 
 /**
  * Describes a PDF document containing several meta information and document data.
@@ -41,6 +42,11 @@ export interface PDFDocument {
      * Highlighting object to enable / disable or modify the text highlighting of a PDF page.
      */
     readonly highlighting: Highlighting;
+
+    /**
+     * Search controller to perform a document search
+     */
+    readonly searchController: DocumentSearch;
 
     /**
      * @returns {Promise<Outline>} the outline of a PDF

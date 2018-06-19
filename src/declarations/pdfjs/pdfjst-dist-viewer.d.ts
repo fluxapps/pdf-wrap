@@ -48,5 +48,39 @@ declare module "pdfjs-dist/web/pdf_viewer" {
         setDocument(pdf: PDFDocumentProxy): void;
 
         getPageView(pageIndex: number): PageView;
+
+        setFindController(controller: PDFFindController): void;
+    }
+
+    export interface FindControllerOptions {
+        pdfViewer: PDFViewer;
+    }
+
+    export interface PDFSearchOptions {
+        readonly query: string;
+        readonly phraseSearch: boolean;
+        readonly caseSensitive: boolean;
+        readonly highlightAll: boolean;
+        readonly findPrevious: boolean;
+    }
+
+    export enum SearchCommand {
+        SEARCH = "find",
+        CONTINUE = "findagain"
+    }
+
+    export interface SelectedTerm {
+        readonly matchIdx: number;
+        readonly pageIdx: number;
+    }
+
+    export class PDFFindController {
+
+        readonly selected: SelectedTerm;
+        readonly matchCount: number;
+
+        constructor(opt: FindControllerOptions);
+
+        executeCommand(cmd: SearchCommand, options: PDFSearchOptions): void;
     }
 }

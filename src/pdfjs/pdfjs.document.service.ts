@@ -5,7 +5,14 @@ import {Observable} from "rxjs/internal/Observable";
 import {Toolbox} from "../api/tool/toolbox";
 import {PageChangeEvent, StateChangeEvent} from "../api/event/event.api";
 import {Highlighting} from "../api/highlight/highlight.api";
-import {EventBus, PageChangingEvent, PageRenderedEvent, PageView, PDFViewer} from "pdfjs-dist/web/pdf_viewer";
+import {
+    EventBus,
+    PageChangingEvent,
+    PageRenderedEvent,
+    PageView,
+    PDFFindController,
+    PDFViewer
+} from "pdfjs-dist/web/pdf_viewer";
 import {getDocument, GlobalWorkerOptions, PDFDocumentProxy} from "pdfjs-dist";
 import {Subscriber} from "rxjs/internal-compatibility";
 import {DocumentModel, Page} from "./document.model";
@@ -22,6 +29,8 @@ import {PageEventCollection} from "../api/storage/page.event";
 import {PDFjsPageEvenCollection} from "./page-event-collection";
 import {merge} from "rxjs/internal/observable/merge";
 import {PolyLine, Rectangle} from "../api/draw/elements";
+import {DocumentSearch} from "../api/search/search.api";
+import {PDFjsDocumentSearch} from "./document.search";
 
 GlobalWorkerOptions.workerSrc = "assets/pdf.worker.js";
 let mapUrl: string = "assets/cmaps";
@@ -58,8 +67,14 @@ export class PDFjsDocumentService implements PDFDocumentService {
 
         viewer.setDocument(pdf);
 
+        const findController: PDFFindController = new PDFFindController({
+            pdfViewer: viewer
+        });
+        viewer.setFindController(findController);
+
         const documentModel: DocumentModel = new DocumentModel(options.container);
 
+        const searchController: DocumentSearch = new PDFjsDocumentSearch(findController);
         const highlighting: Highlighting = new TextHighlighting(documentModel);
         const freehand: FreehandTool = new FreehandTool(documentModel);
         const eraser: EraserTool = new EraserTool(documentModel);
@@ -125,7 +140,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
                 documentModel.addPage(page);
             });
 
-        return new PDFjsDocument(viewer, highlighting, {freehand, eraser});
+        return new PDFjsDocument(viewer, highlighting, {freehand, eraser}, searchController);
     }
 
     private moveDrawLayerToFront(stateEvent: StateChangeEvent): void {
@@ -195,7 +210,8 @@ export class PDFjsDocument implements PDFDocument {
     constructor(
         private readonly viewer: PDFViewer,
         readonly highlighting: Highlighting,
-        readonly toolbox: Toolbox
+        readonly toolbox: Toolbox,
+        readonly searchController: DocumentSearch
     ) {
 
         this.pageChange = new Observable((subscriber: Subscriber<PageChangingEvent>): TeardownLogic => {
