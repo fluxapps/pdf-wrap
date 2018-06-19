@@ -1,6 +1,3 @@
-// import {PDFjsDocmuentService} from "pdf-wrap/pdfjs/pdfjs.document.service";
-// import {URI} from "pdf-wrap/api/document.service";
-
 const {colorFromHex} = require("pdf-wrap/api/draw/color");
 const {PDFjsDocumentService, setWorkerSrc, setMapUrl} = require("pdf-wrap/pdfjs/pdfjs.document.service");
 const {URI} = require("pdf-wrap/api/document.service");
@@ -131,6 +128,30 @@ export class EraserButton {
     }
 }
 
+export class SearchButton {
+
+    constructor(searchController) {
+        this._searchController = searchController;
+        this._button = document.getElementById("search-button");
+        this._previous = document.getElementById("previous-button");
+        this._next = document.getElementById("next-button");
+
+        this.searchField = document.getElementById("search-term");
+
+        this._button.addEventListener("click", () => {
+            this._searchController.search(this.searchField.value, {fuzzy: true, searchPhrase: true, highlightAll: true});
+        });
+
+        this._previous.addEventListener("click", () => {
+            this._searchController.previous();
+        });
+
+        this._next.addEventListener("click", () => {
+            this._searchController.next();
+        })
+    }
+}
+
 const documentService = new PDFjsDocumentService();
 
 documentService.loadWith({
@@ -145,6 +166,8 @@ documentService.loadWith({
     const clearButton = new ClearButton(highlightService);
     const penButton = new PenButton(it.toolbox.freehand);
     const eraserButton = new EraserButton(it.toolbox.eraser);
+
+    const searchButton = new SearchButton(it.searchController);
 
     it.highlighting.enable();
 
