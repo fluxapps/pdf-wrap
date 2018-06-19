@@ -1,5 +1,5 @@
 import {DocumentSearch, SearchOptions} from "../api/search/search.api";
-import {PDFFindController, SearchCommand} from "pdfjs-dist/web/pdf_viewer";
+import {PDFFindController} from "pdfjs-dist/web/pdf_viewer";
 
 /**
  * {@link DocumentSearch} implementation for PDFjs.
@@ -29,7 +29,7 @@ export class PDFjsDocumentSearch implements DocumentSearch {
             return;
         }
 
-        this.findController.executeCommand(SearchCommand.SEARCH, {
+        this.findController.executeCommand("find", {
             caseSensitive: this.options.fuzzy,
             findPrevious: false,
             highlightAll: this.options.highlightAll,
@@ -48,7 +48,7 @@ export class PDFjsDocumentSearch implements DocumentSearch {
             return;
         }
 
-        this.findController.executeCommand(SearchCommand.CONTINUE, {
+        this.findController.executeCommand("findagain", {
             caseSensitive: this.options.fuzzy,
             findPrevious: false,
             highlightAll: this.options.highlightAll,
@@ -67,7 +67,7 @@ export class PDFjsDocumentSearch implements DocumentSearch {
             return;
         }
 
-        this.findController.executeCommand(SearchCommand.CONTINUE, {
+        this.findController.executeCommand("findagain", {
             caseSensitive: this.options.fuzzy,
             findPrevious: true,
             highlightAll: this.options.highlightAll,
