@@ -70,6 +70,60 @@ You have to setup a html container in a specific way.
 Where the `div` with the class `pdf-container` is your viewport and
 the `div` with the class `pdfViewer` wil contain all the pages of your PDF file.
 
+## Setup Logger
+
+PDF Wrap has a default log configuration which logs everything from log level `Warn`.
+
+You can override the default config
+
+```typescript
+LoggerFactory.configure({
+    logGroups: [
+        {
+            logger: "ch/studerraimann/pdfwrap",
+            logLevel: LogLevel.Trace
+        }
+    ]
+});
+```
+
+Each log group object accepts the property `logger` and `logLevel`.
+It allows you to define different log levels for different directories, files or event classes.
+
+---
+
+`logger` defines which directory, file class or function should be used
+
+**The string pattern scheme:**
+
+`ch/studerraimann/pdfwrap/<directory name>/<file name>:<class or function name>`
+
+* `ch/studerraimann/pdfwrap` - must be part of every logger
+* `/<directory name>` - can be any directory structure inside the `src` directory of the PDF Wrap source code
+* `/<file name>` - can be any file name (without extension) inside the specified directory name
+* `:<class or function name>` - can be any class or function name inside the specified file name
+
+**Example**
+
+* `ch/studerrraimann/pdfwrap/pdfjs` - for everything inside this directory
+* `ch/studerraimann/pdfwrap/pdfjs/highlight` - for everything inside this file
+* `ch/studerraimann/pdfwrap/pdfjs/highlight:TextHighlighting` - for the class `TextHighlighting` of the file `highlight`
+
+---
+
+`logLevel` defines one of the log level to use on this group
+
+If you are using Typescript you can use the `typescript-logging` enumerator `LogLevel`.
+
+If you are using Javascript you have to use the index number which represents the log level of the enumerator:
+
+* 0 - trace
+* 1 - debug
+* 2 - info
+* 3 - warn
+* 4 - error
+* 5 - fatal
+
 ## Using the PDF Document Service
 
 The `PDFDocumentService` is your entry point to PDF Wrap. It provides a load method
