@@ -443,6 +443,30 @@ pdf.searchController.search("example", {
 
 ## Outline Feature
 
+You can access the outline of a PDF once the PDF is loaded.
+
+```typescript
+pdf.getOutline().then(outline => {
+    // use the outline
+})
+```
+
+The `Outline` class provides two different forms of the outline.
+The `flatList` and the `tree` structure, where the `flatList` means, that
+even nested outlines are at the same level as every outline.
+The `tree` structure remains in the nested structure of the PDF outline.
+
+Each outline provides the `title` as well as the `pageNumber`
+
+```typescript
+pdf.getOutline().then(outline => {
+    outline.flatList.forEach(item => {
+        item.title;
+        item.pageNumber;
+    })
+})
+```
+
 ## Page Thumbnails
 
 # Miscellaneous
