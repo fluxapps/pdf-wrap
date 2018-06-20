@@ -1,6 +1,6 @@
 import {LoadingOptions, PDFDocumentService} from "../api/document.service";
 import {PDFDocument} from "../api/document/pdf.document";
-import {Outline, PageThumbnail} from "../api/document/document.info";
+import {Outline, PageThumbnail, TreeOutlineEntry} from "../api/document/document.info";
 import {Observable} from "rxjs/internal/Observable";
 import {Toolbox} from "../api/tool/toolbox";
 import {PageChangeEvent, StateChangeEvent} from "../api/event/event.api";
@@ -13,7 +13,7 @@ import {
     PDFFindController,
     PDFViewer
 } from "pdfjs-dist/web/pdf_viewer";
-import {getDocument, GlobalWorkerOptions, PDFDocumentProxy} from "pdfjs-dist";
+import {getDocument, GlobalWorkerOptions, OutlineDestination, PageRef, PDFDocumentProxy, PDFOutline} from "pdfjs-dist";
 import {Subscriber} from "rxjs/internal-compatibility";
 import {DocumentModel, Page} from "./document.model";
 import {map} from "rxjs/operators";
@@ -222,12 +222,42 @@ export class PDFjsDocument implements PDFDocument {
         this.pageCount = this.viewer.pdfDocument.pdfInfo.numpages;
     }
 
-    getOutline(): Promise<Outline> {
-        throw new Error("Not implemented yet");
+    async getOutline(): Promise<Outline> {
+
+        const pdfOutline: PDFOutline = await this.viewer.pdfDocument.getOutline();
+
+        const transformedOutline: Array<TreeOutlineEntry> = await this.transformOutline(pdfOutline);
+
+        return new Outline(transformedOutline);
     }
 
     getThumbnails(...pageNumbers: Array<number>): Observable<PageThumbnail> {
         throw new Error("Not implemented yet" + pageNumbers);
+    }
+
+    private async transformOutline(outline: PDFOutline): Promise<Array<TreeOutlineEntry>> {
+
+        const out: Array<TreeOutlineEntry> = [];
+
+        for (const it of Array.from(outline)) {
+            const destination: OutlineDestination = await this.viewer.pdfDocument.getDestination(it.dest);
+            const pageRef: PageRef = destination[0];
+            const destPageNumber: number = (await this.viewer.pdfDocument.getPageIndex(pageRef)) + 1;
+
+            const children: Array<TreeOutlineEntry> = [];
+
+            if (it.items) {
+                children.push(...(await this.transformOutline(it.items)));
+            }
+
+            out.push(new TreeOutlineEntry(
+                it.title,
+                destPageNumber,
+                children
+            ));
+        }
+
+        return out;
     }
 }
 

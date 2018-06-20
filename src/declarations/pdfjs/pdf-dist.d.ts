@@ -27,7 +27,28 @@ declare module "pdfjs-dist" {
         readonly numpages: number;
     }
 
+    export interface PageRef {}
+
+    export interface OutlineDestination extends ArrayLike<PageRef> {}
+
+    export interface DestType {}
+
+    export interface PDFOutlineItem {
+        readonly dest: DestType;
+        readonly title: string;
+        readonly items: PDFOutline;
+    }
+
+    export interface PDFOutline extends ArrayLike<PDFOutlineItem> {}
+
     export class PDFDocumentProxy {
         readonly pdfInfo: PDFInfo;
+        readonly numPages: number;
+
+        getOutline(): Promise<PDFOutline>;
+
+        getDestination(dest: DestType): Promise<OutlineDestination>;
+
+        getPageIndex(ref: PageRef): Promise<number>;
     }
 }
