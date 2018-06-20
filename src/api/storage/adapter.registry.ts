@@ -1,8 +1,7 @@
 import {StorageAdapter} from "./adapter";
 import {URI} from "../document.service";
-import * as log4js from "@log4js-node/log4js-api";
-
-const logger: log4js.Logger = log4js.getLogger("pdf-wrap");
+import {Logger} from "typescript-logging";
+import {LoggerFactory} from "../../log-config";
 
 /**
  * The registry to add {@link StorageAdapter} instances.
@@ -17,6 +16,8 @@ export class StorageRegistry {
 
     private readonly adapterMap: Map<string, Array<StorageAdapter>> = new Map();
 
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/api/storage/adapter.registry:StorageRegistry");
+
     private constructor() {}
 
     /**
@@ -26,7 +27,7 @@ export class StorageRegistry {
      */
     add(adapter: StorageAdapter): StorageRegistry {
 
-        logger.info(`Add storage adapter to registry: class=${adapter.constructor.name}`);
+        this.log.info(`Add storage adapter to registry: class=${adapter.constructor.name}`);
 
         const uri: URI = adapter.register();
 

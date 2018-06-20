@@ -1,9 +1,9 @@
 import {URI} from "../document.service";
 import {PolyLine, Rectangle} from "../draw/elements";
 import {PageEventCollection} from "./page.event";
-import * as log4js from "@log4js-node/log4js-api";
+import {Logger} from "typescript-logging";
+import {LoggerFactory} from "../../log-config";
 
-const logger: log4js.Logger = log4js.getLogger("pdf-wrap");
 
 /**
  * Describes a adapdet to load page overlays
@@ -52,6 +52,8 @@ export interface StorageAdapter {
  */
 export abstract class SkippableStorgaeAdapter implements StorageAdapter {
 
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/api/storage/adapter:SkippableStorageAdapter");
+
     abstract register(): URI;
 
     abstract loadPage(uri: URI, pageNumber: number): Promise<PageOverlay>;
@@ -68,7 +70,7 @@ export abstract class SkippableStorgaeAdapter implements StorageAdapter {
      * @throws {UnfinishedExecutionError} to indicate the skip of a function
      */
     protected skip(): void {
-        logger.info(`Skip storage adapter: class=${this.constructor.name}`);
+        this.log.info(`Skip storage adapter: class=${this.constructor.name}`);
         throw new UnfinishedExecutionError("Skip function execution");
     }
 }

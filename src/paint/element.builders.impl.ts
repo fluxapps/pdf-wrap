@@ -4,9 +4,8 @@ import {PolyLine, Rectangle} from "../api/draw/elements";
 import {Color, colorFrom, Colors} from "../api/draw/color";
 import {DrawablePolyLine, DrawableRectangle} from "./elements.impl";
 import uuid from "uuid-js";
-import * as log4js from "@log4js-node/log4js-api";
-
-const logger: log4js.Logger = log4js.getLogger("pdf-wrap");
+import {Logger} from "typescript-logging";
+import {LoggerFactory} from "../log-config";
 
 /**
  * Default element builder factory implementation.
@@ -37,6 +36,8 @@ export class PolyLineBuilderImpl implements PolyLineBuilder {
     private _borderColor: Color = colorFrom(Colors.BLACK);
     private _coordinates: Array<Point> = [];
 
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/element.builders.impl:PolyLineBuilderImpl");
+
     id(value: string): PolyLineBuilder {
         this._id = value;
         return this;
@@ -54,7 +55,7 @@ export class PolyLineBuilderImpl implements PolyLineBuilder {
 
     build(): PolyLine {
 
-        logger.trace(`Build poly line element: polyLineId=${this._id}`);
+        this.log.trace(`Build poly line element: polyLineId=${this._id}`);
 
         return new DrawablePolyLine(
             this._borderColor,
@@ -77,6 +78,8 @@ export class RectangleBuilderImpl implements RectangleBuilder {
     private _fillColor: Color = colorFrom(Colors.BLACK);
     private _dimension: Dimension = {height: 0, width: 0};
     private _position: Point = {x: 0, y: 0};
+
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/element.builders.impl:RectangleBuilderImpl");
 
     id(value: string): RectangleBuilder {
         this._id = value;
@@ -105,7 +108,7 @@ export class RectangleBuilderImpl implements RectangleBuilder {
 
     build(): Rectangle {
 
-        logger.trace(`Build rectangle element: rectangleId=${this._id}`);
+        this.log.trace(`Build rectangle element: rectangleId=${this._id}`);
 
         return new DrawableRectangle(
             this._borderColor,

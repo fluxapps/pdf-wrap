@@ -1,6 +1,5 @@
-import * as log4js from "@log4js-node/log4js-api";
-
-const logger: log4js.Logger = log4js.getLogger("pdf-wrap");
+import {Logger} from "typescript-logging";
+import {LoggerFactory} from "../../log-config";
 
 export type HexPattern = "#XXXXXX" | "#XXXXXXXX" | "XXXXXX" | "XXXXXXXX";
 
@@ -79,6 +78,8 @@ export function colorFrom(color: Colors): Color {
  */
 export function colorFromRgba(red: number, green: number, blue: number, alpha: number = 1): Color {
 
+    const log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/api/draw/color:colorFromRgba");
+
     if (!isColorValue(red)) {
             throw new IllegalColorValue(`Parameter red is not a valid color value: red=${red}`);
     }
@@ -95,7 +96,7 @@ export function colorFromRgba(red: number, green: number, blue: number, alpha: n
         throw new IllegalColorValue(`Parameter alpha is not a valid alpha value: alpha=${alpha}`);
     }
 
-    logger.trace(`Create a color from rgba: rgba=${red}, ${green}, ${blue}, ${alpha}`);
+    log.trace(`Create a color from rgba: rgba=${red}, ${green}, ${blue}, ${alpha}`);
     return new SimpleColor(red, green, blue, alpha);
 }
 

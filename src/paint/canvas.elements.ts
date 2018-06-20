@@ -5,11 +5,10 @@ import {Color, colorFromHex} from "../api/draw/color";
 import {Dimension, Point} from "../api/draw/draw.basic";
 import {Observable} from "rxjs/internal/Observable";
 import {pairwise} from "../arrays";
-import * as log4js from "@log4js-node/log4js-api";
 import * as svgjs from "svgjs";
 import {TeardownLogic} from "rxjs/internal/types";
-
-const logger: log4js.Logger = log4js.getLogger("pdf-wrap");
+import {Logger} from "typescript-logging";
+import {LoggerFactory} from "../log-config";
 
 /**
  * Describes a transformable object which can transform itself to the given type {@code T}.
@@ -81,6 +80,8 @@ export class CanvasPolyLine implements CanvasElement<PolyLine> {
         return colorFromHex(this.element.attr("stroke"));
     }
 
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/canvas.elements:CanvasPolyLine");
+
     constructor(
         private readonly element: svgjs.PolyLine
     ) {}
@@ -92,7 +93,7 @@ export class CanvasPolyLine implements CanvasElement<PolyLine> {
     }
 
     remove(): void {
-        logger.trace(`Remove svg element: id=${this.element.id()}`);
+        this.log.trace(`Remove svg element: id=${this.element.id()}`);
         this.element.remove();
     }
 
@@ -135,6 +136,8 @@ export class CanvasRectangle implements CanvasElement<Rectangle> {
         return {height, width};
     }
 
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/canvas.elements:CanvasRectangle");
+
     constructor(
         private readonly element: svgjs.Rect
     ) {}
@@ -146,6 +149,7 @@ export class CanvasRectangle implements CanvasElement<Rectangle> {
     }
 
     remove(): void {
+        this.log.trace(`Remove svg element: id=${this.element.id()}`);
         this.element.remove();
     }
 

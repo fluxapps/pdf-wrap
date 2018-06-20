@@ -31,6 +31,8 @@ import {merge} from "rxjs/internal/observable/merge";
 import {PolyLine, Rectangle} from "../api/draw/elements";
 import {DocumentSearch} from "../api/search/search.api";
 import {PDFjsDocumentSearch} from "./document.search";
+import {Logger} from "typescript-logging";
+import {LoggerFactory} from "../log-config";
 
 GlobalWorkerOptions.workerSrc = "assets/pdf.worker.js";
 let mapUrl: string = "assets/cmaps";
@@ -191,11 +193,14 @@ export class PDFjsDocument implements PDFDocument {
     readonly pageChange: Observable<PageChangeEvent>;
     readonly pageCount: number;
 
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/pdfjs.document.service:PDFjsDocument");
+
     get currentPageNumber(): number {
         return this.viewer.currentPageNumber;
     }
 
     set currentPageNumber(currentPageNumber: number) {
+        this.log.trace(`Set current page number to ${currentPageNumber}`);
         this.viewer.currentPageNumber = currentPageNumber;
     }
 
@@ -204,6 +209,7 @@ export class PDFjsDocument implements PDFDocument {
     }
 
     set scale(scale: number) {
+        this.log.trace(`Set scale to ${scale}`);
         this.viewer.currentScale = scale;
     }
 
@@ -223,6 +229,8 @@ export class PDFjsDocument implements PDFDocument {
     }
 
     async getOutline(): Promise<Outline> {
+
+        this.log.trace("Get outline of PDF");
 
         const pdfOutline: PDFOutline = await this.viewer.pdfDocument.getOutline();
 

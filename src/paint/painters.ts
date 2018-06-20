@@ -1,12 +1,11 @@
 import {Color, colorFrom, Colors} from "../api/draw/color";
 import {Dimension, Point} from "../api/draw/draw.basic";
 import uuid from "uuid-js";
-import * as log4js from "@log4js-node/log4js-api";
 import {CanvasElement, CanvasPolyLine, CanvasRectangle} from "./canvas.elements";
 import * as svgjs from "svgjs";
 import {DrawElement} from "../api/draw/elements";
-
-const logger: log4js.Logger = log4js.getLogger("pdf-wrap");
+import {Logger} from "typescript-logging";
+import {LoggerFactory} from "../log-config";
 
 /**
  * Describes a canvas which can be used to draw elements on.
@@ -232,6 +231,8 @@ class SVGPolyLinePainter implements PolyLinePainter {
         return this._coordinates.map((it) => `${it.x}, ${it.y}`).join(",");
     }
 
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/painters:SVGPolyLinePainter");
+
     constructor(
         private readonly svg: svgjs.Doc
     ) {}
@@ -308,7 +309,7 @@ class SVGPolyLinePainter implements PolyLinePainter {
      */
     endLine(position: Point): CanvasPolyLine {
 
-        logger.trace(`Draw poly line on svg: polyLineId=${this._id}`);
+        this.log.trace(`Draw poly line on svg: polyLineId=${this._id}`);
 
         this.drawTo(position);
 
@@ -348,6 +349,8 @@ class SVGRectanglePainter implements RectanglePainter {
     private _position: Point = {x: 0, y: 0};
     private _dimension: Dimension = {height: 0, width: 0};
 
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/SVGRectanglePainter");
+
     constructor(
         private readonly svg: svgjs.Doc
     ) {}
@@ -384,7 +387,7 @@ class SVGRectanglePainter implements RectanglePainter {
 
     paint(): CanvasRectangle {
 
-        logger.trace(`Draw rectangle on svg: rectangleId=${this._id}`);
+        this.log.trace(`Draw rectangle on svg: rectangleId=${this._id}`);
 
         const rect: svgjs.Rect = this.svg.rect(this._dimension.width, this._dimension.height)
             .fill(`${this._fillColor.hex("#XXXXXX")}`)

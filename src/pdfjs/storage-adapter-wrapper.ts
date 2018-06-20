@@ -2,9 +2,8 @@ import {PageOverlay, StorageAdapter} from "../api/storage/adapter";
 import {StorageRegistry} from "../api/storage/adapter.registry";
 import {URI} from "../api/document.service";
 import {PageEventCollection} from "../api/storage/page.event";
-import * as log4js from "@log4js-node/log4js-api";
-
-const logger: log4js.Logger = log4js.getLogger("pdf-wrap");
+import {Logger} from "typescript-logging";
+import {LoggerFactory} from "../log-config";
 
 /**
  * A wrapper for each registered {@link StorageAdapter}.
@@ -15,6 +14,8 @@ const logger: log4js.Logger = log4js.getLogger("pdf-wrap");
  * @internal
  */
 export class StorageAdapterWrapper implements StorageAdapter {
+
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/storage-adapter-wrapper:StorageAdapterWrapper");
 
     constructor(
         private readonly storageRegistry: StorageRegistry
@@ -43,7 +44,7 @@ export class StorageAdapterWrapper implements StorageAdapter {
             try {
                 return await adapter.loadPage(uri, pageNumber);
             } catch (e) {
-                logger.info("Skip storage adapter");
+                this.log.info("Skip storage adapter");
             }
         }
 
@@ -54,7 +55,7 @@ export class StorageAdapterWrapper implements StorageAdapter {
      * @throws {Error} always throws an {@link Error} indicating that this method must not be invoked
      */
     register(): URI {
-        logger.error("StorageAdapterWrapper.register() method MUST NOT be invoked");
+        this.log.error("StorageAdapterWrapper.register() method MUST NOT be invoked");
         throw new Error("StorageAdapterWrapper must not be registered");
     }
 

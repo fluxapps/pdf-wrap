@@ -34,10 +34,10 @@
     "uglify-js": "^3.3.27"
   },
   "dependencies": {
-    "@log4js-node/log4js-api": "^1.0.0",
     "pdfjs-dist": "^2.0.489",
     "rxjs": "^6.1.0",
     "svgjs": "^2.6.2",
+    "typescript-logging": "^0.6.2",
     "uuid-js": "^0.7.5"
   }
 }

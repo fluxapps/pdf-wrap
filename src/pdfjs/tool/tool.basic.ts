@@ -3,12 +3,11 @@ import {StateChangeEvent} from "../../api/event/event.api";
 import {Observable} from "rxjs/internal/Observable";
 import {DocumentModel, getPageNumberByEvent, Page} from "../document.model";
 import {Point} from "../../api/draw/draw.basic";
-import * as log4js from "@log4js-node/log4js-api";
 import {delayWhen, filter, share, tap} from "rxjs/operators";
 import {Subject} from "rxjs/internal/Subject";
 import {fromEvent} from "rxjs/internal/observable/fromEvent";
-
-const logger: log4js.Logger = log4js.getLogger("pdf-wrap");
+import {Logger} from "typescript-logging";
+import {LoggerFactory} from "../../log-config";
 
 /**
  * Implements the basic features of a tool.
@@ -144,6 +143,8 @@ export abstract class DrawingTool extends BaseTool {
 
     private _page?: Page;
 
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/tool/tool.basic:DrawingTool");
+
     protected constructor(
         protected readonly document: DocumentModel
     ) {
@@ -152,18 +153,18 @@ export abstract class DrawingTool extends BaseTool {
         this.mouseDown = fromEvent<MouseEvent>(document.viewer, "mousedown")
             .pipe(filter(() => this.isActive))
             .pipe(tap((it) => this.setPageByEvent(it)))
-            .pipe(tap((it) => logger.trace(`Mouse down event from drawing tool: event=${JSON.stringify(it)}`)))
+            .pipe(tap((it) => this.log.trace(`Mouse down event from drawing tool: event=${JSON.stringify(it)}`)))
             .pipe(share());
 
         this.mouseMove = fromEvent<MouseEvent>(document.viewer, "mousemove")
             .pipe(filter(() => this.hasPage))
-            .pipe(tap((it) => logger.trace(`Mouse move event from drawing tool: event=${JSON.stringify(it)}`)))
+            .pipe(tap((it) => this.log.trace(`Mouse move event from drawing tool: event=${JSON.stringify(it)}`)))
             .pipe(share());
 
         this.mouseUp = fromEvent<MouseEvent>(document.viewer, "mouseup")
             .pipe(filter(() => this.hasPage))
             .pipe(tap((it) => {
-                logger.trace(`Mouse up event from drawing tool: event=${JSON.stringify(it)}`);
+                this.log.trace(`Mouse up event from drawing tool: event=${JSON.stringify(it)}`);
             }))
             .pipe(share());
 
@@ -191,7 +192,7 @@ export abstract class DrawingTool extends BaseTool {
 
     private setPageByEvent(evt: Event): void {
 
-        logger.trace(`Try to get a page number by an event: event=${JSON.stringify(evt)}`);
+        this.log.trace(`Try to get a page number by an event: event=${JSON.stringify(evt)}`);
 
         const pageNumber: number | undefined = getPageNumberByEvent(evt);
 
