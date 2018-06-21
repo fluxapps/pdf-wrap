@@ -62,13 +62,40 @@ In order to display the PDF properly you should include the following css file.
 You have to setup a html container in a specific way.
 
 ```html
-<div class="pdf-container">
-    <div class="pdfViewer"></div>
+<div class="pdf viewport">
+
+        <div class="pdf-container">
+            <div class="pdfViewer"></div>
+        </div>
+
 </div>
 ```
 
-Where the `div` with the class `pdf-container` is your viewport and
-the `div` with the class `pdfViewer` wil contain all the pages of your PDF file.
+Where the `div` with the class `pdf viewport` is your viewport. It is an absolute
+positioned `div` which will consume the entire area of its relative positioned parent.
+So either wrap it with another `div` which is aligned like you want it,
+or override the `pdf viewport` css styles. Anyway, make sure `pdf viewport` has
+a fix height, otherwise some features of PDF Wrap will not work.
+
+## Setup PDF.js
+
+Because PDF Wrap uses [PDF.js](https://mozilla.github.io/pdf.js/) under the hood,
+you have to provide the `pdf.worker.js` as well as some cMaps.
+
+The `pdf.worker.js` and the cMaps are delivered in the `assets` directory of PDF Wrap.
+
+Depending on how you build your project, either copy they to a directory of your choice or provide them
+somehow as resources.
+
+Either way you can set the worker and cMap url
+
+```typescript
+setWorkerSrc("assets/libs/pdf-wrap/pdf.worker.js");
+setMapUrl("assets/libs/pdf-wrap/cMaps");
+```
+
+In this case, we assuming, that the `pdf.worker.js` and the cMaps are
+inside the `assets/libs/pdf-wrap` directory of the built project.
 
 ## Setup Logger
 
@@ -88,7 +115,7 @@ LoggerFactory.configure({
 ```
 
 Each log group object accepts the property `logger` and `logLevel`.
-It allows you to define different log levels for different directories, files or event classes.
+It allows you to define different log levels for different directories, files or even classes.
 
 ---
 
