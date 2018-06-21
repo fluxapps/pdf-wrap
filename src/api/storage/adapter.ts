@@ -120,7 +120,10 @@ export class EmptyStorageAdapter implements StorageAdapter {
         return this.uri;
     }
 
-    start(_: URI, __: PageEventCollection): void {
-        // empty implementation
+    start(_: URI, events: PageEventCollection): void {
+        // we have to subscribe on these events otherwise, the tools will never emit anything and as a result will not draw anything
+        events.afterPolyLineRendered().subscribe((__) => {/* empty implementation */});
+        events.afterElementRemoved().subscribe((__) => {/* empty implementation */});
+        events.afterRectangleRendered().subscribe((__) => {/* empty implementation */});
     }
 }
