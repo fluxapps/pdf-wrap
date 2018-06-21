@@ -24,7 +24,7 @@ declare module "pdfjs-dist" {
     export function getDocument(src: Source): Promise<PDFDocumentProxy>;
 
     export interface PDFInfo {
-        readonly numpages: number;
+        readonly numPages: number;
     }
 
     export interface PageRef {}

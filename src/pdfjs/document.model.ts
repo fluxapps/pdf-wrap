@@ -10,14 +10,14 @@ import {Dimension, Point} from "../api/draw/draw.basic";
  */
 export class DocumentModel {
 
-    private readonly pages: Array<Page> = [];
+    private readonly pages: Map<number, Page> = new Map();
 
     constructor(
         readonly viewer: HTMLElement
     ) {}
 
     addPage(page: Page): void {
-        this.pages.push(page);
+        this.pages.set(page.pageNumber, page);
     }
 
     /**
@@ -27,7 +27,8 @@ export class DocumentModel {
      * @throws {Error} if no page matching the given {@code pageNumber} could be found
      */
     getPage(pageNumber: number): Page {
-        const page: Page | undefined = this.pages.find((it) => it.pageNumber === pageNumber);
+
+        const page: Page | undefined = this.pages.get(pageNumber);
 
         if (page !== undefined) {
             return page;

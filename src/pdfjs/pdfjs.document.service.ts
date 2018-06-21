@@ -103,6 +103,8 @@ export class PDFjsDocumentService implements PDFDocumentService {
             .pipe(map((it) => new LayerManager(it)))
             .subscribe((it) => {
 
+                this.removeOldLayers(it);
+
                 const highlightLayer: Canvas = it.createHighlightLayer();
                 const searchLayer: Canvas = it.createSearchLayer();
                 const highlightTransparencyLayer: Canvas = it.createHighlightTransparencyLayer();
@@ -184,6 +186,15 @@ export class PDFjsDocumentService implements PDFDocumentService {
             .coordinates(drawing.coordinates)
             .paint();
     }
+
+    private removeOldLayers(layerManager: LayerManager): void {
+        Array.from(layerManager.pageContainer.children)
+            .forEach((child) => {
+                if (child.classList.contains("page-layer")) {
+                    layerManager.pageContainer.removeChild(child);
+                }
+            });
+    }
 }
 
 /**
@@ -229,7 +240,7 @@ export class PDFjsDocument implements PDFDocument {
         })
             .pipe(map((it) => new PageChangeEvent(it.pageNumber)));
 
-        this.pageCount = this.viewer.pdfDocument.pdfInfo.numpages;
+        this.pageCount = this.viewer.pdfDocument.pdfInfo.numPages;
     }
 
     async getOutline(): Promise<Outline> {
