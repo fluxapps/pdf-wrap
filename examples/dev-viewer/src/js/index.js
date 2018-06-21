@@ -205,13 +205,66 @@ documentService.loadWith({
     const penButton = new PenButton(it.toolbox.freehand);
     const eraserButton = new EraserButton(it.toolbox.eraser);
 
-    const searchButton = new SearchButton(it.searchController);
+    // search
+    const searchButton = document.getElementById("search-button");
+    const previousSearch = document.getElementById("previous-button");
+    const nextSearch = document.getElementById("next-button");
 
+    const searchField = document.getElementById("search-term");
+
+    searchButton.addEventListener("click", () => {
+        it.searchController.search(searchField.value, {fuzzy: true, searchPhrase: true, highlightAll: true});
+    });
+
+    previousSearch.addEventListener("click", () => {
+        it.searchController.previous();
+    });
+
+    nextSearch.addEventListener("click", () => {
+        it.searchController.next();
+    });
+
+    // zoom
+    const zoomIn = document.getElementById("zoom-in-button");
+    const zoomOut = document.getElementById("zoom-out-button");
+
+    zoomIn.addEventListener("click", () => {
+        it.scale = it.scale * 1.5;
+    });
+
+    zoomOut.addEventListener("click", () => {
+        it.scale = it.scale / 1.5;
+    });
+
+    // page navigation
+    const pageNumberInput = document.getElementById("page-number");
+    pageNumberInput.value = it.currentPageNumber;
+
+    it.pageChange.subscribe(it => {
+        pageNumberInput.value = it.pageNumber;
+    });
+
+    const pageCountLabel = document.getElementById("page-count-label");
+    pageCountLabel.innerHTML = "/ " + it.pageCount;
+
+    const previousPage = document.getElementById("previous-page");
+    const nextPage = document.getElementById("next-page");
+
+    previousPage.addEventListener("click", () => {
+        it.currentPageNumber = it.currentPageNumber - 1;
+    });
+
+    nextPage.addEventListener("click", () => {
+        it.currentPageNumber = it.currentPageNumber + 1;
+    });
+
+    // sidebar
     const sidebarManager = new SidebarManager(it);
     sidebarManager.render();
 
     it.highlighting.enable();
 
+    // highlighting
     it.highlighting.onTextSelection
         .subscribe(it => {
             highlightService.textSelection = it;

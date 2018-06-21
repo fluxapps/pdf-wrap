@@ -32,7 +32,7 @@
         }
 
         .positioned-viewport {
-            top: 186px!important;
+            top: 239px!important;
             left: 335px!important;
         }
 
@@ -68,6 +68,18 @@
 
             </div>
 
+            <div class="twelve middle aligned columns">
+
+                <button id="zoom-in-button">+</button>
+                <button id="zoom-out-button">-</button>
+                <input id="page-number" type="text">
+                <span id="page-count-label"></span>
+
+                <button id="previous-page"><-</button>
+                <button id="next-page">-></button>
+
+            </div>
+
         </div>
 
     </div>
@@ -79,7 +91,7 @@
         </ul>
     </div>
 
-    <div class="pdf viewport positioned-viewport">
+    <div id="test-or" class="pdf viewport positioned-viewport">
 
         <div id="viewerContainer" class="pdf-container">
             <div class="pdfViewer"></div>
