@@ -435,7 +435,7 @@ const polyLine: PolyLine = elementBuilder.polyLine()
 
 # PDF Wrap Features
 
-## Search Feature
+## Search
 
 PDF Wrap provides a full text search over a PDF document. To access the `DocumentSearch`
 you have to load a PDF.
@@ -468,7 +468,7 @@ pdf.searchController.search("example", {
     fuzzy: true});
 ```
 
-## Outline Feature
+## Outline
 
 You can access the outline of a PDF once the PDF is loaded.
 
@@ -480,21 +480,59 @@ pdf.getOutline().then(outline => {
 
 The `Outline` class provides two different forms of the outline.
 The `flatList` and the `tree` structure, where the `flatList` means, that
-even nested outlines are at the same level as every outline.
+even nested outlines are at the top level.
 The `tree` structure remains in the nested structure of the PDF outline.
 
 Each outline provides the `title` as well as the `pageNumber`
 
 ```typescript
+// use with flat list
 pdf.getOutline().then(outline => {
     outline.flatList.forEach(item => {
         item.title;
         item.pageNumber;
-    })
-})
+    });
+});
+
+// use tree with children
+pdf.getOutline().then(outline => {
+    outline.tree.forEach(item => {
+        item.title;
+        item.pageNumber;
+        item.children; // nested outlines
+    });
+});
 ```
 
+You want to jump to the page where the outline points to? Check out [Page Navigation](#page-navigation)
+
 ## Page Thumbnails
+
+## Page Navigation
+
+You can switch to a page by simply setting the `currentPageNumber` property of the `PDFDocument`
+
+```typescript
+pdf.currentPageNumber = 5;
+
+// next page
+pdf.currentPageNumber = pdf.currentPageNumber + 1;
+
+// previous page
+pdf.currentPageNumber = pdf.currentPageNumber - 1;
+```
+
+## Zoom
+
+You can zoom in or zoom out by simply setting the `scale` property of the `PDFDocument`
+
+```typescript
+pdf.scale = pdf.scale * 1.5; // will zoom in by 150%
+pdf.scale = pdf.scale / 1.5; // will zoom out by 150%
+
+// or set a fix zoom value
+pdf.scale = 1.5; // will zoom to 150%
+```
 
 # Miscellaneous
 
