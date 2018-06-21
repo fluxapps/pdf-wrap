@@ -11,8 +11,29 @@
 
     <style>
 
+        html, body {
+            height: 100%;
+        }
+
+        .pdf-container {
+            overflow: scroll;
+            height: 100%;
+            position: relative;
+        }
+
         .middle.aligned {
             text-align: center;
+        }
+
+        .sidebar {
+            float: left;
+            padding: 10px;
+            background-color: white;
+        }
+
+        .positioned-viewport {
+            top: 186px!important;
+            left: 335px!important;
         }
 
     </style>
@@ -22,6 +43,8 @@
     <div class="container">
 
         <div class="row">
+
+
 
             <div class="twelve columns">
                 <h1 class="middle aligned">Dev PDF viewer</h1>
@@ -49,9 +72,18 @@
 
     </div>
 
-    <div id="viewerContainer" class="pdf-container">
+    <div class="sidebar">
+        <h4>Table of Contents</h4>
 
-        <div class="pdfViewer"></div>
+        <ul id="table-of-contents">
+        </ul>
+    </div>
+
+    <div class="pdf viewport positioned-viewport">
+
+        <div id="viewerContainer" class="pdf-container">
+            <div class="pdfViewer"></div>
+        </div>
 
     </div>
 

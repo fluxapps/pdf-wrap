@@ -3,11 +3,21 @@ const {PDFjsDocumentService, setWorkerSrc, setMapUrl} = require("pdf-wrap/pdfjs/
 const {URI} = require("pdf-wrap/api/document.service");
 const {StorageRegistry} = require("pdf-wrap/api/storage/adapter.registry");
 const {EmptyStorageAdapter} = require("pdf-wrap/api/storage/adapter");
+const {LoggerFactory} = require("pdf-wrap/log-config");
+
+LoggerFactory.configure({
+    logGroups: [
+        {
+            logger: "ch/studerraimann/pdfwrap",
+            logLevel: 0
+        }
+    ]
+});
 
 StorageRegistry.instance.add(new EmptyStorageAdapter(URI.from("ex://")));
 
 setWorkerSrc("assets/libs/pdf-wrap/pdf.worker.js");
-setMapUrl("assets/libs/pdf-wrap");
+setMapUrl("assets/libs/pdf-wrap/cmaps");
 
 class HighlightService {
 
@@ -152,6 +162,34 @@ export class SearchButton {
     }
 }
 
+export class SidebarManager {
+
+    constructor(pdf) {
+        this._pdf = pdf;
+        this._outline = pdf.getOutline();
+
+        this._sidebar = document.getElementById("table-of-contents");
+    }
+
+    render() {
+
+        this._outline.then(outline => {
+
+            outline.flatList.forEach(it => {
+
+                const li = document.createElement("li");
+
+                li.innerHTML = it.title;
+                li.addEventListener("click", () => {
+                    this._pdf.currentPageNumber = it.pageNumber;
+                });
+
+                this._sidebar.appendChild(li);
+            });
+        });
+    }
+}
+
 const documentService = new PDFjsDocumentService();
 
 documentService.loadWith({
@@ -168,6 +206,9 @@ documentService.loadWith({
     const eraserButton = new EraserButton(it.toolbox.eraser);
 
     const searchButton = new SearchButton(it.searchController);
+
+    const sidebarManager = new SidebarManager(it);
+    sidebarManager.render();
 
     it.highlighting.enable();
 
