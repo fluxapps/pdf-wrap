@@ -33,6 +33,7 @@ import {DocumentSearch} from "../api/search/search.api";
 import {PDFjsDocumentSearch} from "./document.search";
 import {Logger} from "typescript-logging";
 import {LoggerFactory} from "../log-config";
+import {RescaleManager} from "./rescale-manager";
 
 GlobalWorkerOptions.workerSrc = "assets/pdf.worker.js";
 let mapUrl: string = "assets/cmaps";
@@ -81,10 +82,13 @@ export class PDFjsDocumentService implements PDFDocumentService {
         const freehand: FreehandTool = new FreehandTool(documentModel);
         const eraser: EraserTool = new EraserTool(documentModel);
 
+        const rescaleManager: RescaleManager = new RescaleManager(viewer);
+
         const pageEventCollection: PageEventCollection = new PDFjsPageEvenCollection(
             freehand.afterLineRendered,
             eraser.afterElementRemoved,
-            highlighting.onTextSelection
+            highlighting.onTextSelection,
+            rescaleManager
         );
         const storageAdapter: StorageAdapterWrapper = new StorageAdapterWrapper(StorageRegistry.instance);
 
@@ -110,12 +114,12 @@ export class PDFjsDocumentService implements PDFDocumentService {
 
                     pageData.highlightings
                         .forEach((highlight) => {
-                            this.drawHighlight(highlightLayer, highlight);
-                            this.drawHighlight(highlightTransparencyLayer, highlight);
+                            this.drawHighlight(highlightLayer, rescaleManager.rescaleRectangle(highlight));
+                            this.drawHighlight(highlightTransparencyLayer, rescaleManager.rescaleRectangle(highlight));
                         });
 
                     pageData.drawings
-                        .forEach((drawing) => this.draw(drawLayer, drawing));
+                        .forEach((drawing) => this.draw(drawLayer, rescaleManager.rescalePolyLine(drawing)));
                 });
 
                 const page: Page = new Page(
