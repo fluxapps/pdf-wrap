@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     * Freehand - to draw with the mouse
     * Eraser - to erase drawings
 * Text highlighting
+* Logger configuration
+* PDF Outline parsing
+* Zoom value
+* Page Navigation
 
 ### Changed
 
