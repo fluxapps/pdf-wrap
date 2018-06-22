@@ -2,6 +2,8 @@ import {PolyLine, Rectangle} from "../api/draw/elements";
 import {Dimension, Point} from "../api/draw/draw.basic";
 import {PDFViewer} from "pdfjs-dist/web/pdf_viewer";
 import {ElementBuilderFactoryImpl} from "../paint/element.builders.impl";
+import {Logger} from "typescript-logging";
+import {LoggerFactory} from "../log-config";
 
 /**
  * Manages the scaling of elements. It can normalize elements based on the viewers
@@ -12,6 +14,8 @@ import {ElementBuilderFactoryImpl} from "../paint/element.builders.impl";
  * @internal
  */
 export class RescaleManager {
+
+    private log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/rescale-manager:RescaleManager");
 
     constructor(
         private readonly viewer: PDFViewer
@@ -25,9 +29,13 @@ export class RescaleManager {
      * @returns {PolyLine} the normalized poly line
      */
     normalizePolyLine(polyLine: PolyLine): PolyLine {
+
+        this.log.trace(`Normalize poly line element: polyLineId=${polyLine.id}`);
+
         return new ElementBuilderFactoryImpl().polyLine()
             .id(polyLine.id)
             .borderColor(polyLine.borderColor)
+            .borderWidth(this.normalizeBorderWidth(polyLine.borderWidth))
             .coordinates(polyLine.coordinates.map(this.normalizePosition.bind(this)))
             .build();
     }
@@ -40,9 +48,13 @@ export class RescaleManager {
      * @returns {PolyLine} the rescaled poly line
      */
     rescalePolyLine(polyLine: PolyLine): PolyLine {
+
+        this.log.trace(`Rescale poly line element: polyLineId=${polyLine.id}`);
+
         return new ElementBuilderFactoryImpl().polyLine()
             .id(polyLine.id)
             .borderColor(polyLine.borderColor)
+            .borderWidth(this.rescaleBorderWidth(polyLine.borderWidth))
             .coordinates(polyLine.coordinates.map(this.rescalePosition.bind(this)))
             .build();
     }
@@ -55,10 +67,14 @@ export class RescaleManager {
      * @returns {Rectangle} the normalized rectangle
      */
     normalizeRectangle(rectangle: Rectangle): Rectangle {
+
+        this.log.trace(`Normalize rectangle element: rectangleId=${rectangle.id}`);
+
         return new ElementBuilderFactoryImpl().rectangle()
             .id(rectangle.id)
             .fillColor(rectangle.fillColor)
             .borderColor(rectangle.borderColor)
+            .borderWidth(this.normalizeBorderWidth(rectangle.borderWidth))
             .dimension(this.normalizeDimension(rectangle.dimension))
             .position(this.normalizePosition(rectangle.position))
             .build();
@@ -72,10 +88,14 @@ export class RescaleManager {
      * @returns {Rectangle} the rescaled rectangle
      */
     rescaleRectangle(rectangle: Rectangle): Rectangle {
+
+        this.log.trace(`Rescale rectangle element: rectangleId=${rectangle.id}`);
+
         return new ElementBuilderFactoryImpl().rectangle()
             .id(rectangle.id)
             .fillColor(rectangle.fillColor)
             .borderColor(rectangle.borderColor)
+            .borderWidth(this.rescaleBorderWidth(rectangle.borderWidth))
             .dimension(this.rescaleDimension(rectangle.dimension))
             .position(this.rescalePosition(rectangle.position))
             .build();
@@ -107,5 +127,13 @@ export class RescaleManager {
             x: position.x * this.viewer.currentScale,
             y: position.y * this.viewer.currentScale
         };
+    }
+
+    private normalizeBorderWidth(px: number): number {
+        return px / this.viewer.currentScale;
+    }
+
+    private rescaleBorderWidth(px: number): number {
+        return px * this.viewer.currentScale;
     }
 }
