@@ -1,5 +1,5 @@
 const {colorFromHex} = require("pdf-wrap/api/draw/color");
-const {PDFjsDocumentService, setWorkerSrc, setMapUrl} = require("pdf-wrap/pdfjs/pdfjs.document.service");
+const {PDFjsDocumentService, setWorkerSrc, setCMapUrl} = require("pdf-wrap/pdfjs/pdfjs.document.service");
 const {URI} = require("pdf-wrap/api/document.service");
 const {StorageRegistry} = require("pdf-wrap/api/storage/adapter.registry");
 const {PageOverlay} = require("pdf-wrap/api/storage/adapter");
@@ -79,7 +79,7 @@ export class InMemStorageAdapter {
 StorageRegistry.instance.add(new InMemStorageAdapter());
 
 setWorkerSrc("assets/libs/pdf-wrap/pdf.worker.js");
-setMapUrl("assets/libs/pdf-wrap/cmaps");
+setCMapUrl("assets/libs/pdf-wrap/cmaps");
 
 class HighlightService {
 
@@ -206,10 +206,15 @@ export class SidebarManager {
         this._pdf = pdf;
         this._outline = pdf.getOutline();
 
-        this._sidebar = document.getElementById("table-of-contents");
+        const pages = []; while (pages.length < pdf.pageCount) pages.push(pages.length + 1);
+
+        this._thumbails = pdf.getThumbnails(96, ...pages);
+
+        this._tableOfContents = document.getElementById("table-of-contents");
+        this._thumbnailsUlElement = document.getElementById("thumbnails");
     }
 
-    render() {
+    renderOutline() {
 
         this._outline.then(outline => {
 
@@ -222,18 +227,47 @@ export class SidebarManager {
                     this._pdf.currentPageNumber = it.pageNumber;
                 });
 
-                this._sidebar.appendChild(li);
+                this._tableOfContents.appendChild(li);
             });
+        });
+    }
+
+    renderThumbnails() {
+
+        this._thumbails.subscribe(it => {
+
+            const li = document.createElement("li");
+            li.classList.add("center");
+            li.classList.add("aligned");
+
+            li.appendChild(it.content);
+            li.addEventListener("click", () => {
+                this._pdf.currentPageNumber = it.pageNumber;
+            });
+
+            this._thumbnailsUlElement.appendChild(li);
         });
     }
 }
 
 const documentService = new PDFjsDocumentService();
 
-documentService.loadWith({
-    container: document.getElementById("viewerContainer"),
-    pdf: "assets/resources/chicken.pdf",
-    layerStorage: URI.from("mem://chicken.pdf")
+
+new Promise(resolve => {
+
+    const request = new XMLHttpRequest();
+    request.open('GET', "assets/resources/chicken.pdf", true);
+    request.responseType = 'blob';
+    request.onload = function() {
+        resolve(request.response);
+    };
+    request.send();
+}).then(pdf => {
+    return documentService.loadWith({
+        container: document.getElementById("viewerContainer"),
+        pdf: pdf,
+        layerStorage: URI.from("mem://chicken.pdf")
+    })
 }).then(it => {
 
     const highlightService = new HighlightService();
@@ -276,10 +310,10 @@ documentService.loadWith({
 
     // page navigation
     const pageNumberInput = document.getElementById("page-number");
-    pageNumberInput.value = it.currentPageNumber;
+    pageNumberInput.innerHTML = it.currentPageNumber;
 
     it.pageChange.subscribe(it => {
-        pageNumberInput.value = it.pageNumber;
+        pageNumberInput.innerHTML = it.pageNumber;
     });
 
     const pageCountLabel = document.getElementById("page-count-label");
@@ -296,9 +330,10 @@ documentService.loadWith({
         it.currentPageNumber = it.currentPageNumber + 1;
     });
 
-    // sidebar
+    // sidebar left
     const sidebarManager = new SidebarManager(it);
-    sidebarManager.render();
+    sidebarManager.renderOutline();
+    sidebarManager.renderThumbnails();
 
     it.highlighting.enable();
 

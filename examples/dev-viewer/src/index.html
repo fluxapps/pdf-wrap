@@ -26,14 +26,38 @@
         }
 
         .sidebar {
-            float: left;
-            padding: 10px;
             background-color: white;
+            overflow-y: scroll;
+        }
+
+        .sidebar.left {
+            float: left;
+        }
+
+        .sidebar.right {
+            float: right;
+        }
+
+        .dark {
+            background-color: #333333;
+        }
+
+        .padded {
+            padding: 10px;
+        }
+
+        ul.no.style {
+            list-style: none;
+        }
+
+        li.center.aligned {
+            text-align: center;
         }
 
         .positioned-viewport {
             top: 239px!important;
             left: 335px!important;
+            right: 160px!important;
         }
 
     </style>
@@ -72,7 +96,7 @@
 
                 <button id="zoom-in-button">+</button>
                 <button id="zoom-out-button">-</button>
-                <input id="page-number" type="text">
+                <span id="page-number"></span>
                 <span id="page-count-label"></span>
 
                 <button id="previous-page"><-</button>
@@ -84,14 +108,21 @@
 
     </div>
 
-    <div class="sidebar">
+    <div class="padded sidebar left">
         <h4>Table of Contents</h4>
 
         <ul id="table-of-contents">
         </ul>
     </div>
 
-    <div id="test-or" class="pdf viewport positioned-viewport">
+    <div class="padded sidebar right">
+        <h4>Thumbnails</h4>
+
+        <ul id="thumbnails" class="padded dark no style">
+        </ul>
+    </div>
+
+    <div class="pdf viewport positioned-viewport">
 
         <div id="viewerContainer" class="pdf-container">
             <div class="pdfViewer"></div>
