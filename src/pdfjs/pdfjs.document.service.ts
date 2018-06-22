@@ -28,8 +28,7 @@ import {first, map, mergeMap} from "rxjs/operators";
 import {TextHighlighting} from "./highlight";
 import {EraserTool, FreehandTool} from "./tool/tools";
 import {TeardownLogic} from "rxjs/internal/types";
-import {Canvas, SVGCanvas} from "../paint/painters";
-import svgjs from "svgjs";
+import {Canvas} from "../paint/painters";
 import {Point} from "../api/draw/draw.basic";
 import {StorageRegistry} from "../api/storage/adapter.registry";
 import {StorageAdapterWrapper} from "./storage-adapter-wrapper";
@@ -44,6 +43,7 @@ import {LoggerFactory} from "../log-config";
 import {RescaleManager} from "./rescale-manager";
 import {of} from "rxjs/internal/observable/of";
 import {fromEvent} from "rxjs/internal/observable/fromEvent";
+import {LayerManager} from "./layer-manager";
 
 // PDF.js defaults
 GlobalWorkerOptions.workerSrc = "assets/pdf.worker.js";
@@ -152,7 +152,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
         storageAdapter.start(options.layerStorage, pageEventCollection);
 
         // move draw layers to front in order to make the mouse listeners work
-        merge(freehand.stateChange, eraser.stateChange).subscribe(this.moveDrawLayerToFront);
+        merge(freehand.stateChange, eraser.stateChange).subscribe(moveDrawLayerToFront);
 
         new Observable((subscriber: Subscriber<PageRenderedEvent>): TeardownLogic => {
             this.log.trace("Listen on pagerendered event");
@@ -165,9 +165,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
                 it.removeLayers();
 
                 const highlightLayer: Canvas = it.createHighlightLayer();
-                const searchLayer: Canvas = it.createSearchLayer();
                 const highlightTransparencyLayer: Canvas = it.createHighlightTransparencyLayer();
-                const searchTransparencyLayer: Canvas = it.createSearchTransparencyLayer();
                 const drawLayer: Canvas = it.createDrawingLayer();
 
                 // this can easily made async without awaiting it
@@ -176,22 +174,20 @@ export class PDFjsDocumentService implements PDFDocumentService {
 
                     pageData.highlightings
                         .forEach((highlight) => {
-                            this.drawHighlight(highlightLayer, rescaleManager.rescaleRectangle(highlight));
-                            this.drawHighlight(highlightTransparencyLayer, rescaleManager.rescaleRectangle(highlight));
+                            drawHighlight(highlightLayer, rescaleManager.rescaleRectangle(highlight));
+                            drawHighlight(highlightTransparencyLayer, rescaleManager.rescaleRectangle(highlight));
                         });
 
                     pageData.drawings
-                        .forEach((drawing) => this.draw(drawLayer, rescaleManager.rescalePolyLine(drawing)));
+                        .forEach((drawing) => draw(drawLayer, rescaleManager.rescalePolyLine(drawing)));
                 });
 
                 const page: Page = new Page(
                     it.pageNumber,
                     it.pageContainer,
                     highlightLayer,
-                    searchLayer,
                     it.pdfLayer,
                     highlightTransparencyLayer,
-                    searchTransparencyLayer,
                     drawLayer,
                     it.textLayer,
                     {height: it.height, width: it.width},
@@ -225,62 +221,6 @@ export class PDFjsDocumentService implements PDFDocumentService {
         fileReader.readAsArrayBuffer(data);
 
         return fileLoadend;
-    }
-
-    /**
-     * Moves any draw layer to the front or back depending on
-     * what state is given.
-     *
-     * @param {StateChangeEvent} stateEvent - the state to move the draw layer in front or back
-     */
-    private moveDrawLayerToFront(stateEvent: StateChangeEvent): void {
-
-        const drawLayerList: Array<Element> = Array.from(document.getElementsByClassName("draw-layer"));
-
-        if (stateEvent.isActive) {
-            drawLayerList
-                .forEach((drawLayer) => {
-                    drawLayer.classList.add("in-front");
-                });
-        } else {
-            drawLayerList
-                .forEach((drawLayer) => {
-                    drawLayer.classList.remove("in-front");
-                });
-        }
-    }
-
-    /**
-     * Draws the given {@code highlight} on the given {@code on} {@link Canvas}.
-     *
-     * @param {Canvas} on - the canvas to draw on
-     * @param {Rectangle} highlight - the highlight to draw
-     */
-    private drawHighlight(on: Canvas, highlight: Rectangle): void {
-
-        on.rectangle()
-            .id(highlight.id)
-            .dimension(highlight.dimension)
-            .position(highlight.position)
-            .fillColor(highlight.fillColor)
-            .borderColor(highlight.borderColor)
-            .borderWidth(highlight.borderWidth)
-            .paint();
-    }
-
-    /**
-     * Draws the given {@code darwing} on the given {@code on} {@link Canvas}.
-     *
-     * @param {Canvas} on - the canvas to draw on
-     * @param {PolyLine} drawing - the drawing to draw
-     */
-    private draw(on: Canvas, drawing: PolyLine): void {
-        on.polyLine()
-            .id(drawing.id)
-            .borderColor(drawing.borderColor)
-            .borderWidth(drawing.borderWidth)
-            .coordinates(drawing.coordinates)
-            .paint();
     }
 }
 
@@ -437,116 +377,57 @@ export class PDFjsDocument implements PDFDocument {
 }
 
 /**
- * Creates and appends the different page layers to the DOM.
- * Attributes like {@code id} or {@code class} are set according
- * to the layer being rendered.
+ * Draws the given {@code darwing} on the given {@code on} {@link Canvas}.
  *
- * @author Nicolas Märchy <nm@studer-raimann.ch>
- * @since 0.0.1
- * @internal
+ * @param {Canvas} on - the canvas to draw on
+ * @param {PolyLine} drawing - the drawing to draw
  */
-class LayerManager {
+function draw(on: Canvas, drawing: PolyLine): void {
+    on.polyLine()
+    .id(drawing.id)
+    .borderColor(drawing.borderColor)
+    .borderWidth(drawing.borderWidth)
+    .coordinates(drawing.coordinates)
+    .paint();
+}
 
-    readonly pageContainer: HTMLDivElement;
-    readonly pdfLayer: HTMLDivElement;
-    readonly textLayer: HTMLDivElement;
+/**
+ * Draws the given {@code highlight} on the given {@code on} {@link Canvas}.
+ *
+ * @param {Canvas} on - the canvas to draw on
+ * @param {Rectangle} highlight - the highlight to draw
+ */
+function drawHighlight(on: Canvas, highlight: Rectangle): void {
 
-    readonly width: number;
-    readonly height: number;
+    on.rectangle()
+    .id(highlight.id)
+    .dimension(highlight.dimension)
+    .position(highlight.position)
+    .fillColor(highlight.fillColor)
+    .borderColor(highlight.borderColor)
+    .borderWidth(highlight.borderWidth)
+    .paint();
+}
 
-    readonly pageNumber: number;
+/**
+ * Moves any draw layer to the front or back depending on
+ * what state is given.
+ *
+ * @param {StateChangeEvent} stateEvent - the state to move the draw layer in front or back
+ */
+function moveDrawLayerToFront(stateEvent: StateChangeEvent): void {
 
-    get pageIndex(): number {
-        return this.pageNumber - 1;
-    }
+    const drawLayerList: Array<Element> = Array.from(document.getElementsByClassName("draw-layer"));
 
-    constructor(
-        pageRenderedEvent: PageRenderedEvent
-    ) {
-        this.pageNumber = pageRenderedEvent.pageNumber;
-        this.pageContainer = pageRenderedEvent.source.div;
-
-        this.width = pageRenderedEvent.source.viewport.width;
-
-        this.height = pageRenderedEvent.source.viewport.height;
-
-        this.pdfLayer = this.pageContainer.getElementsByClassName("canvasWrapper").item(0) as HTMLDivElement;
-        this.textLayer = this.pageContainer.getElementsByClassName("textLayer").item(0) as HTMLDivElement;
-    }
-
-    createHighlightLayer(): Canvas {
-
-        const highlightDiv: HTMLDivElement = this.createLayerDiv(this.height, this.width);
-        highlightDiv.setAttribute("id", `highlight-layer-page-${this.pageNumber}`);
-
-        this.pageContainer.insertBefore(highlightDiv, this.pdfLayer);
-
-        const highlightSVG: svgjs.Doc = svgjs(`${highlightDiv.id}`);
-        return new SVGCanvas(highlightSVG);
-    }
-
-    createSearchLayer(): Canvas {
-
-        const searchDiv: HTMLDivElement = this.createLayerDiv(this.height, this.width);
-        searchDiv.setAttribute("id", `search-layer-page-${this.pageNumber}`);
-
-        this.pageContainer.insertBefore(searchDiv, this.pdfLayer);
-
-        const searchSVG: svgjs.Doc = svgjs(`${searchDiv.id}`);
-        return new SVGCanvas(searchSVG);
-    }
-
-    createHighlightTransparencyLayer(): Canvas {
-
-        const highlightTransparencyDiv: HTMLDivElement = this.createLayerDiv(this.height, this.width);
-        highlightTransparencyDiv.setAttribute("id", `highlight-transparency-layer-page-${this.pageNumber}`);
-        highlightTransparencyDiv.classList.add("transparent");
-
-        this.pageContainer.insertBefore(highlightTransparencyDiv, this.textLayer);
-
-        const highlightTransparencySVG: svgjs.Doc = svgjs(`${highlightTransparencyDiv.id}`);
-        return new SVGCanvas(highlightTransparencySVG);
-    }
-
-    createSearchTransparencyLayer(): Canvas {
-
-        const searchTransparencyDiv: HTMLDivElement = this.createLayerDiv(this.height, this.width);
-        searchTransparencyDiv.setAttribute("id", `search-transparency-layer-page-${this.pageNumber}`);
-        searchTransparencyDiv.classList.add("transparent");
-
-        this.pageContainer.insertBefore(searchTransparencyDiv, this.textLayer);
-
-        const searchTransparencySVG: svgjs.Doc = svgjs(`${searchTransparencyDiv.id}`);
-        return new SVGCanvas(searchTransparencySVG);
-    }
-
-    createDrawingLayer(): Canvas {
-
-        const drawDiv: HTMLDivElement = this.createLayerDiv(this.height, this.width);
-        drawDiv.setAttribute("id", `draw-layer-page-${this.pageNumber}`);
-        drawDiv.classList.add("draw-layer");
-
-        this.pageContainer.insertBefore(drawDiv, this.textLayer);
-
-        const drawSVG: svgjs.Doc = svgjs(`${drawDiv.id}`);
-        return new SVGCanvas(drawSVG);
-    }
-
-    removeLayers(): void {
-        Array.from(this.pageContainer.children)
-            .forEach((child) => {
-                if (child.classList.contains("page-layer")) {
-                    this.pageContainer.removeChild(child);
-                }
+    if (stateEvent.isActive) {
+        drawLayerList
+            .forEach((drawLayer) => {
+                drawLayer.classList.add("in-front");
             });
-    }
-
-    private  createLayerDiv(height: number, width: number): HTMLDivElement {
-
-        const div: HTMLElementTagNameMap["div"] = window.document.createElement("div");
-        div.setAttribute("style", `width: ${width}px; height: ${height}px`);
-        div.classList.add("page-layer");
-
-        return div;
+    } else {
+        drawLayerList
+            .forEach((drawLayer) => {
+                drawLayer.classList.remove("in-front");
+            });
     }
 }
