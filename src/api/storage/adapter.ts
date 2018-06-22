@@ -108,9 +108,13 @@ export class UnfinishedExecutionError extends Error {}
  */
 export class EmptyStorageAdapter implements StorageAdapter {
 
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/api/storage/adapter:EmptyStorageAdapter");
+
     constructor(
         private readonly uri: URI
-    ) {}
+    ) {
+        this.log.info(() => "You are using an empty storage adapter. No page overlay data will be provided or stored");
+    }
 
     async loadPage(_: URI, pageNumber: number): Promise<PageOverlay> {
         return new PageOverlay(pageNumber, [], []);

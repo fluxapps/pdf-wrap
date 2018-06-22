@@ -24,6 +24,8 @@ export abstract class BaseTool implements Tool {
      */
     readonly stateChange: Observable<StateChangeEvent>;
 
+    private readonly logger: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/tool/tool.basic:BaseTool");
+
     get isActive(): boolean {
         return this._isActive;
     }
@@ -37,11 +39,17 @@ export abstract class BaseTool implements Tool {
     }
 
     activate(): void {
+
+        this.logger.info(() => `Activate tool: tool=${this.constructor.name}`);
+
         this._isActive = true;
         this.emit();
     }
 
     deactivate(): void {
+
+        this.logger.info(() => `Deactivate tool: tool=${this.constructor.name}`);
+
         this._isActive = false;
         this.emit();
     }
@@ -153,18 +161,18 @@ export abstract class DrawingTool extends BaseTool {
         this.mouseDown = fromEvent<MouseEvent>(document.viewer, "mousedown")
             .pipe(filter(() => this.isActive))
             .pipe(tap((it) => this.setPageByEvent(it)))
-            .pipe(tap((it) => this.log.trace(`Mouse down event from drawing tool: event=${JSON.stringify(it)}`)))
+            .pipe(tap((_) => this.log.trace(`Mouse down event from drawing tool: tool=${this.constructor.name}`)))
             .pipe(share());
 
         this.mouseMove = fromEvent<MouseEvent>(document.viewer, "mousemove")
             .pipe(filter(() => this.hasPage))
-            .pipe(tap((it) => this.log.trace(`Mouse move event from drawing tool: event=${JSON.stringify(it)}`)))
+            .pipe(tap((_) => this.log.trace(`Mouse move event from drawing tool: tool=${this.constructor.name}`)))
             .pipe(share());
 
         this.mouseUp = fromEvent<MouseEvent>(document.viewer, "mouseup")
             .pipe(filter(() => this.hasPage))
-            .pipe(tap((it) => {
-                this.log.trace(`Mouse up event from drawing tool: event=${JSON.stringify(it)}`);
+            .pipe(tap((_) => {
+                this.log.trace(`Mouse up event from drawing tool: tool=${this.constructor.name}`);
             }))
             .pipe(share());
 
@@ -192,7 +200,7 @@ export abstract class DrawingTool extends BaseTool {
 
     private setPageByEvent(evt: Event): void {
 
-        this.log.trace(`Try to get a page number by an event: event=${JSON.stringify(evt)}`);
+        this.log.trace(`Try to get a page number by an event: event=${evt.type}`);
 
         const pageNumber: number | undefined = getPageNumberByEvent(evt);
 

@@ -161,16 +161,16 @@ export class ClientRectangle implements ClientRect {
      */
     unite(other: ClientRectangle): ClientRectangle {
 
-        this.log.debug(`Unite client rectangles:\n${JSON.stringify(this)}\n${JSON.stringify(other)}`);
+        this.log.debug(`Unite client rectangles:\n${this.toString()}\n${other.toString()}`);
 
         if (!this.isIntersectedWith(other)) {
             throw new Error("Can not unite client rectangles with no intersection:"
-            + `\n${JSON.stringify(this)}\n${JSON.stringify(other)}`);
+            + `\n${this.toString()}\n${other.toString()}`);
         }
 
         if (this.top !== other.top || this.bottom !== other.bottom) {
             throw new Error("Can not unite client rectangles with uneven top or bottom attributes:"
-            + `\n${JSON.stringify(this)}\n${JSON.stringify(other)}`);
+            + `\n${this.toString()}\n${other.toString()}`);
         }
 
         return ClientRectangle.fromCoordinates(
@@ -195,7 +195,7 @@ export class ClientRectangle implements ClientRect {
      */
     subtract(other: ClientRectangle): Array<ClientRectangle> {
 
-        this.log.debug(`Subtract client rectangles:\n ${JSON.stringify(this)}\n-${JSON.stringify(other)}`);
+        this.log.debug(`Subtract client rectangles:\n ${this.toString()}\n-${other.toString()}`);
 
         if (this.top !== other.top || this.bottom !== other.bottom) {
             throw new Error("Can not subtract rectangle with uneven top or bottom attributes:"
@@ -238,6 +238,10 @@ export class ClientRectangle implements ClientRect {
      */
     area(): number {
         return this.height * this.width;
+    }
+
+    toString(): string {
+        return `{left: ${this.left}, top: ${this.top}, right: ${this.right}, bottom: ${this.bottom}, height: ${this.height}, width: ${this.width}`;
     }
 
     private overlapLeft(other: ClientRect): number {

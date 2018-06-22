@@ -12,6 +12,8 @@ import {Subject} from "rxjs/internal/Subject";
 import {zip} from "rxjs/internal/observable/zip";
 import {fromEvent} from "rxjs/internal/observable/fromEvent";
 import {merge} from "rxjs/internal/observable/merge";
+import {Logger} from "typescript-logging";
+import {LoggerFactory} from "../log-config";
 
 /**
  * Represents the text highlighting feature of a PDF.
@@ -29,6 +31,8 @@ export class TextHighlighting implements Highlighting {
     readonly onTextUnselection: Observable<void>;
 
     private isEnabled: boolean = false;
+
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/highlight:TextHighlighting");
 
     constructor(
         private readonly document: DocumentModel
@@ -76,6 +80,7 @@ export class TextHighlighting implements Highlighting {
      * Disable the text selection for a user.
      */
     disable(): void {
+        this.log.info("Disable text highlighting");
         this.isEnabled = false;
     }
 
@@ -83,6 +88,7 @@ export class TextHighlighting implements Highlighting {
      * Enables the text selection for a user.
      */
     enable(): void {
+        this.log.info(() => "Enable text highlighting");
         this.isEnabled = true;
     }
 }
@@ -233,6 +239,8 @@ export class HighlightManager {
             });
     }
 
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/highlight:HighlightManager");
+
     constructor(
         private readonly canvas: Canvas,
         target: Target
@@ -334,6 +342,9 @@ export class HighlightManager {
     }
 
     private paintHighlight(rect: ClientRectangle): void {
+
+        this.log.trace(() => `Paint highlight: position={x: ${rect.left}, y: ${rect.top}`);
+
         const newHighlight: CanvasRectangle = this.canvas.rectangle()
             .fillColor(this.highlightColor!)
             .dimension({height: rect.height, width: rect.width})
@@ -359,6 +370,9 @@ export class HighlightManager {
     private readonly isNotIntersected: (data: HighlightData) => boolean = (data) => !this.isIntersected(data);
 
     private readonly clearHighlight: (data: HighlightData) => void = (data) => {
+
+        this.log.trace(() => "Clear highlight");
+        this.log.debug(() => `Highlight: clientRectangle=${data.clientRectangle.toString()}`);
 
         this.remove(data);
 
@@ -461,6 +475,9 @@ function notIndex(this: number, _: ClientRect, index: number): boolean {
 /**
  * Represents the 3 possible types of a {@link CanvasRectangle}
  * used in the {@link HighlightManager}.
+ *
+ * @author Nicolas Märchy <nm@studer-raimann.ch>
+ * @since 0.0.1
  */
 class HighlightData {
 

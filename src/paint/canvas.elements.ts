@@ -97,7 +97,7 @@ export class CanvasPolyLine implements CanvasElement<PolyLine> {
     }
 
     remove(): void {
-        this.log.trace(`Remove svg element: id=${this.element.id()}`);
+        this.log.trace(`Remove svg poly line element: id=${this.element.id()}`);
         this.element.remove();
     }
 
@@ -158,7 +158,7 @@ export class CanvasRectangle implements CanvasElement<Rectangle> {
     }
 
     remove(): void {
-        this.log.trace(`Remove svg element: id=${this.element.id()}`);
+        this.log.trace(`Remove svg rectangle element: id=${this.element.id()}`);
         this.element.remove();
     }
 

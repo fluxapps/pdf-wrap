@@ -46,6 +46,8 @@ export interface Canvas {
  */
 export class SVGCanvas implements Canvas {
 
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/painters:SVGCanvas");
+
     constructor(
         private readonly svg: svgjs.Doc
     ) {}
@@ -64,6 +66,8 @@ export class SVGCanvas implements Canvas {
      * @param {string} selector - a html selector
      */
     remove(selector: string): void {
+        this.log.trace(() => `Remove svg elements by selector: selector=${selector}`);
+
         this.select(selector).forEach((it) => it.remove());
     }
 
@@ -80,6 +84,8 @@ export class SVGCanvas implements Canvas {
      * @returns {Array<CanvasElement<object>>}
      */
     select(selector: string): Array<CanvasElement<DrawElement>> {
+
+        this.log.trace(() => `Select svg elements by selector: selector=${selector}`);
 
         const svgElements: svgjs.Set = this.svg.select(selector);
 
@@ -309,7 +315,7 @@ class SVGPolyLinePainter implements PolyLinePainter {
      */
     endLine(position: Point): CanvasPolyLine {
 
-        this.log.trace(`Draw poly line on svg: polyLineId=${this._id}`);
+        this.log.trace(`Paint poly line on svg: polyLineId=${this._id}`);
 
         this.drawTo(position);
 
@@ -323,6 +329,8 @@ class SVGPolyLinePainter implements PolyLinePainter {
     }
 
     private paintPolyLine(): svgjs.PolyLine {
+
+        this.log.trace(() => `Paint poly line on svg: polyLineId=${this._id}`);
 
         return this.svg.polyline(this.flatCoordinates)
             .fill("none")
@@ -387,7 +395,7 @@ class SVGRectanglePainter implements RectanglePainter {
 
     paint(): CanvasRectangle {
 
-        this.log.trace(`Draw rectangle on svg: rectangleId=${this._id}`);
+        this.log.trace(`Paint rectangle on svg: rectangleId=${this._id}`);
 
         const rect: svgjs.Rect = this.svg.rect(this._dimension.width, this._dimension.height)
             .fill(`${this._fillColor.hex("#XXXXXX")}`)

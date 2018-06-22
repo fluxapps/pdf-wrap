@@ -226,7 +226,7 @@ describe('a client rectangle', () => {
                 chai.expect(() => a.unite(b))
                     .to.throw(Error)
                     .and.to.have.property("message", "Can not unite client rectangles with uneven top or bottom attributes:"
-                    + `\n${JSON.stringify(a)}\n${JSON.stringify(b)}`);
+                    + `\n${a.toString()}\n${b.toString()}`);
             });
         });
 
@@ -241,7 +241,7 @@ describe('a client rectangle', () => {
                 chai.expect(() => a.unite(b))
                     .to.throw(Error)
                     .and.to.have.property("message", "Can not unite client rectangles with uneven top or bottom attributes:"
-                    + `\n${JSON.stringify(a)}\n${JSON.stringify(b)}`);
+                    + `\n${a.toString()}\n${b.toString()}`);
             });
         });
 
@@ -256,7 +256,7 @@ describe('a client rectangle', () => {
                 chai.expect(() => a.unite(b))
                     .to.throw(Error)
                     .and.to.have.property("message", "Can not unite client rectangles with no intersection:"
-                    + `\n${JSON.stringify(a)}\n${JSON.stringify(b)}`);
+                    + `\n${a.toString()}\n${b.toString()}`);
             });
         });
     });

@@ -1,5 +1,7 @@
 import {DocumentSearch, SearchOptions} from "../api/search/search.api";
 import {PDFFindController} from "pdfjs-dist/web/pdf_viewer";
+import {LoggerFactory} from "../log-config";
+import {Logger} from "typescript-logging";
 
 /**
  * {@link DocumentSearch} implementation for PDFjs.
@@ -16,6 +18,8 @@ export class PDFjsDocumentSearch implements DocumentSearch {
         searchPhrase: true
     };
 
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/document.search:PDFjsDocumentSearch");
+
     constructor(
         private readonly findController: PDFFindController
     ) {}
@@ -28,6 +32,8 @@ export class PDFjsDocumentSearch implements DocumentSearch {
         if (this.isQueryEmpty()) {
             return;
         }
+
+        this.log.info(() => `Search document for query: query=${query}`);
 
         this.findController.executeCommand("find", {
             caseSensitive: this.options.fuzzy,
@@ -48,6 +54,8 @@ export class PDFjsDocumentSearch implements DocumentSearch {
             return;
         }
 
+        this.log.trace(() => `Search next result: query=${this.lastQuery}`);
+
         this.findController.executeCommand("findagain", {
             caseSensitive: this.options.fuzzy,
             findPrevious: false,
@@ -66,6 +74,8 @@ export class PDFjsDocumentSearch implements DocumentSearch {
         if (this.findController.selected.matchIdx === 0 && this.findController.selected.pageIdx === 0) {
             return;
         }
+
+        this.log.trace(() => `Search previous result: query=${this.lastQuery}`);
 
         this.findController.executeCommand("findagain", {
             caseSensitive: this.options.fuzzy,

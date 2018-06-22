@@ -1,5 +1,7 @@
 import {Canvas} from "../paint/painters";
 import {Dimension, Point} from "../api/draw/draw.basic";
+import {Logger} from "typescript-logging";
+import {LoggerFactory} from "../log-config";
 
 /**
  * Holds information about a PDF.
@@ -12,11 +14,24 @@ export class DocumentModel {
 
     private readonly pages: Map<number, Page> = new Map();
 
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/document.model:DocumentModel");
+
     constructor(
         readonly viewer: HTMLElement
     ) {}
 
+    /**
+     * Adds the given {@code page} to this document model.
+     *
+     * If a page with the same page number as the given {@code page#pageNumber} exists already,
+     * it will be replaced.
+     *
+     * @param {Page} page - the page to addo
+     */
     addPage(page: Page): void {
+
+        this.log.trace(() => `Add page to document model: pageNumber=${page.pageNumber}`);
+
         this.pages.set(page.pageNumber, page);
     }
 
@@ -79,6 +94,9 @@ export class Page {
  * @internal
  */
 export function getPageNumberByEvent(evt: Event): number | undefined {
+
+    const log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/document.model:getPageNumberByEvent");
+    log.trace(() => `Try to get page number by event: event=${evt.type}`);
 
     const dataPageNumber: string | undefined = (evt.target as Element)!.parentElement!.parentElement!.dataset.pageNumber
         || (evt.target as Element)!.parentElement!.dataset.pageNumber || undefined;
