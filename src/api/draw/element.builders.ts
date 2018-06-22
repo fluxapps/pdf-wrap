@@ -25,6 +25,7 @@ export interface ElementBuilderFactory {
 export interface BorderElementBuilder<T, R> {
     id(value: string): T;
     borderColor(value: Color): T;
+    borderWidth(px: number): T;
     build(): R;
 }
 

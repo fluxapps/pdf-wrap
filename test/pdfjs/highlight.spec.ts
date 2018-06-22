@@ -12,6 +12,7 @@ import {MockClientRectList, MockRange, MockSelection} from "./selection.mocks";
 function createMockRectangle(): Rectangle {
     return {
         borderColor: colorFrom(Colors.NONE),
+        borderWidth: 1,
         dimension: {width: 2, height: 2},
         fillColor: colorFrom(Colors.YELLOW),
         id: "svg-mock",
@@ -74,6 +75,7 @@ describe('a highlight manager', () => {
                 when(mockCanvas.select(anyString())).thenReturn([instance(existingHighlight)]);
                 when(existingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
+                    borderWidth: 1,
                     dimension: {width: 5, height: 2.04}, // 2% tolerance
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
@@ -117,6 +119,7 @@ describe('a highlight manager', () => {
                 when(mockCanvas.select(anyString())).thenReturn([instance(existingHighlight)]);
                 when(existingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
+                    borderWidth: 1,
                     dimension: {width: 5, height: 1.97}, // 2% tolerance
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
@@ -160,6 +163,7 @@ describe('a highlight manager', () => {
                 when(mockCanvas.select(anyString())).thenReturn([instance(existingHighlight)]);
                 when(existingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
+                    borderWidth: 1,
                     dimension: {width: 8, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
@@ -205,6 +209,7 @@ describe('a highlight manager', () => {
                 when(mockCanvas.select(anyString())).thenReturn([instance(existingHighlight)]);
                 when(existingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
+                    borderWidth: 1,
                     dimension: {width: 2, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
@@ -233,6 +238,7 @@ describe('a highlight manager', () => {
                 when(mockCanvas.select(anyString())).thenReturn([instance(existingHighlight)]);
                 when(existingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
+                    borderWidth: 1,
                     dimension: {width: 2, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
@@ -264,6 +270,7 @@ describe('a highlight manager', () => {
                 when(mockCanvas.select(anyString())).thenReturn([instance(existingHighlight)]);
                 when(existingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
+                    borderWidth: 1,
                     dimension: {width: 2, height: 1.97},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
@@ -307,6 +314,7 @@ describe('a highlight manager', () => {
                 when(mockCanvas.select(anyString())).thenReturn([instance(existingHighlight)]);
                 when(existingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
+                    borderWidth: 1,
                     dimension: {width: 2, height: 2.04}, // 2% tolerance
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
@@ -351,6 +359,7 @@ describe('a highlight manager', () => {
                 when(mockCanvas.select(anyString())).thenReturn([instance(existingHighlight), instance(secondExistingHighlight)]);
                 when(existingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
+                    borderWidth: 1,
                     dimension: {width: 4, height: 1.97}, // 2% tolerance
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
@@ -358,6 +367,7 @@ describe('a highlight manager', () => {
                 });
                 when(secondExistingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
+                    borderWidth: 1,
                     dimension: {width: 4, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove-2",
@@ -403,6 +413,7 @@ describe('a highlight manager', () => {
                 when(mockCanvas.select(anyString())).thenReturn([instance(existingHighlight), instance(secondExistingHighlight)]);
                 when(existingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
+                    borderWidth: 1,
                     dimension: {width: 4, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
@@ -410,6 +421,7 @@ describe('a highlight manager', () => {
                 });
                 when(secondExistingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
+                    borderWidth: 1,
                     dimension: {width: 4, height: 2},
                     fillColor: colorFrom(Colors.GREEN),
                     id: "svg-to-remove-2",
@@ -457,6 +469,7 @@ describe('a highlight manager', () => {
                 when(mockCanvas.select(anyString())).thenReturn([instance(existingHighlight)]);
                 when(existingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
+                    borderWidth: 1,
                     dimension: {width: 8, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
@@ -485,6 +498,7 @@ describe('a highlight manager', () => {
                 when(mockCanvas.select(anyString())).thenReturn([instance(existingHighlight)]);
                 when(existingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
+                    borderWidth: 1,
                     dimension: {width: 8, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
@@ -532,6 +546,7 @@ describe('a highlight manager', () => {
                 when(mockCanvas.select(anyString())).thenReturn([instance(existingHighlight)]);
                 when(existingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
+                    borderWidth: 1,
                     dimension: {width: 3, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",

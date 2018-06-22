@@ -29,6 +29,7 @@ export class DrawablePolyLine implements PolyLine, DrawableElement {
 
     constructor(
         readonly borderColor: Color,
+        readonly borderWidth: number,
         readonly coordinates: Array<Point>,
         readonly id: string
     ) {}
@@ -38,7 +39,7 @@ export class DrawablePolyLine implements PolyLine, DrawableElement {
         canvas.polyLine()
             .id(this.id)
             .borderColor(this.borderColor)
-            .borderWidth(1)
+            .borderWidth(this.borderWidth)
             .coordinates(this.coordinates)
             .paint();
     }
@@ -54,6 +55,7 @@ export class DrawableRectangle implements Rectangle, DrawableElement {
 
     constructor(
         readonly borderColor: Color,
+        readonly borderWidth: number,
         readonly dimension: Dimension,
         readonly fillColor: Color,
         readonly id: string,
@@ -65,6 +67,7 @@ export class DrawableRectangle implements Rectangle, DrawableElement {
         canvas.rectangle()
             .id(this.id)
             .borderColor(this.borderColor)
+            .borderWidth(this.borderWidth)
             .fillColor(this.fillColor)
             .position(this.position)
             .dimension(this.dimension)

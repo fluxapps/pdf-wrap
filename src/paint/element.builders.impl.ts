@@ -34,6 +34,7 @@ export class PolyLineBuilderImpl implements PolyLineBuilder {
 
     private _id: string = `$svg${uuid.create(4).toString()}`;
     private _borderColor: Color = colorFrom(Colors.BLACK);
+    private _borderWidth: number = 1;
     private _coordinates: Array<Point> = [];
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/element.builders.impl:PolyLineBuilderImpl");
@@ -48,6 +49,11 @@ export class PolyLineBuilderImpl implements PolyLineBuilder {
         return this;
     }
 
+    borderWidth(px: number): PolyLineBuilder {
+        this._borderWidth = px;
+        return this;
+    }
+
     coordinates(value: Array<Point>): PolyLineBuilder {
         this._coordinates = value;
         return this;
@@ -59,6 +65,7 @@ export class PolyLineBuilderImpl implements PolyLineBuilder {
 
         return new DrawablePolyLine(
             this._borderColor,
+            this._borderWidth,
             this._coordinates,
             this._id
         );
@@ -75,6 +82,7 @@ export class RectangleBuilderImpl implements RectangleBuilder {
 
     private _id: string = `$svg${uuid.create(4).toString()}`;
     private _borderColor: Color = colorFrom(Colors.NONE);
+    private _borderWidth: number = 1;
     private _fillColor: Color = colorFrom(Colors.BLACK);
     private _dimension: Dimension = {height: 0, width: 0};
     private _position: Point = {x: 0, y: 0};
@@ -88,6 +96,11 @@ export class RectangleBuilderImpl implements RectangleBuilder {
 
     borderColor(value: Color): RectangleBuilder {
         this._borderColor = value;
+        return this;
+    }
+
+    borderWidth(px: number): RectangleBuilder {
+        this._borderWidth = px;
         return this;
     }
 
@@ -112,6 +125,7 @@ export class RectangleBuilderImpl implements RectangleBuilder {
 
         return new DrawableRectangle(
             this._borderColor,
+            this._borderWidth,
             this._dimension,
             this._fillColor,
             this._id,

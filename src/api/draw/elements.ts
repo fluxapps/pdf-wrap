@@ -19,6 +19,7 @@ export interface DrawElement {
  */
 export interface BorderElement extends DrawElement {
     readonly borderColor: Color;
+    readonly borderWidth: number;
 }
 
 /**

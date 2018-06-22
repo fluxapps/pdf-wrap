@@ -80,6 +80,10 @@ export class CanvasPolyLine implements CanvasElement<PolyLine> {
         return colorFromHex(this.element.attr("stroke"));
     }
 
+    private get width(): number {
+        return this.element.attr("stroke-width");
+    }
+
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/canvas.elements:CanvasPolyLine");
 
     constructor(
@@ -101,6 +105,7 @@ export class CanvasPolyLine implements CanvasElement<PolyLine> {
         return new ElementBuilderFactoryImpl().polyLine()
             .id(this.element.id())
             .borderColor(this.color)
+            .borderWidth(this.width)
             .coordinates(this.coordinates)
             .build();
     }
@@ -117,6 +122,10 @@ export class CanvasRectangle implements CanvasElement<Rectangle> {
 
     private get borderColor(): Color {
         return colorFromHex(this.element.attr("stroke"));
+    }
+
+    private get borderWidth(): number {
+        return this.element.attr("stroke-width");
     }
 
     private get fillColor(): Color {
@@ -157,6 +166,7 @@ export class CanvasRectangle implements CanvasElement<Rectangle> {
         return new ElementBuilderFactoryImpl().rectangle()
             .id(this.element.id())
             .borderColor(this.borderColor)
+            .borderWidth(this.borderWidth)
             .fillColor(this.fillColor)
             .position(this.position)
             .dimension(this.dimension)
