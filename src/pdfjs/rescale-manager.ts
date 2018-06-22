@@ -30,7 +30,7 @@ export class RescaleManager {
      */
     normalizePolyLine(polyLine: PolyLine): PolyLine {
 
-        this.log.trace(`Normalize poly line element: polyLineId=${polyLine.id}`);
+        this.log.trace(() => `Normalize poly line element: polyLineId=${polyLine.id}`);
 
         return new ElementBuilderFactoryImpl().polyLine()
             .id(polyLine.id)
@@ -49,7 +49,7 @@ export class RescaleManager {
      */
     rescalePolyLine(polyLine: PolyLine): PolyLine {
 
-        this.log.trace(`Rescale poly line element: polyLineId=${polyLine.id}`);
+        this.log.trace(() => `Rescale poly line element: polyLineId=${polyLine.id}`);
 
         return new ElementBuilderFactoryImpl().polyLine()
             .id(polyLine.id)
@@ -68,7 +68,7 @@ export class RescaleManager {
      */
     normalizeRectangle(rectangle: Rectangle): Rectangle {
 
-        this.log.trace(`Normalize rectangle element: rectangleId=${rectangle.id}`);
+        this.log.trace(() => `Normalize rectangle element: rectangleId=${rectangle.id}`);
 
         return new ElementBuilderFactoryImpl().rectangle()
             .id(rectangle.id)
@@ -89,7 +89,7 @@ export class RescaleManager {
      */
     rescaleRectangle(rectangle: Rectangle): Rectangle {
 
-        this.log.trace(`Rescale rectangle element: rectangleId=${rectangle.id}`);
+        this.log.trace(() => `Rescale rectangle element: rectangleId=${rectangle.id}`);
 
         return new ElementBuilderFactoryImpl().rectangle()
             .id(rectangle.id)

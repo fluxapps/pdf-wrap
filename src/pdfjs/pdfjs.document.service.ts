@@ -217,7 +217,7 @@ export class PDFjsDocument implements PDFDocument {
     }
 
     set currentPageNumber(currentPageNumber: number) {
-        this.log.trace(`Set current page number to ${currentPageNumber}`);
+        this.log.trace(() => `Set current page number to ${currentPageNumber}`);
         this.viewer.currentPageNumber = currentPageNumber;
     }
 
@@ -226,7 +226,7 @@ export class PDFjsDocument implements PDFDocument {
     }
 
     set scale(scale: number) {
-        this.log.trace(`Set scale to ${scale}`);
+        this.log.trace(() => `Set scale to ${scale}`);
         this.viewer.currentScale = scale;
     }
 
@@ -247,7 +247,7 @@ export class PDFjsDocument implements PDFDocument {
 
     async getOutline(): Promise<Outline> {
 
-        this.log.trace("Get outline of PDF");
+        this.log.trace(() => "Get outline of PDF");
 
         const pdfOutline: PDFOutline = await this.viewer.pdfDocument.getOutline();
 

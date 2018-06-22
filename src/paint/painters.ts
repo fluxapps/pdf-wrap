@@ -315,7 +315,7 @@ class SVGPolyLinePainter implements PolyLinePainter {
      */
     endLine(position: Point): CanvasPolyLine {
 
-        this.log.trace(`Paint poly line on svg: polyLineId=${this._id}`);
+        this.log.trace(() => `Paint poly line on svg: polyLineId=${this._id}`);
 
         this.drawTo(position);
 
@@ -395,7 +395,7 @@ class SVGRectanglePainter implements RectanglePainter {
 
     paint(): CanvasRectangle {
 
-        this.log.trace(`Paint rectangle on svg: rectangleId=${this._id}`);
+        this.log.trace(() => `Paint rectangle on svg: rectangleId=${this._id}`);
 
         const rect: svgjs.Rect = this.svg.rect(this._dimension.width, this._dimension.height)
             .fill(`${this._fillColor.hex("#XXXXXX")}`)

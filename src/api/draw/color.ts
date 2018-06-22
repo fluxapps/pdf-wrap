@@ -96,7 +96,7 @@ export function colorFromRgba(red: number, green: number, blue: number, alpha: n
         throw new IllegalColorValue(`Parameter alpha is not a valid alpha value: alpha=${alpha}`);
     }
 
-    log.trace(`Create a color from rgba: rgba=${red}, ${green}, ${blue}, ${alpha}`);
+    log.trace(() => `Create a color from rgba: rgba=${red}, ${green}, ${blue}, ${alpha}`);
     return new SimpleColor(red, green, blue, alpha);
 }
 

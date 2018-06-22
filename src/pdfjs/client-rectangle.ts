@@ -161,7 +161,7 @@ export class ClientRectangle implements ClientRect {
      */
     unite(other: ClientRectangle): ClientRectangle {
 
-        this.log.debug(`Unite client rectangles:\n${this.toString()}\n${other.toString()}`);
+        this.log.debug(() => `Unite client rectangles:\n${this.toString()}\n${other.toString()}`);
 
         if (!this.isIntersectedWith(other)) {
             throw new Error("Can not unite client rectangles with no intersection:"
@@ -195,7 +195,7 @@ export class ClientRectangle implements ClientRect {
      */
     subtract(other: ClientRectangle): Array<ClientRectangle> {
 
-        this.log.debug(`Subtract client rectangles:\n ${this.toString()}\n-${other.toString()}`);
+        this.log.debug(() => `Subtract client rectangles:\n ${this.toString()}\n-${other.toString()}`);
 
         if (this.top !== other.top || this.bottom !== other.bottom) {
             throw new Error("Can not subtract rectangle with uneven top or bottom attributes:"

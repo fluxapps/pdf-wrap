@@ -35,7 +35,7 @@ export class StorageRegistry {
      */
     add(adapter: StorageAdapter): StorageRegistry {
 
-        this.log.info(`Add storage adapter to registry: class=${adapter.constructor.name}`);
+        this.log.info(() => `Add storage adapter to registry: class=${adapter.constructor.name}`);
 
         const uri: URI = adapter.register();
 

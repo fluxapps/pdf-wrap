@@ -161,18 +161,18 @@ export abstract class DrawingTool extends BaseTool {
         this.mouseDown = fromEvent<MouseEvent>(document.viewer, "mousedown")
             .pipe(filter(() => this.isActive))
             .pipe(tap((it) => this.setPageByEvent(it)))
-            .pipe(tap((_) => this.log.trace(`Mouse down event from drawing tool: tool=${this.constructor.name}`)))
+            .pipe(tap((_) => this.log.trace(() => `Mouse down event from drawing tool: tool=${this.constructor.name}`)))
             .pipe(share());
 
         this.mouseMove = fromEvent<MouseEvent>(document.viewer, "mousemove")
             .pipe(filter(() => this.hasPage))
-            .pipe(tap((_) => this.log.trace(`Mouse move event from drawing tool: tool=${this.constructor.name}`)))
+            .pipe(tap((_) => this.log.trace(() => `Mouse move event from drawing tool: tool=${this.constructor.name}`)))
             .pipe(share());
 
         this.mouseUp = fromEvent<MouseEvent>(document.viewer, "mouseup")
             .pipe(filter(() => this.hasPage))
             .pipe(tap((_) => {
-                this.log.trace(`Mouse up event from drawing tool: tool=${this.constructor.name}`);
+                this.log.trace(() => `Mouse up event from drawing tool: tool=${this.constructor.name}`);
             }))
             .pipe(share());
 
@@ -200,7 +200,7 @@ export abstract class DrawingTool extends BaseTool {
 
     private setPageByEvent(evt: Event): void {
 
-        this.log.trace(`Try to get a page number by an event: event=${evt.type}`);
+        this.log.trace(() => `Try to get a page number by an event: event=${evt.type}`);
 
         const pageNumber: number | undefined = getPageNumberByEvent(evt);
 

@@ -44,8 +44,8 @@ export class StorageAdapterWrapper implements StorageAdapter {
             try {
                 return await adapter.loadPage(uri, pageNumber);
             } catch (e) {
-                this.log.info("Skip storage adapter");
-                this.log.debug(`Error: ${e.message}`);
+                this.log.info(() => "Skip storage adapter");
+                this.log.debug(() => `Error: ${e.message}`);
             }
         }
 
@@ -56,7 +56,7 @@ export class StorageAdapterWrapper implements StorageAdapter {
      * @throws {Error} always throws an {@link Error} indicating that this method must not be invoked
      */
     register(): URI {
-        this.log.error("StorageAdapterWrapper.register() method MUST NOT be invoked");
+        this.log.error(() => "StorageAdapterWrapper.register() method MUST NOT be invoked");
         throw new Error("StorageAdapterWrapper must not be registered");
     }
 

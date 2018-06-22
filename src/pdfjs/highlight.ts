@@ -80,7 +80,7 @@ export class TextHighlighting implements Highlighting {
      * Disable the text selection for a user.
      */
     disable(): void {
-        this.log.info("Disable text highlighting");
+        this.log.info(() => "Disable text highlighting");
         this.isEnabled = false;
     }
 

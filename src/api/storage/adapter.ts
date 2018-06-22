@@ -70,7 +70,7 @@ export abstract class SkippableStorgaeAdapter implements StorageAdapter {
      * @throws {UnfinishedExecutionError} to indicate the skip of a function
      */
     protected skip(): void {
-        this.log.info(`Skip storage adapter: class=${this.constructor.name}`);
+        this.log.info(() => `Skip storage adapter: class=${this.constructor.name}`);
         throw new UnfinishedExecutionError("Skip function execution");
     }
 }

@@ -61,7 +61,7 @@ export class PolyLineBuilderImpl implements PolyLineBuilder {
 
     build(): PolyLine {
 
-        this.log.trace(`Build poly line element: polyLineId=${this._id}`);
+        this.log.trace(() => `Build poly line element: polyLineId=${this._id}`);
 
         return new DrawablePolyLine(
             this._borderColor,
@@ -121,7 +121,7 @@ export class RectangleBuilderImpl implements RectangleBuilder {
 
     build(): Rectangle {
 
-        this.log.trace(`Build rectangle element: rectangleId=${this._id}`);
+        this.log.trace(() => `Build rectangle element: rectangleId=${this._id}`);
 
         return new DrawableRectangle(
             this._borderColor,
