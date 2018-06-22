@@ -164,12 +164,12 @@ const documentService: PDFDocumentService = new PDFjsDocumentService();
 
 > Note that `PDFDocumentService` is the interface and `PDFjsDocumentService` is an implementation of it.
 
-Load your PDF file
+You must provide the PDF as a `Blob`
 
 ```typescript
 documentService.loadWith({
     container: document.getElementById("viewerContainer"),
-    pdf: "assets/resources/chicken.pdf",
+    pdf: pdfData,
     layerStorage: URI.from("file://my-pdf")
 }).then(pdf => {
     // you'll get a PDFDocument instance

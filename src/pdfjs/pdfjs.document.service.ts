@@ -24,7 +24,7 @@ import {
 } from "pdfjs-dist";
 import {fromPromise, Subscriber} from "rxjs/internal-compatibility";
 import {DocumentModel, Page} from "./document.model";
-import {map, mergeMap} from "rxjs/operators";
+import {first, map, mergeMap} from "rxjs/operators";
 import {TextHighlighting} from "./highlight";
 import {EraserTool, FreehandTool} from "./tool/tools";
 import {TeardownLogic} from "rxjs/internal/types";
@@ -43,6 +43,7 @@ import {Logger} from "typescript-logging";
 import {LoggerFactory} from "../log-config";
 import {RescaleManager} from "./rescale-manager";
 import {of} from "rxjs/internal/observable/of";
+import {fromEvent} from "rxjs/internal/observable/fromEvent";
 
 // PDF.js defaults
 GlobalWorkerOptions.workerSrc = "assets/pdf.worker.js";
@@ -76,6 +77,8 @@ export function setCMapUrl(url: string): void {
  */
 export class PDFjsDocumentService implements PDFDocumentService {
 
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/pdfjs.document.service:PDFjsDocumentService");
+
     /**
      * Loads a PDF by the given loading options, displays it
      * and returns a {@link PDFDocument} to operate with the document.
@@ -91,23 +94,42 @@ export class PDFjsDocumentService implements PDFDocumentService {
      */
     async loadWith(options: LoadingOptions): Promise<PDFDocument> {
 
+        return this._loadWith(options)
+            .then((it) => it)
+            .catch((error) => {
+                this.log.error(() => `Error occurred during PDF loading: error=${error}`);
+                throw error;
+            });
+    }
+
+    // just as a private method so we can catch the error a bit more readable, because this method is already quite messy
+    private async _loadWith(options: LoadingOptions): Promise<PDFDocument> {
+
+        this.log.info(() => `Load PDF file`);
+
+        const pdfData: ArrayBuffer = await this.readBlob(options.pdf);
+
+        this.log.trace(() => "Create PDF viewer");
         const viewer: PDFViewer = new PDFViewer({
             container: options.container,
             eventBus: new EventBus(),
             renderer: "svg"
         });
 
+        this.log.trace(() => "Get document from array buffer");
         const pdf: PDFDocumentProxy = await getDocument({
             MapUrl: mapUrl,
             cMapPacked: true,
-            url: "assets/resources/chicken.pdf" // TODO: use blob
+            data: pdfData
         });
 
+        this.log.trace(() => "Set document on PDF viewer");
         viewer.setDocument(pdf);
 
         const findController: PDFFindController = new PDFFindController({
             pdfViewer: viewer
         });
+        this.log.trace(() => "Set find controller on PDF viewer");
         viewer.setFindController(findController);
 
         const documentModel: DocumentModel = new DocumentModel(options.container);
@@ -133,6 +155,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
         merge(freehand.stateChange, eraser.stateChange).subscribe(this.moveDrawLayerToFront);
 
         new Observable((subscriber: Subscriber<PageRenderedEvent>): TeardownLogic => {
+            this.log.trace("Listen on pagerendered event");
             viewer.eventBus.on("pagerendered", (ev) => subscriber.next(ev));
         })
             .pipe(map((it) => new LayerManager(it)))
@@ -148,6 +171,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
                 const drawLayer: Canvas = it.createDrawingLayer();
 
                 // this can easily made async without awaiting it
+                this.log.trace(() => `Load page data: pageNumber=${it.pageNumber}`);
                 storageAdapter.loadPage(options.layerStorage, it.pageNumber).then((pageData) => {
 
                     pageData.highlightings
@@ -185,6 +209,22 @@ export class PDFjsDocumentService implements PDFDocumentService {
             });
 
         return new PDFjsDocument(viewer, highlighting, {freehand, eraser}, searchController);
+    }
+
+    private readBlob(data: Blob): Promise<ArrayBuffer> {
+
+        const fileReader: FileReader = new FileReader();
+        const fileLoadend: Promise<ArrayBuffer> = fromEvent<ArrayBuffer>(fileReader, "loadend")
+            .pipe(first())
+            .pipe(map(() => fileReader.result))
+            .toPromise();
+        fromEvent(fileReader, "error").subscribe((error) => {
+            this.log.error(() => `Could not read options.pdf: error=${error}`);
+        });
+
+        fileReader.readAsArrayBuffer(data);
+
+        return fileLoadend;
     }
 
     /**
