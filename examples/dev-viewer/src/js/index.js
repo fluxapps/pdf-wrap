@@ -2,7 +2,7 @@ const {colorFromHex} = require("pdf-wrap/api/draw/color");
 const {PDFjsDocumentService, setWorkerSrc, setMapUrl} = require("pdf-wrap/pdfjs/pdfjs.document.service");
 const {URI} = require("pdf-wrap/api/document.service");
 const {StorageRegistry} = require("pdf-wrap/api/storage/adapter.registry");
-const {EmptyStorageAdapter} = require("pdf-wrap/api/storage/adapter");
+const {PageOverlay} = require("pdf-wrap/api/storage/adapter");
 const {LoggerFactory} = require("pdf-wrap/log-config");
 
 LoggerFactory.configure({
@@ -14,7 +14,69 @@ LoggerFactory.configure({
     ]
 });
 
-StorageRegistry.instance.add(new EmptyStorageAdapter(URI.from("ex://")));
+export class InMemStorageAdapter {
+
+    constructor() {
+        this._memory = new Map();
+    }
+
+    register() {
+        return URI.from("mem://");
+    }
+
+    start(uri, events) {
+
+
+        const store = this._getStore(uri.uri);
+
+        events.afterPolyLineRendered().subscribe(it => {
+            store.set(it.element.id, it);
+        });
+
+        events.afterRectangleRendered().subscribe(it => {
+            store.set(it.element.id, it);
+        });
+
+        events.afterElementRemoved().subscribe(it => {
+            store.delete(it.element.id);
+        })
+    }
+
+    loadPage(uri, pageNumber) {
+
+        const store = this._getStore(uri.uri);
+
+        const highlights = [];
+        const drawings = [];
+
+        for (let item of store.values()) {
+
+            if (item.pageNumber === pageNumber && item.layer === 0) {
+                highlights.push(item.element);
+            }
+
+            if (item.pageNumber === pageNumber && item.layer === 1) {
+                drawings.push(item.element);
+            }
+        }
+
+        return new PageOverlay(
+            pageNumber,
+            highlights,
+            drawings
+        );
+    }
+
+    _getStore(uri) {
+        if (!this._memory.has(uri)) {
+            this._memory.set(uri, new Map());
+        }
+
+        return this._memory.get(uri);
+    }
+}
+
+StorageRegistry.instance.add(new InMemStorageAdapter());
 
 setWorkerSrc("assets/libs/pdf-wrap/pdf.worker.js");
 setMapUrl("assets/libs/pdf-wrap/cmaps");
@@ -138,30 +200,6 @@ export class EraserButton {
     }
 }
 
-export class SearchButton {
-
-    constructor(searchController) {
-        this._searchController = searchController;
-        this._button = document.getElementById("search-button");
-        this._previous = document.getElementById("previous-button");
-        this._next = document.getElementById("next-button");
-
-        this.searchField = document.getElementById("search-term");
-
-        this._button.addEventListener("click", () => {
-            this._searchController.search(this.searchField.value, {fuzzy: true, searchPhrase: true, highlightAll: true});
-        });
-
-        this._previous.addEventListener("click", () => {
-            this._searchController.previous();
-        });
-
-        this._next.addEventListener("click", () => {
-            this._searchController.next();
-        })
-    }
-}
-
 export class SidebarManager {
 
     constructor(pdf) {
@@ -195,7 +233,7 @@ const documentService = new PDFjsDocumentService();
 documentService.loadWith({
     container: document.getElementById("viewerContainer"),
     pdf: "assets/resources/chicken.pdf",
-    layerStorage: URI.from("ex://")
+    layerStorage: URI.from("mem://chicken.pdf")
 }).then(it => {
 
     const highlightService = new HighlightService();

@@ -8,6 +8,7 @@ module.exports = {
         filename: "main.js"
     },
 
+    devtool: "none",
     mode: "development",
 
     node: {
