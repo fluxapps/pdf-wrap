@@ -20,13 +20,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * PDF Outline parsing
 * Zoom value
 * Page Navigation
-
-### Changed
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
+* PDF thumbnails

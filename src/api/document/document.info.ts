@@ -67,7 +67,7 @@ export class TreeOutlineEntry extends OutlineEntry {
 export class PageThumbnail {
 
     constructor(
-        readonly content: Blob,
+        readonly content: HTMLCanvasElement,
         readonly pageNumber: number
     ) {}
 }

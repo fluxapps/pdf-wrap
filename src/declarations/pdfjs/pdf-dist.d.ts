@@ -41,6 +41,25 @@ declare module "pdfjs-dist" {
 
     export interface PDFOutline extends ArrayLike<PDFOutlineItem> {}
 
+    export interface PageViewPort {
+        readonly width: number;
+        readonly height: number;
+    }
+
+    export interface PageRenderOptions {
+        canvasContext: CanvasRenderingContext2D;
+        viewport: PageViewPort;
+    }
+
+    export interface PDFPageProxy {
+
+        readonly pageNumber: number;
+
+        getViewport(scale: number): PageViewPort;
+
+        render(opt: PageRenderOptions): Promise<void>;
+    }
+
     export class PDFDocumentProxy {
         readonly pdfInfo: PDFInfo;
         readonly numPages: number;
@@ -50,5 +69,7 @@ declare module "pdfjs-dist" {
         getDestination(dest: DestType): Promise<OutlineDestination>;
 
         getPageIndex(ref: PageRef): Promise<number>;
+
+        getPage(pageNumber: number): Promise<PDFPageProxy>;
     }
 }

@@ -330,7 +330,7 @@ pdf.highlighting.onTextUnselection
 
 This can be useful, if you want to enable or disable a button to highlight or to clear the text selection.
 
-The `TextSelection` instance provides a `clearHighlight` or `highlight` method.
+The `TextSelection` instance provides a `clearHighlight` and a `highlight` method.
 
 * `clearHighlight` will remove any highlight of the selected text
 * `highlight` accepts a `Color` instance and highlights the selection with it
@@ -525,7 +525,7 @@ pdf.searchController.search("example", {
 
 ## Outline
 
-You can access the outline of a PDF once the PDF is loaded.
+You can access the outline of a PDF once the PDF is loaded
 
 ```typescript
 pdf.getOutline().then(outline => {
@@ -562,6 +562,27 @@ pdf.getOutline().then(outline => {
 You want to jump to the page where the outline points to? Check out [Page Navigation](#page-navigation)
 
 ## Page Thumbnails
+
+You can access thumbnails of the PDF pages once the PDF is loaded
+
+```typescript
+// get the thumbnail of page 1, 2 and 3 with a max size of 96px
+pdf.getThumbnails(96, 1, 2, 3).subscribe(thumbnail => {
+    // use the thumbnail
+});
+```
+
+The `getThumbails` method returns an `Observable` which emits every thumbnail after another.
+Once the last thumbnail is loaded, the `Observable` completes.
+
+* The first parameter `maxSize` defines the max size, a thumbnail can be.
+* The second parameter `pageNumbers` is a vararg for the page number you want the thumbnail of.
+
+*Tip: If you want to get the thumbnail of all pages, use a while loop to get all page numbers of the document*
+
+```typescript
+const pages: Array<number> = []; while (pages.length < pdf.pageCount) pages.push(pages.length + 1);
+```
 
 ## Page Navigation
 

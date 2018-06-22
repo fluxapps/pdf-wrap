@@ -57,9 +57,13 @@ export interface PDFDocument {
      * Returns a observable which emits a {@link PageThumbnail} for each given page number.
      * The observable completes when the last thumbnail is emitted.
      *
+     * If the {@code maxSize} parameter is greater than the max width or height of the PDF page,
+     * the size of the PDF page will be used.
+     *
+     * @param {number} maxSize - the max width or height of the thumbnails
      * @param {number} pageNumbers - the page numbers for the thumbnails that should be returned
      *
      * @returns {Observable<PageThumbnail>} a observable which emits the thumbnails
      */
-    getThumbnails(...pageNumbers: Array<number>): Observable<PageThumbnail>;
+    getThumbnails(maxSize: number, ...pageNumbers: Array<number>): Observable<PageThumbnail>;
 }

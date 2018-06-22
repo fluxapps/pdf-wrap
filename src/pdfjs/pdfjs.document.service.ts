@@ -13,10 +13,18 @@ import {
     PDFFindController,
     PDFViewer
 } from "pdfjs-dist/web/pdf_viewer";
-import {getDocument, GlobalWorkerOptions, OutlineDestination, PageRef, PDFDocumentProxy, PDFOutline} from "pdfjs-dist";
-import {Subscriber} from "rxjs/internal-compatibility";
+import {
+    getDocument,
+    GlobalWorkerOptions,
+    OutlineDestination,
+    PageRef,
+    PageViewPort,
+    PDFDocumentProxy,
+    PDFOutline
+} from "pdfjs-dist";
+import {fromPromise, Subscriber} from "rxjs/internal-compatibility";
 import {DocumentModel, Page} from "./document.model";
-import {map} from "rxjs/operators";
+import {map, mergeMap} from "rxjs/operators";
 import {TextHighlighting} from "./highlight";
 import {EraserTool, FreehandTool} from "./tool/tools";
 import {TeardownLogic} from "rxjs/internal/types";
@@ -34,26 +42,53 @@ import {PDFjsDocumentSearch} from "./document.search";
 import {Logger} from "typescript-logging";
 import {LoggerFactory} from "../log-config";
 import {RescaleManager} from "./rescale-manager";
+import {of} from "rxjs/internal/observable/of";
 
+// PDF.js defaults
 GlobalWorkerOptions.workerSrc = "assets/pdf.worker.js";
 let mapUrl: string = "assets/cmaps";
 
+/**
+ * Sets the PDF.js worker url.
+ *
+ * @param {string} url - the url to use
+ */
 export function setWorkerSrc(url: string): void {
     GlobalWorkerOptions.workerSrc = url;
 }
 
-export function setMapUrl(url: string): void {
+/**
+ * Sets the PDF.js cMap url.
+ *
+ * @param {string} url - the url to use
+ */
+export function setCMapUrl(url: string): void {
     mapUrl = url;
 }
 
 /**
+ * {@link PDFDocumentService} implementation for PDF.js.
  *
+ * This class relies very much on the PDF.js library.
  *
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
  */
 export class PDFjsDocumentService implements PDFDocumentService {
 
+    /**
+     * Loads a PDF by the given loading options, displays it
+     * and returns a {@link PDFDocument} to operate with the document.
+     *
+     * The PDF that is being rendered will always be rendered as an svg element.
+     *
+     * This method will listen on page rendering from PDF.js and adds different additional layers
+     * to the DOM.
+     *
+     * @param {LoadingOptions} options - the options to determine how to load the document
+     *
+     * @returns {Promise<PDFDocument>} the resulting document
+     */
     async loadWith(options: LoadingOptions): Promise<PDFDocument> {
 
         const viewer: PDFViewer = new PDFViewer({
@@ -103,7 +138,8 @@ export class PDFjsDocumentService implements PDFDocumentService {
             .pipe(map((it) => new LayerManager(it)))
             .subscribe((it) => {
 
-                this.removeOldLayers(it);
+                // we remove possible outdated layers, otherwise we could get duplicated ones
+                it.removeLayers();
 
                 const highlightLayer: Canvas = it.createHighlightLayer();
                 const searchLayer: Canvas = it.createSearchLayer();
@@ -151,6 +187,12 @@ export class PDFjsDocumentService implements PDFDocumentService {
         return new PDFjsDocument(viewer, highlighting, {freehand, eraser}, searchController);
     }
 
+    /**
+     * Moves any draw layer to the front or back depending on
+     * what state is given.
+     *
+     * @param {StateChangeEvent} stateEvent - the state to move the draw layer in front or back
+     */
     private moveDrawLayerToFront(stateEvent: StateChangeEvent): void {
 
         const drawLayerList: Array<Element> = Array.from(document.getElementsByClassName("draw-layer"));
@@ -168,6 +210,12 @@ export class PDFjsDocumentService implements PDFDocumentService {
         }
     }
 
+    /**
+     * Draws the given {@code highlight} on the given {@code on} {@link Canvas}.
+     *
+     * @param {Canvas} on - the canvas to draw on
+     * @param {Rectangle} highlight - the highlight to draw
+     */
     private drawHighlight(on: Canvas, highlight: Rectangle): void {
 
         on.rectangle()
@@ -180,6 +228,12 @@ export class PDFjsDocumentService implements PDFDocumentService {
             .paint();
     }
 
+    /**
+     * Draws the given {@code darwing} on the given {@code on} {@link Canvas}.
+     *
+     * @param {Canvas} on - the canvas to draw on
+     * @param {PolyLine} drawing - the drawing to draw
+     */
     private draw(on: Canvas, drawing: PolyLine): void {
         on.polyLine()
             .id(drawing.id)
@@ -188,19 +242,13 @@ export class PDFjsDocumentService implements PDFDocumentService {
             .coordinates(drawing.coordinates)
             .paint();
     }
-
-    private removeOldLayers(layerManager: LayerManager): void {
-        Array.from(layerManager.pageContainer.children)
-            .forEach((child) => {
-                if (child.classList.contains("page-layer")) {
-                    layerManager.pageContainer.removeChild(child);
-                }
-            });
-    }
 }
 
 /**
+ * {@link PDFDocument} implementation for PDF.js.
  *
+ * A lot of operations are either completely delegated or partially
+ * delegated to the PDFViewer instance.
  *
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
@@ -245,27 +293,89 @@ export class PDFjsDocument implements PDFDocument {
         this.pageCount = this.viewer.pdfDocument.pdfInfo.numPages;
     }
 
+    /**
+     * If an error occurs during the outline parsing, an empty outline
+     * will be returned.
+     *
+     * @returns {Promise<Outline>} returns the outline of the pdf
+     */
     async getOutline(): Promise<Outline> {
 
-        this.log.trace(() => "Get outline of PDF");
+        try {
 
-        const pdfOutline: PDFOutline = await this.viewer.pdfDocument.getOutline();
+            this.log.trace(() => "Get outline of PDF");
 
-        const transformedOutline: Array<TreeOutlineEntry> = await this.transformOutline(pdfOutline);
+            const pdfOutline: PDFOutline = await this.viewer.pdfDocument.getOutline();
 
-        return new Outline(transformedOutline);
+            const transformedOutline: Array<TreeOutlineEntry> = await this.transformOutline(pdfOutline);
+
+            return new Outline(transformedOutline);
+        } catch (e) {
+            /*
+             * The reason we return an empty outline is, that it seems to work sometimes and sometimes
+             * not. It is outside our control, because PDF.js does the parsing.
+             */
+            this.log.warn(() => `Could not get outline: error=${e.message}`);
+            return new Outline([]);
+        }
     }
 
-    getThumbnails(...pageNumbers: Array<number>): Observable<PageThumbnail> {
-        throw new Error("Not implemented yet" + pageNumbers);
+    /**
+     * Returns a observable which emits a {@link PageThumbnail} for each given page number.
+     * The observable completes when the last thumbnail is emitted.
+     *
+     * If the {@code maxSize} parameter is greater than the max width or height of the PDF page,
+     * the size of the PDF page will be used.
+     *
+     * @param {number} maxSize - the max width or height of the thumbnails
+     * @param {number} pageNumbers - the page numbers for the thumbnails that should be returned
+     *
+     * @returns {Observable<PageThumbnail>} a observable which emits the thumbnails
+     */
+    getThumbnails(maxSize: number, ...pageNumbers: Array<number>): Observable<PageThumbnail> {
+
+        return of(...pageNumbers)
+            .pipe(mergeMap((it) => fromPromise(this.viewer.pdfDocument.getPage(it))))
+            .pipe(mergeMap((it) => {
+
+                const viewport: PageViewPort = it.getViewport(1);
+
+                // calculate the ratio of the maxSize to the original page width and than use the smallest to not be larger than maxSize
+                const scale: number = Math.min(maxSize / viewport.width, maxSize / viewport.height);
+
+                const rescaledViewport: PageViewPort = it.getViewport(scale);
+
+                const canvas: HTMLCanvasElement = document.createElement("canvas");
+                canvas.height = rescaledViewport.height;
+                canvas.width = rescaledViewport.width;
+
+                // we have to wait for the render method, then the canvas is ready
+                return fromPromise(
+                    it.render({
+                        canvasContext: canvas.getContext("2d")!,
+                        viewport: rescaledViewport
+                    })
+                )
+                    .pipe(map(() => new PageThumbnail(canvas, it.pageNumber)));
+            }));
     }
 
+    /**
+     * Transforms the PDF.js outline object to get the page number and the title of the outline.
+     *
+     * @param {module:pdfjs-dist.PDFOutline} outline - the outline to transform
+     *
+     * @returns {Promise<Array<TreeOutlineEntry>>} the transformed outline as a {@link TreeOutlineEntry} array
+     */
     private async transformOutline(outline: PDFOutline): Promise<Array<TreeOutlineEntry>> {
 
         const out: Array<TreeOutlineEntry> = [];
 
         for (const it of Array.from(outline)) {
             const destination: OutlineDestination = await this.viewer.pdfDocument.getDestination(it.dest);
+
+            this.log.debug(() => `Outline destination: destination=${destination}`);
+
             const pageRef: PageRef = destination[0];
             const destPageNumber: number = (await this.viewer.pdfDocument.getPageIndex(pageRef)) + 1;
 
@@ -287,7 +397,9 @@ export class PDFjsDocument implements PDFDocument {
 }
 
 /**
- *
+ * Creates and appends the different page layers to the DOM.
+ * Attributes like {@code id} or {@code class} are set according
+ * to the layer being rendered.
  *
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
@@ -378,6 +490,15 @@ class LayerManager {
 
         const drawSVG: svgjs.Doc = svgjs(`${drawDiv.id}`);
         return new SVGCanvas(drawSVG);
+    }
+
+    removeLayers(): void {
+        Array.from(this.pageContainer.children)
+            .forEach((child) => {
+                if (child.classList.contains("page-layer")) {
+                    this.pageContainer.removeChild(child);
+                }
+            });
     }
 
     private  createLayerDiv(height: number, width: number): HTMLDivElement {
