@@ -12,13 +12,26 @@ Copyright &copy; 2018 studer + raimann ag, <a rel="license" href="http://creativ
 
 # Getting Started
 
+As a note, PDF Wrap does not come with a bundled js file.
+
+If you want a bundled version, you have to bundle it yourself (e.g. with [webpack](https://webpack.js.org/)).
+
 ## Requirements
 
-* Target language level: ES5
-* Module: commonjs
+* Language level: ES5
+* Module System: commonjs
+* `FileReader` support
+* `Blob` support
 
-If you have to use a lower target language level you have
-to transpile the code yourself (e.g. with [Babel](https://babeljs.io/)).
+*Easy way to check the `FileReader` and `Blob` support*
+
+```javascript
+if (window.FileReader && window.Blob) {
+  // Great success! All the required File APIs are supported.
+} else {
+  alert('The required File APIs are not fully supported in this browser.');
+}
+```
 
 ## Installing
 
