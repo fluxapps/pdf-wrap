@@ -45,6 +45,7 @@ export class StorageAdapterWrapper implements StorageAdapter {
                 return await adapter.loadPage(uri, pageNumber);
             } catch (e) {
                 this.log.info("Skip storage adapter");
+                this.log.debug(`Error: ${e.message}`);
             }
         }
 

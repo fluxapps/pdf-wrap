@@ -15,7 +15,7 @@ import {LoggerFactory} from "../log-config";
  */
 export class RescaleManager {
 
-    private log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/rescale-manager:RescaleManager");
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/rescale-manager:RescaleManager");
 
     constructor(
         private readonly viewer: PDFViewer
