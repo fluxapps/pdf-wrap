@@ -26,7 +26,7 @@ export class LoggerFactory {
         config.logGroups.forEach((it) => {
 
             if (!it.logger.startsWith("ch/studerraimann/pdfwrap")) {
-                throw new Error("LogGroup.directory must start with: ch/studerraimann/pdfwrap");
+                throw new Error("LogGroup#logger must start with: ch/studerraimann/pdfwrap");
             }
 
             const regex: RegExp = new RegExp(`${this.escapeDots(it.logger)}.+`);
