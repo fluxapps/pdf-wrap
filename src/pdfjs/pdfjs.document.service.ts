@@ -176,6 +176,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
             .position(highlight.position)
             .fillColor(highlight.fillColor)
             .borderColor(highlight.borderColor)
+            .borderWidth(highlight.borderWidth)
             .paint();
     }
 
@@ -183,6 +184,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
         on.polyLine()
             .id(drawing.id)
             .borderColor(drawing.borderColor)
+            .borderWidth(drawing.borderWidth)
             .coordinates(drawing.coordinates)
             .paint();
     }
