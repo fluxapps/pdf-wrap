@@ -45,7 +45,7 @@ You can download the PDF Wrap distribution from the npm repository.
 # Using PDF Wrap
 
 This section goes into more detail about how you should use PDF Wrap.
-It covers topics such as using the api, toolbox and how to provide your storage.
+It covers topics such as using the api, toolbox and how to provide your storage adapter.
 
 ## Setup HTML
 
@@ -184,6 +184,44 @@ Options:
 
 Learn more about the [StorageAdapter](#provide-your-storage-adapter)
 
+### LayerStorage Example
+
+We assume
+
+* the `layerStorage` is "mem://my-pdf"
+* the registered storage adapter scheme is "mem://"
+
+```typescript
+// load the document
+documentService.loadWith({
+    container: document.getElementById("viewerContainer"),
+    pdf: "assets/resources/my-pdf.pdf",
+    layerStorage: URI.from("mem://my-pdf")
+}).then(pdf => {
+    // you'll get a PDFDocument instance
+});
+
+// the storage adapter will get the full URI
+export class MyStorageAdapter implements StorageAdapter {
+    
+    register(): URI {
+        return URI.from("mem://"); // we only provide the same scheme
+    }
+    
+    start(uri: URI, events: PageEventCollection): void {
+        // uri is mem://my-pdf
+    }
+    
+    loadPage(uri: URI, pageNumber: number): Promise<PageOverlay> {
+        // uri is mem://my-pdf
+    }
+}
+```
+
+It is important to know, that for the `register` method, only the URI scheme is considered.
+Where in the `start` and `loadPage` method, the full URI used by the `loadWith` method is provided.
+Otherwise, you would not be able to store different PDFs with the same Adapter.
+
 ## Using the toolbox
 
 Once you have loaded the PDF, you can access its toolbox.
@@ -316,11 +354,11 @@ export class MyStorageAdapter implements StorageAdapter {
         return URI.from("file://");
     }
     
-    start(events: PageEventCollection): void {
+    start(uri: URI, events: PageEventCollection): void {
         // listen on events
     }
     
-    loadPage(pageNumber: number): Promise<PageOverlay> {
+    loadPage(uri: URI, pageNumber: number): Promise<PageOverlay> {
         // load page data
     }
 }
@@ -328,16 +366,20 @@ export class MyStorageAdapter implements StorageAdapter {
 
 You have to implement three methods: `register`, `start` and `loadPage`.
 
-### `register`
+---
+
+`register`
 
 The schema of the returned `URI` determines if your storage provider is used or not.
 Which schema is used to load a PDF must be defined when the PDF is loaded.
 
 Read more about how to load a PDF: [Using the PDF Document Service](#using-the-pdf-document-service)
 
-### `start`
+---
 
-Will be invoked when your storage provider is used. It'll provide a event collection,
+`start`
+
+Will be invoked when your storage provider is used. It'll provide the URI and a event collection,
 where you can listen to store the different annotations made on a PDF page.
 
 Each event is a hot `Observable` which emits specific objects.
@@ -346,18 +388,20 @@ Each event is a hot `Observable` which emits specific objects.
 * `afterRectangleRendered` - Emits a `DrawElement` with the rendered `Rectangle` information.
 * `afterElementRemoved` - Emits a `DrawElement` with the `Element` information which was removed.
 
-> A `DrawEvent` contains a `layer` and a `pageNumber` property which you should store as well,
+A `DrawEvent` contains a `layer` and a `pageNumber` property which you should store as well,
 because you have to provide highlights and drawings separated in your `loadPage` method.
 The `layer` property is either `PageLayer.HIGHLIGHT` or `PageLayer.DRAWING`.
 
-### `loadPage`
+---
+
+`loadPage`
 
 You have to provide the page information to the given `pageNumber`.
 Highlights and drawings are separated. In order to build the different elements
 you should use the `ElementBuilderFactory` class.
 
 ```typescript
-async loadPage(pageNumber: number): Promise<PageOverlay> {
+async loadPage(uri, URI, pageNumber: number): Promise<PageOverlay> {
     
     // load your page information
     
@@ -415,6 +459,17 @@ export class MySkippableStorageAdapter extends SkippableStorgaeAdapter {
 ```
 
 The `skip` method will abort the loading process of this adapter and continues with the next available adapter.
+
+### Empty Storage Adapter
+
+If you don't want to provide a `StorageAdapter` you can register an `EmptyStorageAdapter` instance
+
+```typescript
+StorageRegistry.instance
+    .add(new EmptyStorageAdapter(URI.from("ex://")));
+```
+
+> You should only provide the `EmptyStorageAdapter` if you are not using the toolbox or highlighting at all.
 
 ## Using the `ElementBuilderFactory`
 
