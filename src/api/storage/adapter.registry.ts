@@ -12,7 +12,15 @@ import {LoggerFactory} from "../../log-config";
  */
 export class StorageRegistry {
 
-    static readonly instance: StorageRegistry = new StorageRegistry();
+    static get instance(): StorageRegistry {
+        if (this._instance === undefined) {
+            this._instance = new StorageRegistry();
+        }
+
+        return this._instance;
+    }
+
+    private static _instance?: StorageRegistry;
 
     private readonly adapterMap: Map<string, Array<StorageAdapter>> = new Map();
 
