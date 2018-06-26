@@ -11,10 +11,10 @@
     "copyResources": "cp src/index.html build/www && cp -r src/assets/* build/www/assets",
     "build": "yarn webpack && yarn run copyResources && yarn run copyPDFjs && yarn run copyCSS",
     "clean": "rm -r build",
-    "start": "yarn run build"
+    "start": "yarn run build && yarn light-server -s build/www"
   },
   "devDependencies": {
-    "typescript": "^2.9.1",
+    "light-server": "^2.5.1",
     "webpack": "^4.12.0",
     "webpack-cli": "^3.0.3"
   },
