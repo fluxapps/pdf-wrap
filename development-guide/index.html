@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <meta name="author" content="studer + raimann ag">
-        
+        <link rel="canonical" href="https://studer-raimann.github.io/pdf-wrap/development-guide/">
         <link rel="shortcut icon" href="../img/favicon.ico">
         <title>Development Guide - PDF Wrap</title>
         <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
@@ -132,6 +132,8 @@
 <li>Yarn - <a href="https://yarnpkg.com/lang/en">https://yarnpkg.com/lang/en</a></li>
 <li>Node.js - <a href="https://nodejs.org/en/">https://nodejs.org/en/</a></li>
 <li>MkDocs - <a href="https://www.mkdocs.org/">https://www.mkdocs.org/</a></li>
+<li>ghp-import - <a href="https://github.com/davisp/ghp-import">https://github.com/davisp/ghp-import</a><br>
+You need ghp-import on your PATH, otherwise you won't be able to publish the documentation.</li>
 </ul>
 <h1 id="architecture">Architecture</h1>
 <p><img alt="alt PDF Wrap Architecture" src="../resources/img/pdf_wrap_architecture.jpg" /></p>
@@ -238,8 +240,12 @@ Same as <code>package</code> but executes <code>clean</code> before</p>
 Uglifies the javascript code</p>
 <h2 id="docs-tasks">docs Tasks</h2>
 <p>The <strong>docs</strong> tasks contain tasks about generating or publishing the documentation.</p>
+<p><strong><code>mkdocs</code></strong><br>
+Generates the MkDocs documentation and includes the typedoc.</p>
 <p><strong><code>typedoc</code></strong><br>
 Generates the typedoc api documentation.</p>
+<p><strong><code>publishDoc</code></strong><br>
+Generates and publishes the MkDocs.</p>
 <h2 id="other-tasks">other Tasks</h2>
 <p>The <strong>other</strong> tasks contain tasks which have more a general purpose, rather than something specific.</p>
 <p><strong><code>copyDependencies</code></strong><br>
