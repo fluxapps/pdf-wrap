@@ -9,6 +9,7 @@ pages:
   - Guides:
     - 'Basic PDF viewer': guides/basic-viewer.md
   - Reference Documentation: reference-documentation.md
+  - Development Guide: development-guide.md
 
 site_dir: "build/docs/mkdocs"
 
