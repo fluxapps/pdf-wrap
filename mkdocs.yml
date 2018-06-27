@@ -1,6 +1,7 @@
 site_name: PDF Wrap
-site_description: "Full documentation of PDF Wrap. Includes guides, api and reference documentation and examples."
+site_description: "Full documentation of PDF Wrap. Includes guides, API documentation, reference documentation, development guide and examples."
 site_author: "studer + raimann ag"
+site_url: "https://studer-raimann.github.io/pdf-wrap"
 
 copyright: "Creative Commons Attribution-ShareAlike 4.0 International License"
 

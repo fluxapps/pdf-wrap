@@ -15,6 +15,8 @@ Copyright &copy; 2018 studer + raimann ag, <a rel="license" href="http://creativ
 * Yarn - [https://yarnpkg.com/lang/en](https://yarnpkg.com/lang/en)
 * Node.js - [https://nodejs.org/en/](https://nodejs.org/en/)
 * MkDocs - [https://www.mkdocs.org/](https://www.mkdocs.org/)
+* ghp-import - [https://github.com/davisp/ghp-import](https://github.com/davisp/ghp-import)<br>
+You need ghp-import on your PATH, otherwise you won't be able to publish the documentation.
 
 # Architecture
 
@@ -158,6 +160,9 @@ Generates the MkDocs documentation and includes the typedoc.
 
 **`typedoc`**<br>
 Generates the typedoc api documentation.
+
+**`publishDoc`**<br>
+Generates and publishes the MkDocs.
 
 ## other Tasks
 

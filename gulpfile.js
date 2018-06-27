@@ -116,6 +116,21 @@ gulp.task("typedoc", () => {
         }));
 });
 
+// --- publishDoc
+/*
+ * Builds and publishes the documentation
+ */
+gulp.task("publishDoc", ["mkdocs"], (done) => {
+
+    spawn("ghp-import", [`${appProperties.build.dirs.docs}/mkdocs`, "-p"], {stdio: "inherit"})
+        .once("exit", function (code) {
+            if (code === 0) {
+                done();
+            } else {
+                done(`Process finished with exit code ${code}`);
+            }
+        });
+});
 
 // other ----------------------------------------------------
 
