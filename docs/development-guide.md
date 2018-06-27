@@ -182,6 +182,43 @@ TODO: Write manual
 
 # Architecture
 
+![alt PDF Wrap Architecture](resources/img/pdf_wrap_architecture.jpg)
+
+The *API exposed to the user* defines mainly interfaces a user can use. In contrast
+to the *paint*, which implements the possibility to draw, is only used internal of PDF Wrap.
+The *pdfjs* is the PDF.js implementation for the API.
+
+## Displaying PDF Pages
+
+The PDF pages are displayed by PDF.js. But the highlight as well as the drawing are displayed by PDF Wrap.
+
+Every page is displayed in a specific way.
+
+![alt PDF Wrap Pages Structure](resources/img/pdf_wrap_pages_structure.jpeg)
+
+**HIGHLIGHT LAYER**<br>
+This layer contains any text highlighting with a 100% opacity. It is beneath the actual
+rendered PDF page, so it won't cover the text.
+
+**PDF Layer**<br>
+Is the actual PDF page rendered as svg by PDF.js.
+
+**HIGHLIGHT LAYER TRANSPARENCY**<br>
+Is the same as the *HIGHLIGHT Layer* but with less opacity (about 40%). This layer
+is required to highlight text which is not on a white background. With only
+the *HIGHLIGHT LAYER*, the highlight would not be visible at all, because of the
+non-transparent background of the *PDF LAYER*. The transparency is required
+to not cover the *PDF LAYER* completely.
+
+**DRAW LAYER**<br>
+The layer contains all drawings made by a user.
+
+**TEXT LAYER**<br>
+Is the invisible actual text of the PDF page. Is rendered by PDF.js and
+enables the text selection, because on the *PDF LAYER* is no text selection
+available. Must be invisible, because its only purpose is the text selection.
+The text itself may not have the correct font or exact position on the page.
+
 # Logging
 
 PDF Wrap uses [typescript-logging](https://github.com/mreuvers/typescript-logging).
