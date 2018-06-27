@@ -90,6 +90,9 @@ So either wrap it with another `div` which is aligned like you want it,
 or override the `pdf viewport` css styles. Anyway, make sure `pdf viewport` has
 a fix height, otherwise some features of PDF Wrap will not work.
 
+> A fix height can also be a percentage based height like `height: 100%`. The viewport container
+should not be larger than the window, otherwise you'll get doubled scrollbars.
+
 ## Setup PDF.js
 
 Because PDF Wrap uses [PDF.js](https://mozilla.github.io/pdf.js/) under the hood,
@@ -107,7 +110,7 @@ setWorkerSrc("assets/libs/pdf-wrap/pdf.worker.js");
 setMapUrl("assets/libs/pdf-wrap/cMaps");
 ```
 
-In this case, we assuming, that the `pdf.worker.js` and the cMaps are
+In this case, we assume, that the `pdf.worker.js` and the cMaps are
 inside the `assets/libs/pdf-wrap` directory of the built project.
 
 ## Setup Logger
