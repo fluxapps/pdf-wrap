@@ -10,84 +10,50 @@ Copyright &copy; 2018 studer + raimann ag, <a rel="license" href="http://creativ
 
 ---
 
-# Tasks
+# Prerequisites
 
-PDF Wrap uses [Gulp](https://gulpjs.com/) for its task management.
+* Yarn - [https://yarnpkg.com/lang/en](https://yarnpkg.com/lang/en)
+* Node.js - [https://nodejs.org/en/](https://nodejs.org/en/)
+* MkDocs - [https://www.mkdocs.org/](https://www.mkdocs.org/)
 
-The `gulpfile.js` uses the `app.properties.js` file to get specific directories.
+# Architecture
 
-The `app.properties.js` file just exports an object, which resolves important directory paths absolute.
+![alt PDF Wrap Architecture](resources/img/pdf_wrap_architecture.jpg)
 
-## build Tasks
+The *API exposed to the user* defines mainly interfaces a user can use. In contrast
+to the *paint*, which implements the possibility to draw, is only used internal of PDF Wrap.
+The *pdfjs* is the PDF.js implementation for the API.
 
-The **build** tasks contain tasks all around building the project.
+## Displaying PDF Pages
 
-**`clean`**<br>
-Cleans the build by removing the `build` directory.
+The PDF pages are displayed by PDF.js. But the highlight as well as the drawing are displayed by PDF Wrap.
 
-**`build`**<br>
-Transpiles and lints typescript and runs the tests.
+Every page is displayed in a specific way.
 
-**`package`**<br>
-Packs the project ready to use. Copies resources needed and uglifies the javascript code.
+![alt PDF Wrap Pages Structure](resources/img/pdf_wrap_pages_structure.jpeg)
 
-**`repackage`**<br>
-Same as `package` but executes `clean` before
+**HIGHLIGHT LAYER**<br>
+This layer contains any text highlighting with a 100% opacity. It is beneath the actual
+rendered PDF page, so it won't cover the text.
 
-**`uglifyJS`**<br>
-Uglifies the javascript code
+**PDF Layer**<br>
+Is the actual PDF page rendered as svg by PDF.js.
 
-## docs Tasks
+**HIGHLIGHT LAYER TRANSPARENCY**<br>
+Is the same as the *HIGHLIGHT Layer* but with less opacity (about 40%). This layer
+is required to highlight text which is not on a white background. With only
+the *HIGHLIGHT LAYER*, the highlight would not be visible at all, because of the
+non-transparent background of the *PDF LAYER*. The transparency is required
+to not cover the *PDF LAYER* completely.
 
-The **docs** tasks contain tasks about generating or publishing the documentation.
+**DRAW LAYER**<br>
+The layer contains all drawings made by a user.
 
-**`typedoc`**<br>
-Generates the typedoc api documentation.
-
-## other Tasks
-
-The **other** tasks contain tasks which have more a general purpose, rather than something specific.
-
-**`copyDependencies`**<br>
-Copies the projects dependencies.
-
-**`copyCMaps`**<br>
-Copies the cMaps of PDF.js
-
-**`copyPDFJS`**<br>
-Copies the PDF.js files needed.
-
-**`copyCSS`**<br>
-Copies and concat the CSS files needed.
-
-**`transformPackageJSON`**<br>
-Declares every dependency used in package.json as `bundledDependencies`.
-This is needed, because PDF Wrap does not come with a bundled js file.
-Therefore npm needs to know, that the dependencies are bundled.
-In addition, `devDependecies` are cleared, because they are not needed for production.
-
-**`transpileTypescript`**<br>
-Transpiles typescript to javascript and generates inline source maps.
-
-## npm Tasks
-
-The **npm** tasks contain tasks used for [npmjs](https://www.npmjs.com/).
-
-**`pack`**<br>
-Runs `yarn pack` for the `build/distributions/npm` directory.
-
-**`publish`**<br>
-Publishes the project to npm.
-
-## verification Tasks
-
-The **verification** tasks contain tasks about testing.
-
-**`test`**<br>
-Runts the unit tests.
-
-**`lint`**<br>
-Lints the typescript code.
+**TEXT LAYER**<br>
+Is the invisible actual text of the PDF page. Is rendered by PDF.js and
+enables the text selection, because on the *PDF LAYER* is no text selection
+available. Must be invisible, because its only purpose is the text selection.
+The text itself may not have the correct font or exact position on the page.
 
 # Directory Structure
 
@@ -156,68 +122,87 @@ It is structured in a specific way.
 * With CHANGELOG file
 * With modified package.json file
 
-# MkDocs
+# Tasks
 
-The PDF Wrap documentation is built with [MkDocs](https://www.mkdocs.org/).
+PDF Wrap uses [Gulp](https://gulpjs.com/) for its task management.
 
-The documentation contains the following parts.
+The `gulpfile.js` uses the `app.properties.js` file to get specific directories.
 
-**Home**<br>
-The index of the documentation. Contains a quick start and link to other parts of the documentation.
+The `app.properties.js` file just exports an object, which resolves important directory paths absolute.
 
-**Guides**<br>
-Contains guides with a specific example of a specific part of PDF Wrap.
+## build Tasks
 
-For example: How to implement a Storage Adapter
+The **build** tasks contain tasks all around building the project.
 
-**Reference Documentation**<br>
-Contains the full in-depth documentation about how to use PDF Wrap.
+**`clean`**<br>
+Cleans the build by removing the `build` directory.
 
-**Development Guide**<br>
-Contains guides about the source code and how to develop with PDF Wrap.
+**`build`**<br>
+Transpiles and lints typescript and runs the tests.
 
-## How to publish the documentation
+**`package`**<br>
+Packs the project ready to use. Copies resources needed and uglifies the javascript code.
 
-TODO: Write manual
+**`repackage`**<br>
+Same as `package` but executes `clean` before
 
-# Architecture
+**`uglifyJS`**<br>
+Uglifies the javascript code
 
-![alt PDF Wrap Architecture](resources/img/pdf_wrap_architecture.jpg)
+## docs Tasks
 
-The *API exposed to the user* defines mainly interfaces a user can use. In contrast
-to the *paint*, which implements the possibility to draw, is only used internal of PDF Wrap.
-The *pdfjs* is the PDF.js implementation for the API.
+The **docs** tasks contain tasks about generating or publishing the documentation.
 
-## Displaying PDF Pages
+**`mkdocs`**<br>
+Generates the MkDocs documentation and includes the typedoc.
 
-The PDF pages are displayed by PDF.js. But the highlight as well as the drawing are displayed by PDF Wrap.
+**`typedoc`**<br>
+Generates the typedoc api documentation.
 
-Every page is displayed in a specific way.
+## other Tasks
 
-![alt PDF Wrap Pages Structure](resources/img/pdf_wrap_pages_structure.jpeg)
+The **other** tasks contain tasks which have more a general purpose, rather than something specific.
 
-**HIGHLIGHT LAYER**<br>
-This layer contains any text highlighting with a 100% opacity. It is beneath the actual
-rendered PDF page, so it won't cover the text.
+**`copyDependencies`**<br>
+Copies the projects dependencies.
 
-**PDF Layer**<br>
-Is the actual PDF page rendered as svg by PDF.js.
+**`copyCMaps`**<br>
+Copies the cMaps of PDF.js
 
-**HIGHLIGHT LAYER TRANSPARENCY**<br>
-Is the same as the *HIGHLIGHT Layer* but with less opacity (about 40%). This layer
-is required to highlight text which is not on a white background. With only
-the *HIGHLIGHT LAYER*, the highlight would not be visible at all, because of the
-non-transparent background of the *PDF LAYER*. The transparency is required
-to not cover the *PDF LAYER* completely.
+**`copyPDFJS`**<br>
+Copies the PDF.js files needed.
 
-**DRAW LAYER**<br>
-The layer contains all drawings made by a user.
+**`copyCSS`**<br>
+Copies and concat the CSS files needed.
 
-**TEXT LAYER**<br>
-Is the invisible actual text of the PDF page. Is rendered by PDF.js and
-enables the text selection, because on the *PDF LAYER* is no text selection
-available. Must be invisible, because its only purpose is the text selection.
-The text itself may not have the correct font or exact position on the page.
+**`transformPackageJSON`**<br>
+Declares every dependency used in package.json as `bundledDependencies`.
+This is needed, because PDF Wrap does not come with a bundled js file.
+Therefore npm needs to know, that the dependencies are bundled.
+In addition, `devDependecies` are cleared, because they are not needed for production.
+
+**`transpileTypescript`**<br>
+Transpiles typescript to javascript and generates inline source maps.
+
+## npm Tasks
+
+The **npm** tasks contain tasks used for [npmjs](https://www.npmjs.com/).
+
+**`pack`**<br>
+Runs `yarn pack` for the `build/distributions/npm` directory.
+
+**`publish`**<br>
+Publishes the project to npm.
+
+## verification Tasks
+
+The **verification** tasks contain tasks about testing.
+
+**`test`**<br>
+Runts the unit tests.
+
+**`lint`**<br>
+Lints the typescript code.
 
 # Logging
 
@@ -279,6 +264,31 @@ PDF Wrap provides an API to configure the logging output way down to a function 
 This way, the logger names are unified and as a result the configuration can be applied to every logger.
 
 Read the [Reference Documentation about logging](reference-documentation.md#setup-logger) to understand the concept better. 
+
+# MkDocs
+
+The PDF Wrap documentation is built with [MkDocs](https://www.mkdocs.org/).
+
+The documentation contains the following parts.
+
+**Home**<br>
+The index of the documentation. Contains a quick start and link to other parts of the documentation.
+
+**Guides**<br>
+Contains guides with a specific example of a specific part of PDF Wrap.
+
+For example: How to implement a Storage Adapter
+
+**Reference Documentation**<br>
+Contains the full in-depth documentation about how to use PDF Wrap.
+
+**Development Guide**<br>
+Contains guides about the source code and how to develop with PDF Wrap.
+
+## How to publish the documentation
+
+TODO: Write manual
+
 
 # Unit Testing
 
@@ -429,22 +439,6 @@ Read more about [Unused Parameters](#unused-parameters)
 Therefore, an interface can not be mocked by creating an abstract class of it
 and use the abstract class as the mock class.
 
-# PDF.js
-
-PDF Wrap makes a high usage of [PDF.js](https://mozilla.github.io/pdf.js/), which is written in Javascript.
-
-The distribution of PDF.js is only the parsing functionality. But we also use their PDF Viewer.
-Because of that, some parts of the PDF.js node module will be copied to the build output.
-
-## Type def
-
-[Definitelytyped](https://definitelytyped.org/) contains a type def for PDF.js, but unfortunately it is not correct.
-Therefore we have our own type def of PDF.js, located in `src/declarations/pdfjs`.
-
-**This type def is not complete and contains only what we need right now.**
-
-Whenever you need more of the API of PDF.js, you have to extend the type def.
-
 # Miscellaneous
 
 ## CSS
@@ -504,3 +498,18 @@ In addition to the the description in a type doc, there should be the following 
 * `@since current-pdfwrap-version` - e.g. `@since 1.0.0`
 * `@internal` - is optional and should be declared whenever something is only used intern of PDF Wrap
 
+## PDF.js
+
+PDF Wrap makes a high usage of [PDF.js](https://mozilla.github.io/pdf.js/), which is written in Javascript.
+
+The distribution of PDF.js is only the parsing functionality. But we also use their PDF Viewer.
+Because of that, some parts of the PDF.js node module will be copied to the build output.
+
+### Type def
+
+[Definitelytyped](https://definitelytyped.org/) contains a type def for PDF.js, but unfortunately it is not correct.
+Therefore we have our own type def of PDF.js, located in `src/declarations/pdfjs`.
+
+**This type def is not complete and contains only what we need right now.**
+
+Whenever you need more of the API of PDF.js, you have to extend the type def.

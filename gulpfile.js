@@ -79,6 +79,25 @@ gulp.task("uglifyJS", ["build"], function () {
 // docs -----------------------------------------------------
 
 // --- mkdocs
+/*
+ * Generates the full PDF Wrap documentation
+ */
+gulp.task("mkdocs", ["typedoc"], (done) => {
+
+    spawn("mkdocs", ["build"], {stdio: "inherit"})
+        .once("exit", function (code) {
+            if (code === 0) {
+
+                gulp.src(`${appProperties.build.dirs.docs}/typedoc/**/*`)
+                    .pipe(gulp.dest(`${appProperties.build.dirs.docs}/mkdocs/typedoc`))
+                    .on("end", done)
+                    .on("error", done);
+
+            } else {
+                done(`Process finished with exit code ${code}`);
+            }
+        });
+});
 
 // --- typedoc
 /*
