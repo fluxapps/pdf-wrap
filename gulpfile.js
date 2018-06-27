@@ -151,23 +151,6 @@ gulp.task("copyCSS", () => {
         .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap/assets`))
 });
 
-// --- lint
-/*
- * Lints the typescript code
- */
-gulp.task("lint", () =>
-    gulp.src(`${appProperties.root}/src/**/*.ts`)
-        .pipe(gulpTslint({
-            formatter: "stylish",
-            program: tslint.Linter.createProgram("./tsconfig.json"), // required for type aware rules
-            configuration: "./tslint.json"
-        }))
-        .pipe(gulpTslint.report({
-            summarizeFailureOutput: true,
-            allowWarnings: false
-        }))
-);
-
 // --- transformPackageJSON
 /*
  * Declares every dependency used in package.json as bundledDependencies.
@@ -206,7 +189,7 @@ gulp.task("transpileTypescript", function () {
 /*
  * Executes yarn pack.
  */
-gulp.task("pack", ["package"], function (done) {
+gulp.task("pack", ["repackage"], function (done) {
 
     spawn("yarn", ["pack"], {stdio: "inherit", cwd: `${appProperties.build.dirs.dist}/npm`})
         .once("exit", function (code) {
@@ -250,19 +233,19 @@ gulp.task("test", ["transpileTypescript"], function (done) {
         });
 });
 
-// development ----------------------------------------------
-
-// --- run
+// --- lint
 /*
- * Runs a development project to test the features.
+ * Lints the typescript code
  */
-gulp.task("start", ["repackage"], (done) => {
-    spawn("yarn", ["run", "build"], {stdio: "inherit", cwd: `${appProperties.root}/examples/dev-viewer`})
-        .once("exit", function (code) {
-            if (code === 0) {
-                done();
-            } else {
-                done(`Process finished with exit code ${code}`);
-            }
-        });
-});
+gulp.task("lint", () =>
+    gulp.src(`${appProperties.root}/src/**/*.ts`)
+        .pipe(gulpTslint({
+            formatter: "stylish",
+            program: tslint.Linter.createProgram("./tsconfig.json"), // required for type aware rules
+            configuration: "./tslint.json"
+        }))
+        .pipe(gulpTslint.report({
+            summarizeFailureOutput: true,
+            allowWarnings: false
+        }))
+);
