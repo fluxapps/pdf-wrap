@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="studer + raimann ag">
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Reference Documentation - PDF Wrap</title>
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="..">PDF Wrap</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                    <li >
+                        <a href="..">Home</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Guides <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+<li >
+    <a href="../guides/basic-viewer/">Basic PDF viewer</a>
+</li>
+                        </ul>
+                    </li>
+                    <li class="active">
+                        <a href="./">Reference Documentation</a>
+                    </li>
+                    <li >
+                        <a href="../development-guide/">Development Guide</a>
+                    </li>
+                </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                    <li >
+                        <a rel="next" href="../guides/basic-viewer/">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../development-guide/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#pdf-wrap-reference-documentation">PDF Wrap Reference Documentation</a></li>
+        <li class="main "><a href="#getting-started">Getting Started</a></li>
+            <li><a href="#requirements">Requirements</a></li>
+            <li><a href="#installing">Installing</a></li>
+        <li class="main "><a href="#using-pdf-wrap">Using PDF Wrap</a></li>
+            <li><a href="#setup-html">Setup HTML</a></li>
+            <li><a href="#setup-pdfjs">Setup PDF.js</a></li>
+            <li><a href="#setup-logger">Setup Logger</a></li>
+            <li><a href="#using-the-pdf-document-service">Using the PDF Document Service</a></li>
+            <li><a href="#using-the-toolbox">Using the toolbox</a></li>
+            <li><a href="#using-the-highlighting">Using the highlighting</a></li>
+            <li><a href="#provide-your-storage-adapter">Provide your storage adapter</a></li>
+            <li><a href="#using-the-elementbuilderfactory">Using the ElementBuilderFactory</a></li>
+        <li class="main "><a href="#pdf-wrap-features">PDF Wrap Features</a></li>
+            <li><a href="#search">Search</a></li>
+            <li><a href="#outline">Outline</a></li>
+            <li><a href="#page-thumbnails">Page Thumbnails</a></li>
+            <li><a href="#page-navigation">Page Navigation</a></li>
+            <li><a href="#zoom">Zoom</a></li>
+        <li class="main "><a href="#miscellaneous">Miscellaneous</a></li>
+            <li><a href="#using-colors">Using colors</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="pdf-wrap-reference-documentation">PDF Wrap Reference Documentation</h1>
+<p><strong>Authors</strong></p>
+<p>Nicolas Märchy</p>
+<p><strong>Version 0.0.1</strong></p>
+<p>Copyright &copy; 2018 studer + raimann ag, <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.</p>
+<hr />
+<h1 id="getting-started">Getting Started</h1>
+<p>As a note, PDF Wrap does not come with a bundled js file.</p>
+<p>If you want a bundled version, you have to bundle it yourself (e.g. with <a href="https://webpack.js.org/">webpack</a>).</p>
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li>Language level: ES5</li>
+<li>Module System: commonjs</li>
+<li><code>FileReader</code> support</li>
+<li><code>Blob</code> support</li>
+</ul>
+<p><em>Easy way to check the <code>FileReader</code> and <code>Blob</code> support</em></p>
+<pre><code class="javascript">if (window.FileReader &amp;&amp; window.Blob) {
+  // Great success! All the required File APIs are supported.
+} else {
+  alert('The required File APIs are not fully supported in this browser.');
+}
+</code></pre>
+
+<h2 id="installing">Installing</h2>
+<p>PDF Wrap can be installed with npm or yarn.</p>
+<h3 id="yarn-install">Yarn Install</h3>
+<pre><code class="shell">yarn add pdf-wrap
+</code></pre>
+
+<h3 id="npm-install">NPM Install</h3>
+<pre><code class="npm">npm i pdf-wrap
+</code></pre>
+
+<h3 id="manual-installation">Manual Installation</h3>
+<p>You can download the PDF Wrap distribution from the npm repository.</p>
+<ul>
+<li><a href="https://www.npmjs.com/">pdf-wrap.tar.zip</a></li>
+</ul>
+<h1 id="using-pdf-wrap">Using PDF Wrap</h1>
+<p>This section goes into more detail about how you should use PDF Wrap.
+It covers topics such as using the api, toolbox and how to provide your storage adapter.</p>
+<h2 id="setup-html">Setup HTML</h2>
+<p>In order to use PDF Wrap properly you have to setup a minimalistic html.</p>
+<h3 id="styles">Styles</h3>
+<p>In order to display the PDF properly you should include the following css file.</p>
+<ul>
+<li><pdf-wrap-root>/assets/css/pdf-wrap.css</li>
+</ul>
+<h3 id="html-container">HTML container</h3>
+<p>You have to setup a html container in a specific way.</p>
+<pre><code class="html">&lt;div class=&quot;pdf viewport&quot;&gt;
+
+        &lt;div class=&quot;pdf-container&quot;&gt;
+            &lt;div class=&quot;pdfViewer&quot;&gt;&lt;/div&gt;
+        &lt;/div&gt;
+
+&lt;/div&gt;
+</code></pre>
+
+<p>Where the <code>div</code> with the class <code>pdf viewport</code> is your viewport. It is an absolute
+positioned <code>div</code> which will consume the entire area of its relative positioned parent.
+So either wrap it with another <code>div</code> which is aligned like you want it,
+or override the <code>pdf viewport</code> css styles. Anyway, make sure <code>pdf viewport</code> has
+a fix height, otherwise some features of PDF Wrap will not work.</p>
+<blockquote>
+<p>A fix height can also be a percentage based height like <code>height: 100%</code>. The viewport container
+should not be larger than the window, otherwise you'll get doubled scrollbars.</p>
+</blockquote>
+<h2 id="setup-pdfjs">Setup PDF.js</h2>
+<p>Because PDF Wrap uses <a href="https://mozilla.github.io/pdf.js/">PDF.js</a> under the hood,
+you have to provide the <code>pdf.worker.js</code> as well as some cMaps.</p>
+<p>The <code>pdf.worker.js</code> and the cMaps are delivered in the <code>assets</code> directory of PDF Wrap.</p>
+<p>Depending on how you build your project, either copy they to a directory of your choice or provide them
+somehow as resources.</p>
+<p>Either way you can set the worker and cMap url</p>
+<pre><code class="typescript">setWorkerSrc(&quot;assets/libs/pdf-wrap/pdf.worker.js&quot;);
+setMapUrl(&quot;assets/libs/pdf-wrap/cMaps&quot;);
+</code></pre>
+
+<p>In this case, we assume, that the <code>pdf.worker.js</code> and the cMaps are
+inside the <code>assets/libs/pdf-wrap</code> directory of the built project.</p>
+<h2 id="setup-logger">Setup Logger</h2>
+<p>PDF Wrap has a default log configuration which logs everything from log level <code>Warn</code>.</p>
+<p>You can override the default config</p>
+<pre><code class="typescript">LoggerFactory.configure({
+    logGroups: [
+        {
+            logger: &quot;ch/studerraimann/pdfwrap&quot;,
+            logLevel: LogLevel.Trace
+        }
+    ]
+});
+</code></pre>
+
+<p>Each log group object accepts the property <code>logger</code> and <code>logLevel</code>.
+It allows you to define different log levels for different directories, files or even classes.</p>
+<hr />
+<p><code>logger</code> defines which directory, file class or function should be used</p>
+<p><strong>The string pattern scheme:</strong></p>
+<p><code>ch/studerraimann/pdfwrap/&lt;directory name&gt;/&lt;file name&gt;:&lt;class or function name&gt;</code></p>
+<ul>
+<li><code>ch/studerraimann/pdfwrap</code> - must be part of every logger</li>
+<li><code>/&lt;directory name&gt;</code> - can be any directory structure inside the <code>src</code> directory of the PDF Wrap source code</li>
+<li><code>/&lt;file name&gt;</code> - can be any file name (without extension) inside the specified directory name</li>
+<li><code>:&lt;class or function name&gt;</code> - can be any class or function name inside the specified file name</li>
+</ul>
+<p><strong>Example</strong></p>
+<ul>
+<li><code>ch/studerrraimann/pdfwrap/pdfjs</code> - for everything inside this directory</li>
+<li><code>ch/studerraimann/pdfwrap/pdfjs/highlight</code> - for everything inside this file</li>
+<li><code>ch/studerraimann/pdfwrap/pdfjs/highlight:TextHighlighting</code> - for the class <code>TextHighlighting</code> of the file <code>highlight</code></li>
+</ul>
+<hr />
+<p><code>logLevel</code> defines one of the log level to use on this group</p>
+<p>If you are using Typescript you can use the <code>typescript-logging</code> enumerator <code>LogLevel</code>.</p>
+<p>If you are using Javascript you have to use the index number which represents the log level of the enumerator:</p>
+<ul>
+<li>0 - trace</li>
+<li>1 - debug</li>
+<li>2 - info</li>
+<li>3 - warn</li>
+<li>4 - error</li>
+<li>5 - fatal</li>
+</ul>
+<h2 id="using-the-pdf-document-service">Using the PDF Document Service</h2>
+<p>The <code>PDFDocumentService</code> is your entry point to PDF Wrap. It provides a load method
+to load and display your PDF file.</p>
+<p>Create an instance of a <code>PDFDocumentService</code></p>
+<pre><code class="typescript">const documentService: PDFDocumentService = new PDFjsDocumentService();
+</code></pre>
+
+<blockquote>
+<p>Note that <code>PDFDocumentService</code> is the interface and <code>PDFjsDocumentService</code> is an implementation of it.</p>
+</blockquote>
+<p>You must provide the PDF as a <code>Blob</code></p>
+<pre><code class="typescript">documentService.loadWith({
+    container: document.getElementById(&quot;viewerContainer&quot;),
+    pdf: pdfData,
+    layerStorage: URI.from(&quot;file://my-pdf&quot;)
+}).then(pdf =&gt; {
+    // you'll get a PDFDocument instance
+});
+</code></pre>
+
+<p>Options:</p>
+<ul>
+<li>container: your div with the <code>pdf-container</code> class.</li>
+<li>pdf: a <code>Blob</code> representing your PDF file.    </li>
+<li>layerStorage: an <code>URI</code> to use for the storage adapter</li>
+</ul>
+<p>Learn more about the <a href="#provide-your-storage-adapter">StorageAdapter</a></p>
+<h3 id="layerstorage-example">LayerStorage Example</h3>
+<p>We assume</p>
+<ul>
+<li>the <code>layerStorage</code> is "mem://my-pdf"</li>
+<li>the registered storage adapter scheme is "mem://"</li>
+</ul>
+<pre><code class="typescript">// load the document
+documentService.loadWith({
+    container: document.getElementById(&quot;viewerContainer&quot;),
+    pdf: &quot;assets/resources/my-pdf.pdf&quot;,
+    layerStorage: URI.from(&quot;mem://my-pdf&quot;)
+}).then(pdf =&gt; {
+    // you'll get a PDFDocument instance
+});
+
+// the storage adapter will get the full URI
+export class MyStorageAdapter implements StorageAdapter {
+
+    register(): URI {
+        return URI.from(&quot;mem://&quot;); // we only provide the same scheme
+    }
+
+    start(uri: URI, events: PageEventCollection): void {
+        // uri is mem://my-pdf
+    }
+
+    loadPage(uri: URI, pageNumber: number): Promise&lt;PageOverlay&gt; {
+        // uri is mem://my-pdf
+    }
+}
+</code></pre>
+
+<p>It is important to know, that for the <code>register</code> method, only the URI scheme is considered.
+Where in the <code>start</code> and <code>loadPage</code> method, the full URI used by the <code>loadWith</code> method is provided.
+Otherwise, you would not be able to store different PDFs with the same Adapter.</p>
+<h2 id="using-the-toolbox">Using the toolbox</h2>
+<p>Once you have loaded the PDF, you can access its toolbox.</p>
+<p>The toolbox contains the following tools:</p>
+<ul>
+<li>Freehand - to draw with the mouse on a PDF page</li>
+<li>Eraser - to remove drawings made with the Freehand tool</li>
+</ul>
+<pre><code class="typescript">pdf.toolbox.freehand; // get the freehand tool instance
+pdf.toolbox.eraser; // get the eraser tool instance
+</code></pre>
+
+<p>All tools can be activated, deactivated or toggled</p>
+<pre><code class="typescript">pdf.toolbox.freehand.activate();
+pdf.toolbox.freehand.deactivate();
+pdf.toolbox.freehand.toggle();
+</code></pre>
+
+<p>All tools provide the current state through a property</p>
+<pre><code class="typescript">const isFreehandActive: boolean = pdf.toolbox.freehand.isActive;
+</code></pre>
+
+<p>All tools provide an <code>Observable</code> which emits the new state in case of a state change</p>
+<pre><code class="typescript">pdf.toolbox.freehand.stateChange
+    .subscribe(state =&gt; {
+        if (state.isActive) {
+            ...
+        } else {
+            ...
+        }
+    })
+</code></pre>
+
+<h3 id="freehand">Freehand</h3>
+<p><strong>Limitations:</strong></p>
+<ul>
+<li>The Freehand tool can <strong>not</strong> draw over multiple PDF pages at once</li>
+<li>The Freehand tool does <strong>not</strong> work with touchscreen</li>
+</ul>
+<p>The Freehand tool as additional setters:</p>
+<ul>
+<li><code>setColor</code> - accepts a <code>Color</code> instance and defines the color of the stroke</li>
+<li><code>setStrokeWidth</code> - accepts a number in px and defines the width of the stroke</li>
+</ul>
+<p>These setters can be chained</p>
+<pre><code class="typescript">pdf.toolbox.freehand
+    .setColor(colorFromHex(&quot;#000&quot;))
+    .setStrokeWidth(2);
+</code></pre>
+
+<p>Learn more about colors: <a href="#using-colors">Using colors</a></p>
+<h3 id="eraser">Eraser</h3>
+<p>The Eraser can only remove strokes made with the Freehand tool.</p>
+<p>In order to remove a stroke, the eraser tool needs to be activated
+and the stroke needs to be crossed with the mouse while the mouse is pressed.</p>
+<h2 id="using-the-highlighting">Using the highlighting</h2>
+<p><strong>Limitations:</strong></p>
+<ul>
+<li>The highlight feature can <strong>not</strong> highlight text over multiple PDF pages at once.</li>
+</ul>
+<p>Once you have loaded the PDF, you can use its highlighting feature.</p>
+<p>The highlighting feature is disabled by default. You have to enable it if you want to provide it to your users.</p>
+<p>Enable highlighting</p>
+<pre><code class="typescript">pdf.highlighting.enable();
+</code></pre>
+
+<p>This will register several event listeners in order to enable the highlighting feature.</p>
+<p>To actually highlight a text selection you have to use the <code>onTextSelection</code> Observable.
+It'll will emit a <code>TextSelection</code> instance, whenever a text selection is performed by the user.</p>
+<p>In contrast to the <code>onTextSelection</code>, the <code>onTextUnselection</code> Observable emits
+whenever a text selection is cleared.</p>
+<pre><code class="typescript">pdf.highlighting.onTextSelection
+    .subscribe(textSelection =&gt; {
+        // use the textSelection here
+    });
+
+pdf.highlighting.onTextUnselection
+    .subscribe(() =&gt; {
+        // disable button
+    })
+</code></pre>
+
+<p>This can be useful, if you want to enable or disable a button to highlight or to clear the text selection.</p>
+<p>The <code>TextSelection</code> instance provides a <code>clearHighlight</code> and a <code>highlight</code> method.</p>
+<ul>
+<li><code>clearHighlight</code> will remove any highlight of the selected text</li>
+<li><code>highlight</code> accepts a <code>Color</code> instance and highlights the selection with it</li>
+</ul>
+<p>Learn more about colors: <a href="#using-colors">Using colors</a></p>
+<blockquote>
+<p>PDF Wrap only adds or remove event listeners for the text selection.
+It does not actually disable the text select feature from a html page. If you want
+to disable it, you have to disable or enable it
+yourself through <a href="https://css-tricks.com/almanac/properties/u/user-select/">CSS</a>.</p>
+</blockquote>
+<h2 id="provide-your-storage-adapter">Provide your storage adapter</h2>
+<p>In order to use PDF Wrap, you must provide a storage adapter. A storage adapter
+is used to store and load PDF annotations.</p>
+<pre><code class="typescript">export class MyStorageAdapter implements StorageAdapter {
+
+    register(): URI {
+        return URI.from(&quot;file://&quot;);
+    }
+
+    start(uri: URI, events: PageEventCollection): void {
+        // listen on events
+    }
+
+    loadPage(uri: URI, pageNumber: number): Promise&lt;PageOverlay&gt; {
+        // load page data
+    }
+}
+</code></pre>
+
+<p>You have to implement three methods: <code>register</code>, <code>start</code> and <code>loadPage</code>.</p>
+<hr />
+<p><code>register</code></p>
+<p>The schema of the returned <code>URI</code> determines if your storage provider is used or not.
+Which schema is used to load a PDF must be defined when the PDF is loaded.</p>
+<p>Read more about how to load a PDF: <a href="#using-the-pdf-document-service">Using the PDF Document Service</a></p>
+<hr />
+<p><code>start</code></p>
+<p>Will be invoked when your storage provider is used. It'll provide the URI and a event collection,
+where you can listen to store the different annotations made on a PDF page.</p>
+<p>Each event is a hot <code>Observable</code> which emits specific objects.</p>
+<ul>
+<li><code>afterPolyLineRendered</code> - Emits a <code>DrawElement</code> with the rendered <code>PolyLine</code> information.</li>
+<li><code>afterRectangleRendered</code> - Emits a <code>DrawElement</code> with the rendered <code>Rectangle</code> information.</li>
+<li><code>afterElementRemoved</code> - Emits a <code>DrawElement</code> with the <code>Element</code> information which was removed.</li>
+</ul>
+<p>A <code>DrawEvent</code> contains a <code>layer</code> and a <code>pageNumber</code> property which you should store as well,
+because you have to provide highlights and drawings separated in your <code>loadPage</code> method.
+The <code>layer</code> property is either <code>PageLayer.HIGHLIGHT</code> or <code>PageLayer.DRAWING</code>.</p>
+<hr />
+<p><code>loadPage</code></p>
+<p>You have to provide the page information to the given <code>pageNumber</code>.
+Highlights and drawings are separated. In order to build the different elements
+you should use the <code>ElementBuilderFactory</code> class.</p>
+<pre><code class="typescript">async loadPage(uri, URI, pageNumber: number): Promise&lt;PageOverlay&gt; {
+
+    // load your page information
+
+    return new PageOverlay(
+        pageNumber,
+        [...], // your highlights
+        [...] // your drawings
+    )
+}
+</code></pre>
+
+<p>Read more about how to build elements: <a href="#using-the-elementbuilderfactory">Using the ElementBuilderFactory</a></p>
+<h3 id="add-your-storage-adapter-to-the-storageregistry">Add your storage adapter to the <code>StorageRegistry</code></h3>
+<p>In order to provide your storage adapter to PDF Wrap you have to add it
+to the <code>StorageRegistry</code>.</p>
+<p>The <code>StorageRegistry</code> is a singleton where you can add as many storage adapters as you want.</p>
+<pre><code class="typescript">
+StorageRegistry.instance
+    .add(new MyStorageAdapter())
+    .add(new MyStorageadapter2());
+
+</code></pre>
+
+<h3 id="skippable-storage-adapter">Skippable Storage Adapter</h3>
+<p>You can provide multiple storage adapters for the same URI schema. When the events from
+the <code>start</code> method are fired, every storage adapter will be used to store the data.
+But when the PDF is loaded only one storage adapter can be used.</p>
+<p>Usually the first storage adapter will be used. But you can make your storage adapter skippable.
+This can be useful, if you want to load the data, but in case it'll fail, delegate
+to the next storage adapter.</p>
+<p>To make your storage adapter skippable extend the abstract class <code>SkippableStorageAdapter</code>.</p>
+<pre><code class="typescript">export class MySkippableStorageAdapter extends SkippableStorgaeAdapter {
+
+    ... // other methods
+
+    loadPage(pageNumber: number): Promise&lt;PageOverlay&gt; {
+
+        try {
+            // load page data   
+        } catch (error) {
+            this.skip();
+        }        
+    }
+}
+</code></pre>
+
+<p>The <code>skip</code> method will abort the loading process of this adapter and continues with the next available adapter.</p>
+<h3 id="empty-storage-adapter">Empty Storage Adapter</h3>
+<p>If you don't want to provide a <code>StorageAdapter</code> you can register an <code>EmptyStorageAdapter</code> instance</p>
+<pre><code class="typescript">StorageRegistry.instance
+    .add(new EmptyStorageAdapter(URI.from(&quot;ex://&quot;)));
+</code></pre>
+
+<blockquote>
+<p>You should only provide the <code>EmptyStorageAdapter</code> if you are not using the toolbox or highlighting at all.</p>
+</blockquote>
+<h2 id="using-the-elementbuilderfactory">Using the <code>ElementBuilderFactory</code></h2>
+<p>In order to create elements used in a <code>StorageAdapter</code> you should use the
+<code>ElementBuilderFactory</code>.</p>
+<pre><code class="typescript">
+const elementBuilder: ElementBuilderFactory = new ElementBuilderFactoryImpl();
+
+const polyLine: PolyLine = elementBuilder.polyLine()
+    .id(&quot;some-id&quot;)
+    .borderColor(colorFromHex(&quot;000000&quot;))
+    .coordinates([{x: 47.51, y: 201.45}, {x: 48.8, y: 202.02}])
+    .build();
+
+</code></pre>
+
+<h1 id="pdf-wrap-features">PDF Wrap Features</h1>
+<h2 id="search">Search</h2>
+<p>PDF Wrap provides a full text search over a PDF document. To access the <code>DocumentSearch</code>
+you have to load a PDF.</p>
+<p>Once you have loaded the PDF, you can access the <code>SearchDocument</code></p>
+<pre><code class="typescript">pdf.searchController;
+</code></pre>
+
+<p>A <code>DocumentSearch</code> provides you with different methods:</p>
+<ul>
+<li><code>search</code> - to start a search against a term</li>
+<li><code>previous</code> - to select the previous search result found by <code>search</code></li>
+<li><code>next</code> - to select the next search result found by <code>search</code></li>
+</ul>
+<p>The <code>search</code> methods accepts two parameters, <code>query</code> and <code>options</code>
+where <code>query</code> is self explained and <code>options</code> are different flags for the search.</p>
+<ul>
+<li><code>searchPhrase</code> - if <code>true</code> the search term will be used as a phrase, otherwise as a term</li>
+<li><code>fuzzy</code> - if <code>true</code> the search operation is performed case insensitive, otherwise case sensitive</li>
+<li><code>highlightAll</code> - if <code>true</code> highlights all search results, otherwise only the active selected</li>
+</ul>
+<h3 id="example-search">Example Search</h3>
+<pre><code class="typescript">pdf.searchController.search(&quot;example&quot;, {
+    highlightAll: true,
+    searchPhrase: false,
+    fuzzy: true});
+</code></pre>
+
+<h2 id="outline">Outline</h2>
+<p>You can access the outline of a PDF once the PDF is loaded</p>
+<pre><code class="typescript">pdf.getOutline().then(outline =&gt; {
+    // use the outline
+})
+</code></pre>
+
+<p>The <code>Outline</code> class provides two different forms of the outline.
+The <code>flatList</code> and the <code>tree</code> structure, where the <code>flatList</code> means, that
+even nested outlines are at the top level.
+The <code>tree</code> structure remains in the nested structure of the PDF outline.</p>
+<p>Each outline provides the <code>title</code> as well as the <code>pageNumber</code></p>
+<pre><code class="typescript">// use with flat list
+pdf.getOutline().then(outline =&gt; {
+    outline.flatList.forEach(item =&gt; {
+        item.title;
+        item.pageNumber;
+    });
+});
+
+// use tree with children
+pdf.getOutline().then(outline =&gt; {
+    outline.tree.forEach(item =&gt; {
+        item.title;
+        item.pageNumber;
+        item.children; // nested outlines
+    });
+});
+</code></pre>
+
+<p>You want to jump to the page where the outline points to? Check out <a href="#page-navigation">Page Navigation</a></p>
+<h2 id="page-thumbnails">Page Thumbnails</h2>
+<p>You can access thumbnails of the PDF pages once the PDF is loaded</p>
+<pre><code class="typescript">// get the thumbnail of page 1, 2 and 3 with a max size of 96px
+pdf.getThumbnails(96, 1, 2, 3).subscribe(thumbnail =&gt; {
+    // use the thumbnail
+});
+</code></pre>
+
+<p>The <code>getThumbails</code> method returns an <code>Observable</code> which emits every thumbnail after another.
+Once the last thumbnail is loaded, the <code>Observable</code> completes.</p>
+<ul>
+<li>The first parameter <code>maxSize</code> defines the max size, a thumbnail can be.</li>
+<li>The second parameter <code>pageNumbers</code> is a vararg for the page number you want the thumbnail of.</li>
+</ul>
+<p><em>Tip: If you want to get the thumbnail of all pages, use a while loop to get all page numbers of the document</em></p>
+<pre><code class="typescript">const pages: Array&lt;number&gt; = []; while (pages.length &lt; pdf.pageCount) pages.push(pages.length + 1);
+</code></pre>
+
+<h2 id="page-navigation">Page Navigation</h2>
+<p>You can switch to a page by simply setting the <code>currentPageNumber</code> property of the <code>PDFDocument</code></p>
+<pre><code class="typescript">pdf.currentPageNumber = 5;
+
+// next page
+pdf.currentPageNumber = pdf.currentPageNumber + 1;
+
+// previous page
+pdf.currentPageNumber = pdf.currentPageNumber - 1;
+</code></pre>
+
+<h2 id="zoom">Zoom</h2>
+<p>You can zoom in or zoom out by simply setting the <code>scale</code> property of the <code>PDFDocument</code></p>
+<pre><code class="typescript">pdf.scale = pdf.scale * 1.5; // will zoom in by 150%
+pdf.scale = pdf.scale / 1.5; // will zoom out by 150%
+
+// or set a fix zoom value
+pdf.scale = 1.5; // will zoom to 150%
+</code></pre>
+
+<h1 id="miscellaneous">Miscellaneous</h1>
+<h2 id="using-colors">Using colors</h2>
+<p>Whenever a color can be set in PDF Wrap, a <code>Color</code> instance is required.</p>
+<p>To create a <code>Color</code> instances use one of the following functions.</p>
+<p>Module: <code>api/draw/color</code></p>
+<ul>
+<li><code>colorFrom</code></li>
+<li><code>colorFromHex</code></li>
+<li><code>colorFromRgba</code></li>
+</ul>
+<blockquote>
+<p>There are predefined colors with the <code>Colors</code> enumerator available.</p>
+</blockquote>
+<p>If you're looking for valid values of these functions, please consider the typedoc <a href="../api">API</a>.</p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+                <p>Creative Commons Attribution-ShareAlike 4.0 International License</p>
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>var base_url = '..';</script>
+        <script src="../js/base.js"></script>
+        <script src="../search/require.js"></script>
+        <script src="../search/search.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td><kbd>&larr;</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td><kbd>&rarr;</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    </body>
+</html>

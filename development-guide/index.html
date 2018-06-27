@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="studer + raimann ag">
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Development Guide - PDF Wrap</title>
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script> 
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="..">PDF Wrap</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                    <li >
+                        <a href="..">Home</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Guides <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+<li >
+    <a href="../guides/basic-viewer/">Basic PDF viewer</a>
+</li>
+                        </ul>
+                    </li>
+                    <li >
+                        <a href="../reference-documentation/">Reference Documentation</a>
+                    </li>
+                    <li class="active">
+                        <a href="./">Development Guide</a>
+                    </li>
+                </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                    <li >
+                        <a rel="next" href="../reference-documentation/">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li class="disabled">
+                        <a rel="prev" >
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#development-guide">Development Guide</a></li>
+        <li class="main "><a href="#prerequisites">Prerequisites</a></li>
+        <li class="main "><a href="#architecture">Architecture</a></li>
+            <li><a href="#displaying-pdf-pages">Displaying PDF Pages</a></li>
+        <li class="main "><a href="#directory-structure">Directory Structure</a></li>
+            <li><a href="#build-directory">build directory</a></li>
+        <li class="main "><a href="#tasks">Tasks</a></li>
+            <li><a href="#build-tasks">build Tasks</a></li>
+            <li><a href="#docs-tasks">docs Tasks</a></li>
+            <li><a href="#other-tasks">other Tasks</a></li>
+            <li><a href="#npm-tasks">npm Tasks</a></li>
+            <li><a href="#verification-tasks">verification Tasks</a></li>
+        <li class="main "><a href="#logging">Logging</a></li>
+            <li><a href="#the-logger-name">The logger name</a></li>
+            <li><a href="#why-using-it-this-way">Why using it this way?</a></li>
+        <li class="main "><a href="#mkdocs">MkDocs</a></li>
+            <li><a href="#how-to-publish-the-documentation">How to publish the documentation</a></li>
+        <li class="main "><a href="#unit-testing">Unit Testing</a></li>
+            <li><a href="#where-to-write-tests">Where to write tests</a></li>
+            <li><a href="#test-style">Test style</a></li>
+            <li><a href="#mocha">Mocha</a></li>
+            <li><a href="#ts-mockito">ts-mockito</a></li>
+        <li class="main "><a href="#miscellaneous">Miscellaneous</a></li>
+            <li><a href="#css">CSS</a></li>
+            <li><a href="#custom-type-def">Custom type def</a></li>
+            <li><a href="#unused-parameters">Unused Parameters</a></li>
+            <li><a href="#type-doc">Type Doc</a></li>
+            <li><a href="#pdfjs">PDF.js</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="development-guide">Development Guide</h1>
+<p><strong>Authors</strong></p>
+<p>Nicolas Märchy</p>
+<p><strong>Version 0.0.1</strong></p>
+<p>Copyright &copy; 2018 studer + raimann ag, <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.</p>
+<hr />
+<h1 id="prerequisites">Prerequisites</h1>
+<ul>
+<li>Yarn - <a href="https://yarnpkg.com/lang/en">https://yarnpkg.com/lang/en</a></li>
+<li>Node.js - <a href="https://nodejs.org/en/">https://nodejs.org/en/</a></li>
+<li>MkDocs - <a href="https://www.mkdocs.org/">https://www.mkdocs.org/</a></li>
+</ul>
+<h1 id="architecture">Architecture</h1>
+<p><img alt="alt PDF Wrap Architecture" src="../resources/img/pdf_wrap_architecture.jpg" /></p>
+<p>The <em>API exposed to the user</em> defines mainly interfaces a user can use. In contrast
+to the <em>paint</em>, which implements the possibility to draw, is only used internal of PDF Wrap.
+The <em>pdfjs</em> is the PDF.js implementation for the API.</p>
+<h2 id="displaying-pdf-pages">Displaying PDF Pages</h2>
+<p>The PDF pages are displayed by PDF.js. But the highlight as well as the drawing are displayed by PDF Wrap.</p>
+<p>Every page is displayed in a specific way.</p>
+<p><img alt="alt PDF Wrap Pages Structure" src="../resources/img/pdf_wrap_pages_structure.jpeg" /></p>
+<p><strong>HIGHLIGHT LAYER</strong><br>
+This layer contains any text highlighting with a 100% opacity. It is beneath the actual
+rendered PDF page, so it won't cover the text.</p>
+<p><strong>PDF Layer</strong><br>
+Is the actual PDF page rendered as svg by PDF.js.</p>
+<p><strong>HIGHLIGHT LAYER TRANSPARENCY</strong><br>
+Is the same as the <em>HIGHLIGHT Layer</em> but with less opacity (about 40%). This layer
+is required to highlight text which is not on a white background. With only
+the <em>HIGHLIGHT LAYER</em>, the highlight would not be visible at all, because of the
+non-transparent background of the <em>PDF LAYER</em>. The transparency is required
+to not cover the <em>PDF LAYER</em> completely.</p>
+<p><strong>DRAW LAYER</strong><br>
+The layer contains all drawings made by a user.</p>
+<p><strong>TEXT LAYER</strong><br>
+Is the invisible actual text of the PDF page. Is rendered by PDF.js and
+enables the text selection, because on the <em>PDF LAYER</em> is no text selection
+available. Must be invisible, because its only purpose is the text selection.
+The text itself may not have the correct font or exact position on the page.</p>
+<h1 id="directory-structure">Directory Structure</h1>
+<p><img alt="alt PDF Wrap directory structure" src="../resources/img/pdf_wrap_directory_structure.jpg" /></p>
+<p><strong>1. /pdf-wrap - Root</strong></p>
+<ul>
+<li>The PDF Wrap root directory</li>
+<li>Every single file and directory of PDF Wrap</li>
+<li>Directly in this directory are configuration files like <code>package.json</code> or <code>tsconfg.json</code></li>
+</ul>
+<p><strong>2. /build - Build Output</strong></p>
+<ul>
+<li>Contains all generated output files</li>
+</ul>
+<p>The <code>/build</code> directory has a specific structure itself. Read more about <a href="#build-directory">build directory</a></p>
+<p><strong>3. /docs - Documentation Source</strong></p>
+<ul>
+<li>Contains the documentation's source files</li>
+</ul>
+<p><strong>4. /examples - PDF Wrap Examples</strong></p>
+<ul>
+<li>Contains examples of how to use PDF Wrap</li>
+<li>Contains a Dev Viewer example mainly used for development</li>
+</ul>
+<p><strong>5. /src - Source Code</strong></p>
+<ul>
+<li>Contains the source code of PDF Wrap</li>
+<li>This also contains type definition files of libraries which don't have type definitions them-self</li>
+</ul>
+<p><strong>6. /test - Unit Test</strong></p>
+<ul>
+<li>Contains unit test files</li>
+<li>This also contains files with Mock object of for example interfaces</li>
+<li>Unit Test files must end with <code>.spec.ts</code></li>
+<li>Mock files must end with <code>.mock.ts</code></li>
+<li>Only files ending to <code>.spec.ts</code> or <code>.mock.ts</code> are picked up by Typescript</li>
+</ul>
+<h2 id="build-directory">build directory</h2>
+<p>The <code>build</code> directory is the output directory for any file generated through the <a href="#tasks">Tasks</a>.</p>
+<p>It is structured in a specific way.</p>
+<p><img alt="alt PDF Wrap directory structure" src="../resources/img/pdf_wrap_build_directory_structure.jpg" /></p>
+<p><strong>1. /javascript - Transpiled Code</strong></p>
+<ul>
+<li>Directly transpiled typescript code from <code>src</code> and <code>test</code> directory</li>
+<li>No uglifying</li>
+<li>No dependencies</li>
+</ul>
+<p><strong>2. /libs - Production Ready</strong></p>
+<ul>
+<li>This code is production ready</li>
+<li>Uglified</li>
+<li>With dependencies and additional resources like CSS files</li>
+</ul>
+<p><strong>3. /distributions - Distribution Ready</strong></p>
+<ul>
+<li>This code is ready to be distributed</li>
+<li>Uglified</li>
+<li>With dependencies and additional resources like CSS files</li>
+<li>With README file</li>
+<li>With CHANGELOG file</li>
+<li>With modified package.json file</li>
+</ul>
+<h1 id="tasks">Tasks</h1>
+<p>PDF Wrap uses <a href="https://gulpjs.com/">Gulp</a> for its task management.</p>
+<p>The <code>gulpfile.js</code> uses the <code>app.properties.js</code> file to get specific directories.</p>
+<p>The <code>app.properties.js</code> file just exports an object, which resolves important directory paths absolute.</p>
+<h2 id="build-tasks">build Tasks</h2>
+<p>The <strong>build</strong> tasks contain tasks all around building the project.</p>
+<p><strong><code>clean</code></strong><br>
+Cleans the build by removing the <code>build</code> directory.</p>
+<p><strong><code>build</code></strong><br>
+Transpiles and lints typescript and runs the tests.</p>
+<p><strong><code>package</code></strong><br>
+Packs the project ready to use. Copies resources needed and uglifies the javascript code.</p>
+<p><strong><code>repackage</code></strong><br>
+Same as <code>package</code> but executes <code>clean</code> before</p>
+<p><strong><code>uglifyJS</code></strong><br>
+Uglifies the javascript code</p>
+<h2 id="docs-tasks">docs Tasks</h2>
+<p>The <strong>docs</strong> tasks contain tasks about generating or publishing the documentation.</p>
+<p><strong><code>typedoc</code></strong><br>
+Generates the typedoc api documentation.</p>
+<h2 id="other-tasks">other Tasks</h2>
+<p>The <strong>other</strong> tasks contain tasks which have more a general purpose, rather than something specific.</p>
+<p><strong><code>copyDependencies</code></strong><br>
+Copies the projects dependencies.</p>
+<p><strong><code>copyCMaps</code></strong><br>
+Copies the cMaps of PDF.js</p>
+<p><strong><code>copyPDFJS</code></strong><br>
+Copies the PDF.js files needed.</p>
+<p><strong><code>copyCSS</code></strong><br>
+Copies and concat the CSS files needed.</p>
+<p><strong><code>transformPackageJSON</code></strong><br>
+Declares every dependency used in package.json as <code>bundledDependencies</code>.
+This is needed, because PDF Wrap does not come with a bundled js file.
+Therefore npm needs to know, that the dependencies are bundled.
+In addition, <code>devDependecies</code> are cleared, because they are not needed for production.</p>
+<p><strong><code>transpileTypescript</code></strong><br>
+Transpiles typescript to javascript and generates inline source maps.</p>
+<h2 id="npm-tasks">npm Tasks</h2>
+<p>The <strong>npm</strong> tasks contain tasks used for <a href="https://www.npmjs.com/">npmjs</a>.</p>
+<p><strong><code>pack</code></strong><br>
+Runs <code>yarn pack</code> for the <code>build/distributions/npm</code> directory.</p>
+<p><strong><code>publish</code></strong><br>
+Publishes the project to npm.</p>
+<h2 id="verification-tasks">verification Tasks</h2>
+<p>The <strong>verification</strong> tasks contain tasks about testing.</p>
+<p><strong><code>test</code></strong><br>
+Runts the unit tests.</p>
+<p><strong><code>lint</code></strong><br>
+Lints the typescript code.</p>
+<h1 id="logging">Logging</h1>
+<p>PDF Wrap uses <a href="https://github.com/mreuvers/typescript-logging">typescript-logging</a>.</p>
+<p>The configuration abstracted to the user, to enable a unified log output.</p>
+<h2 id="the-logger-name">The logger name</h2>
+<p>The logger name has a specific scheme in order to enable a unified and an exact as possible log output.</p>
+<p><code>&lt;namespace&gt;/&lt;file-path&gt;:&lt;class-name&gt;</code></p>
+<p><strong><code>&lt;namespace&gt;</code></strong><br>
+The namespace is always the same value: <code>ch/studerraimann/pdfwrap</code></p>
+<p><strong><code>&lt;file-path&gt;</code></strong><br>
+The path of the file where you create the logger. The file name must be without the extension
+and the file path is relative to the <code>src</code> directory of PDF Wrap.</p>
+<p><strong><code>&lt;class-name&gt;</code></strong><br>
+The class or function name where you create the logger.</p>
+<h3 id="example-class">Example: Class</h3>
+<p>Assuming the class is declared in the file <code>src/services/my-service.ts</code>.</p>
+<pre><code class="typescript">export class MyService {
+
+    private readonly log: Logger = LoggerFactory.getLogger(&quot;ch/studerraimann/pdfwrap/services/my-service:MyService&quot;);
+
+    constructor() {
+        this.log.info(() =&gt; &quot;Call constructor of MyService&quot;);
+    }
+</code></pre>
+
+<h3 id="example-file">Example: File</h3>
+<p>Assuming the function is declared in the file <code>src/services/my-service.ts</code>.</p>
+<pre><code class="typescript">export function doSomething() {
+
+    const log: Logger = LoggerFactory.getLogger(&quot;ch/studerraimann/pdfwrap/services/my-service:doSomething&quot;);
+
+    log.info(() =&gt; &quot;Call doSomething&quot;);
+}
+</code></pre>
+
+<p><strong>You should always use the lambda expression for a log message, because this way it will only be executed when its needed.</strong></p>
+<blockquote>
+<p>Please note, that the <code>Logger</code> type must be imported from <code>typescript-logging</code>,
+but the <code>LoggerFactory</code> class is from <code>src/log-config.ts</code>.</p>
+</blockquote>
+<h2 id="why-using-it-this-way">Why using it this way?</h2>
+<p>PDF Wrap provides an API to configure the logging output way down to a function or class.
+This way, the logger names are unified and as a result the configuration can be applied to every logger.</p>
+<p>Read the <a href="../reference-documentation/#setup-logger">Reference Documentation about logging</a> to understand the concept better. </p>
+<h1 id="mkdocs">MkDocs</h1>
+<p>The PDF Wrap documentation is built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+<p>The documentation contains the following parts.</p>
+<p><strong>Home</strong><br>
+The index of the documentation. Contains a quick start and link to other parts of the documentation.</p>
+<p><strong>Guides</strong><br>
+Contains guides with a specific example of a specific part of PDF Wrap.</p>
+<p>For example: How to implement a Storage Adapter</p>
+<p><strong>Reference Documentation</strong><br>
+Contains the full in-depth documentation about how to use PDF Wrap.</p>
+<p><strong>Development Guide</strong><br>
+Contains guides about the source code and how to develop with PDF Wrap.</p>
+<h2 id="how-to-publish-the-documentation">How to publish the documentation</h2>
+<p>TODO: Write manual</p>
+<h1 id="unit-testing">Unit Testing</h1>
+<p>PDF Wrap uses <a href="https://mochajs.org/">Mocha</a> to run its tests. In addition, <a href="http://www.chaijs.com/">chaijs</a> is used
+to assert test results. And for mocking classes, <a href="https://github.com/NagRock/ts-mockito">ts-mockito</a> is used.</p>
+<h2 id="where-to-write-tests">Where to write tests</h2>
+<p>All unit tests are declared in the <code>test</code> directory. This directory remains
+in the same structure like the <code>src</code> directory. Test files must end with <code>.spec.ts</code> and
+any files containing mock classes (if needed) must end with <code>.mock.ts</code>.</p>
+<p>The file name of a unit test is the same where the class or function you wanna test, is declared.</p>
+<p>For Example</p>
+<p><code>src/pdfjs/my-service.ts</code> contains a function called <code>doBar</code> you wanna test.</p>
+<p><code>test/pdfjs/my-service.spec.ts</code> must be the file name of the unit test.</p>
+<h2 id="test-style">Test style</h2>
+<p>Mocha is a BDD (Behaviour Driven Development) testing Framework. Therefore we organize our test like this.</p>
+<h3 id="testing-classes">Testing classes</h3>
+<p>The unit test structure of a class</p>
+<pre><code class="typescript">
+describe('the class you test', () =&gt; {
+
+    describe('the method you test', () =&gt; {
+
+        describe('the case of the method you test', () =&gt; {
+
+            it('should do what you expect', () =&gt; {
+                // AAA
+            }); 
+        });
+    });
+});
+</code></pre>
+
+<p>This way you have a group per class, per method and per case of a method.</p>
+<p>The <code>it</code> block should always start with "should".<br>
+For example, if you expect an error to be thrown: <code>it("should throw an error indicating that ...", () =&gt; { ... })</code></p>
+<p><code>AAA</code> stands for <code>Arrange</code>, <code>Act</code> and <code>Assert</code>, which means a test should be structured in that way.</p>
+<ol>
+<li>Arrange everything for the test like mocks</li>
+<li>Act, which means that you invoke the method or function you wanna test</li>
+<li>Assert if everything worked like expected</li>
+</ol>
+<p><strong>Pro Tip:</strong> Mark where your <code>Arrange</code> stops and your <code>Act</code> starts or where your <code>Act</code> stops and your <code>Assert</code> starts
+with two blank lines between them.</p>
+<blockquote>
+<p>Sometimes you just can not have this structure. Especially when you test for errors,
+because you have to invoke the tested method or function during the assert.
+AAA is more a guide line rather than an absolute rule.</p>
+</blockquote>
+<h3 id="testing-functions">Testing functions</h3>
+<p>When you test functions its pretty much the same structure, but you leave out the class describe.</p>
+<pre><code class="typescript">describe('the function you test', () =&gt; {
+
+    describe('the case you test', () =&gt; {
+
+        it('should do what you expect', () =&gt; {
+            // AAA
+        }); 
+    });
+});
+</code></pre>
+
+<h2 id="mocha">Mocha</h2>
+<p>Mocha has a cli options file which will be used: <code>test/mocha.opt</code>.</p>
+<p>This file contains command line arguments which should be used when running mocha.</p>
+<p>Read more about <a href="https://mochajs.org/#mochaopts">Mocha Options</a></p>
+<h2 id="ts-mockito">ts-mockito</h2>
+<p>ts-mockito is a mocking library for Typescript. A big advantages is, that
+you don't lose the type definitions like you would for example with Sinon.js</p>
+<h3 id="mocking-interfaces">Mocking interfaces</h3>
+<p>Because interfaces are a Typescript only thing and are not available during the runtime,
+ts-mockito can not mock interfaces. So you have to create a mock class of the interface
+you wanna mock your-self.</p>
+<p>Because ts-mockito <strong>can</strong> mock classes, you only have to create a mock class
+as an empty implementation, rather than a mock class for each case you wanna test.</p>
+<h4 id="example-mocking-interface">Example mocking interface</h4>
+<p>This is our interface</p>
+<pre><code class="typescript">export interface MyService {
+
+    bar: number;
+
+    readonly foo: number;
+
+    doBar(): void;
+}
+</code></pre>
+
+<p>You create a mock class for it</p>
+<pre><code class="typescript">export class MockMyService implements MyService {
+
+    get bar(): number {
+        throw new Error(&quot;Not implemented test stub&quot;);
+    }
+
+    set bar(_: number): void {
+        throw new Error(&quot;Not implemented test stub&quot;);
+    }
+
+    get foo(): number {
+        throw new Error(&quot;Not implemented test stub&quot;);
+    }
+
+    doBar(): void {
+        throw new Error(&quot;Not implemented test stub&quot;);
+    }
+}
+</code></pre>
+
+<p>Please note, that all implementations, including the properties, do throw an <code>Error</code>
+indicating that this test stub is not implemented. This makes sure you do not
+have a side effect when you forgot to manipulate a method or property.</p>
+<p>In addition, parameters should be renamed to a <code>_</code> symbol, otherwise the Typescript compiler would report an error.</p>
+<p>Read more about <a href="#unused-parameters">Unused Parameters</a></p>
+<blockquote>
+<p>Please note, that ts-mockito can mock an abstract class, but only manipulate non-abstract methods.
+Therefore, an interface can not be mocked by creating an abstract class of it
+and use the abstract class as the mock class.</p>
+</blockquote>
+<h1 id="miscellaneous">Miscellaneous</h1>
+<h2 id="css">CSS</h2>
+<p>Whenever you have to declare CSS you must add it in the file <code>src/assets/css/pdf-wrap.css</code>.</p>
+<p>When the project is be built, this file will be concat together with the CSS file
+of PDF.js.</p>
+<h2 id="custom-type-def">Custom type def</h2>
+<p>Whenever small type definitions are needed, they can be written in the <code>src/declarations.ts</code> file.
+But it should not contain too much type defs of the same library.</p>
+<p>If that's the case, create a directory in the <code>src/declarations</code> directory named after the library
+you wanna use and write your type definitions there.</p>
+<h2 id="unused-parameters">Unused Parameters</h2>
+<p>Because our <code>tsconfig.json</code> enables the <code>noUnusedParameter</code> flag, you would get an error
+whenever you don't need a parameter. Instead of just not declare the parameter,
+you should rename it with a <code>_</code> symbol. This way the Typescript compiler will not report an error
+and a developer does know, there is a parameter but it is not used.</p>
+<p>In case you have multiple parameters you don't need, just add a additional <code>_</code> to the second unused parameter.</p>
+<p>Example</p>
+<pre><code class="typescript">
+// unused parameter
+doBar(_: number): void { ... }
+
+// two unused parameters
+doBar(_: nmuber, __: number): void { ... }
+
+// three unused parameters
+doBar(_: number, __: number, ___: number): void { ... }
+
+// two unused with one used parameter
+doBar(_: number, usedParameter: number, __: number): void {
+    console.log(usedParameter);
+}
+
+// and so on
+</code></pre>
+
+<p>This also can be applied to any case where a parameter is unused, whenever its a
+lambda expression, a method to implement or even a setter.</p>
+<h2 id="type-doc">Type Doc</h2>
+<p>The type doc should be written in most cases. There are exceptions like getters / setters.
+In addition to the the description in a type doc, there should be the following type doc annotations:</p>
+<ul>
+<li><code>@author your-name &lt;your-email&gt;</code> - e.g. <code>@author Max Muster &lt;mm@gmail.com&gt;</code></li>
+<li><code>@since current-pdfwrap-version</code> - e.g. <code>@since 1.0.0</code></li>
+<li><code>@internal</code> - is optional and should be declared whenever something is only used intern of PDF Wrap</li>
+</ul>
+<h2 id="pdfjs">PDF.js</h2>
+<p>PDF Wrap makes a high usage of <a href="https://mozilla.github.io/pdf.js/">PDF.js</a>, which is written in Javascript.</p>
+<p>The distribution of PDF.js is only the parsing functionality. But we also use their PDF Viewer.
+Because of that, some parts of the PDF.js node module will be copied to the build output.</p>
+<h3 id="type-def">Type def</h3>
+<p><a href="https://definitelytyped.org/">Definitelytyped</a> contains a type def for PDF.js, but unfortunately it is not correct.
+Therefore we have our own type def of PDF.js, located in <code>src/declarations/pdfjs</code>.</p>
+<p><strong>This type def is not complete and contains only what we need right now.</strong></p>
+<p>Whenever you need more of the API of PDF.js, you have to extend the type def.</p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+                <p>Creative Commons Attribution-ShareAlike 4.0 International License</p>
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>var base_url = '..';</script>
+        <script src="../js/base.js"></script>
+        <script src="../search/require.js"></script>
+        <script src="../search/search.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td><kbd>&larr;</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td><kbd>&rarr;</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    </body>
+</html>

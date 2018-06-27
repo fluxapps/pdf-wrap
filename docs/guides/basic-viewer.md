@@ -1,2 +1,0 @@
-# Basic PDF viewer
-
