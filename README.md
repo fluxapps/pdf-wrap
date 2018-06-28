@@ -6,7 +6,12 @@ Tasty! Isn't it?
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
+Consider our documentation for notes on how to deploy the project on a live system.
+
+https://studer-raimann.github.io/pdf-wrap/
+
 
 ### Prerequisites
 
@@ -18,7 +23,7 @@ These instructions will get you a copy of the project up and running on your loc
 Install dependencies
 
 ```
-yarn
+yarn install
 ```
 
 ## Tasks
@@ -36,25 +41,13 @@ Run unit tests
 yarn gulp test
 ```
 
-### Break down into end to end tests
+### Coding style tests
 
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
+We use [TSLint](https://palantir.github.io/tslint/) to analysis our code.
 
 ```
-Give an example
+yarn gulp lint
 ```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
 
 ## Built With
 
@@ -63,26 +56,20 @@ Add additional notes about how to deploy this on a live system
 * [gulp](https://gulpjs.com/) - Task automating toolkit used
 * [Mocha](https://mochajs.org/) - Test framework used
 
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/studer-raimann/pdf-wrap/tags). 
 
 ## Authors
 
 * **Nicolas Märchy** - *Initial work* - [BilledTrain380](https://github.com/BilledTrain380)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/studer-raimann/pdf-wrap/graphs/contributors) who participated in this project.
 
 ## License
 
-This project is licensed under the GPL-3.0 License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the GPL-3.0 License - see the [LICENSE.md](https://github.com/studer-raimann/pdf-wrap/blob/master/LICENSE.md) file for details
 
 ## Acknowledgments
 
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
+* A big fat thank you to Mozilla and their [PDF.js](https://mozilla.github.io/pdf.js/) library which is the main reason this project can exist
