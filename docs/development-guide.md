@@ -4,7 +4,7 @@
 
 Nicolas Märchy
 
-**Version 0.0.1**
+**Version 1.0.0**
 
 Copyright &copy; 2018 studer + raimann ag, <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
 
@@ -38,7 +38,7 @@ Every page is displayed in a specific way.
 This layer contains any text highlighting with a 100% opacity. It is beneath the actual
 rendered PDF page, so it won't cover the text.
 
-**PDF Layer**<br>
+**PDF LAYER**<br>
 Is the actual PDF page rendered as svg by PDF.js.
 
 **HIGHLIGHT LAYER TRANSPARENCY**<br>
@@ -123,6 +123,10 @@ It is structured in a specific way.
 * With README file
 * With CHANGELOG file
 * With modified package.json file
+
+**4. /docs - Built Documentation**
+
+* Generated documentation like MkDocs or Typedoc
 
 # Tasks
 
@@ -213,7 +217,7 @@ Lints the typescript code.
 
 PDF Wrap uses [typescript-logging](https://github.com/mreuvers/typescript-logging).
 
-The configuration abstracted to the user, to enable a unified log output.
+The configuration is abstracted to the user, to enable a unified log output.
 
 ## The logger name
 
@@ -284,6 +288,9 @@ Contains guides with a specific example of a specific part of PDF Wrap.
 
 For example: How to implement a Storage Adapter
 
+**API Documentation**<br>
+The API documentation of PDF Wrap is part of the final output, but is not actually made by MkDocs.
+
 **Reference Documentation**<br>
 Contains the full in-depth documentation about how to use PDF Wrap.
 
@@ -292,8 +299,17 @@ Contains guides about the source code and how to develop with PDF Wrap.
 
 ## How to publish the documentation
 
-TODO: Write manual
+In order to publish the documentation, you must have MkDocs installed
+and ghp-import must be on your PATH.
 
+Then simply run
+
+```
+yarn gulp publishDoc
+```
+
+This will generate the documentation, updates the `gh-pages` branch
+and pushes it to Github.
 
 # Unit Testing
 
