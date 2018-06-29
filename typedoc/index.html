@@ -66,7 +66,9 @@
 				<p>A high level PDF abstraction library with a rich set of additional features like full text document search. Its primary goal is to provide a simple api to create your own PDF viewer.</p>
 				<p>Tasty! Isn&#39;t it?</p>
 				<h2 id="getting-started">Getting Started</h2>
-				<p>These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.</p>
+				<p>These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.</p>
+				<p>Consider our documentation for notes on how to deploy the project on a live system.</p>
+				<p><a href="https://studer-raimann.github.io/pdf-wrap/">https://studer-raimann.github.io/pdf-wrap/</a></p>
 				<h3 id="prerequisites">Prerequisites</h3>
 				<ul>
 					<li>Yarn - <a href="https://yarnpkg.com/en/docs/install">https://yarnpkg.com/en/docs/install</a></li>
@@ -74,7 +76,7 @@
 				</ul>
 				<h3 id="installing">Installing</h3>
 				<p>Install dependencies</p>
-				<pre><code><span class="hljs-attribute">yarn</span>
+				<pre><code>yarn <span class="hljs-keyword">install</span>
 </code></pre><h2 id="tasks">Tasks</h2>
 				<p>We use <a href="https://gulpjs.com/">gulp</a> for all tasks used. We recommend
 				to not install gulp globally and use the local gulp version.</p>
@@ -84,37 +86,28 @@
 				<h2 id="running-the-tests">Running the tests</h2>
 				<p>Run unit tests</p>
 				<pre><code>yarn gulp <span class="hljs-built_in">test</span>
-</code></pre><h3 id="break-down-into-end-to-end-tests">Break down into end to end tests</h3>
-				<p>Explain what these tests test and why</p>
-				<pre><code><span class="hljs-attribute">Give an example</span>
-</code></pre><h3 id="and-coding-style-tests">And coding style tests</h3>
-				<p>Explain what these tests test and why</p>
-				<pre><code><span class="hljs-attribute">Give an example</span>
-</code></pre><h2 id="deployment">Deployment</h2>
-				<p>Add additional notes about how to deploy this on a live system</p>
-				<h2 id="built-with">Built With</h2>
+</code></pre><h3 id="coding-style-tests">Coding style tests</h3>
+				<p>We use <a href="https://palantir.github.io/tslint/">TSLint</a> to analysis our code.</p>
+				<pre><code><span class="hljs-attribute">yarn gulp lint</span>
+</code></pre><h2 id="built-with">Built With</h2>
 				<ul>
 					<li><a href="https://www.typescriptlang.org/">Typescript</a> - Javascript transpiler used</li>
 					<li><a href="https://yarnpkg.com/en/">Yarn</a> - Package manager used</li>
 					<li><a href="https://gulpjs.com/">gulp</a> - Task automating toolkit used</li>
 					<li><a href="https://mochajs.org/">Mocha</a> - Test framework used</li>
 				</ul>
-				<h2 id="contributing">Contributing</h2>
-				<p>Please read <a href="https://gist.github.com/PurpleBooth/b24679402957c63ec426">CONTRIBUTING.md</a> for details on our code of conduct, and the process for submitting pull requests to us.</p>
 				<h2 id="versioning">Versioning</h2>
-				<p>We use <a href="http://semver.org/">SemVer</a> for versioning. For the versions available, see the <a href="https://github.com/your/project/tags">tags on this repository</a>. </p>
+				<p>We use <a href="http://semver.org/">SemVer</a> for versioning. For the versions available, see the <a href="https://github.com/studer-raimann/pdf-wrap/tags">tags on this repository</a>. </p>
 				<h2 id="authors">Authors</h2>
 				<ul>
 					<li><strong>Nicolas Märchy</strong> - <em>Initial work</em> - <a href="https://github.com/BilledTrain380">BilledTrain380</a></li>
 				</ul>
-				<p>See also the list of <a href="https://github.com/your/project/contributors">contributors</a> who participated in this project.</p>
+				<p>See also the list of <a href="https://github.com/studer-raimann/pdf-wrap/graphs/contributors">contributors</a> who participated in this project.</p>
 				<h2 id="license">License</h2>
-				<p>This project is licensed under the GPL-3.0 License - see the <a href="LICENSE.md">LICENSE.md</a> file for details</p>
+				<p>This project is licensed under the GPL-3.0 License - see the <a href="https://github.com/studer-raimann/pdf-wrap/blob/master/LICENSE.md">LICENSE.md</a> file for details</p>
 				<h2 id="acknowledgments">Acknowledgments</h2>
 				<ul>
-					<li>Hat tip to anyone who&#39;s code was used</li>
-					<li>Inspiration</li>
-					<li>etc</li>
+					<li>A big fat thank you to Mozilla and their <a href="https://mozilla.github.io/pdf.js/">PDF.js</a> library which is the main reason this project can exist</li>
 				</ul>
 			</div>
 		</div>

@@ -124,7 +124,7 @@
 <h1 id="development-guide">Development Guide</h1>
 <p><strong>Authors</strong></p>
 <p>Nicolas Märchy</p>
-<p><strong>Version 0.0.1</strong></p>
+<p><strong>Version 1.0.0</strong></p>
 <p>Copyright &copy; 2018 studer + raimann ag, <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.</p>
 <hr />
 <h1 id="prerequisites">Prerequisites</h1>
@@ -147,7 +147,7 @@ The <em>pdfjs</em> is the PDF.js implementation for the API.</p>
 <p><strong>HIGHLIGHT LAYER</strong><br>
 This layer contains any text highlighting with a 100% opacity. It is beneath the actual
 rendered PDF page, so it won't cover the text.</p>
-<p><strong>PDF Layer</strong><br>
+<p><strong>PDF LAYER</strong><br>
 Is the actual PDF page rendered as svg by PDF.js.</p>
 <p><strong>HIGHLIGHT LAYER TRANSPARENCY</strong><br>
 Is the same as the <em>HIGHLIGHT Layer</em> but with less opacity (about 40%). This layer
@@ -222,6 +222,10 @@ The text itself may not have the correct font or exact position on the page.</p>
 <li>With CHANGELOG file</li>
 <li>With modified package.json file</li>
 </ul>
+<p><strong>4. /docs - Built Documentation</strong></p>
+<ul>
+<li>Generated documentation like MkDocs or Typedoc</li>
+</ul>
 <h1 id="tasks">Tasks</h1>
 <p>PDF Wrap uses <a href="https://gulpjs.com/">Gulp</a> for its task management.</p>
 <p>The <code>gulpfile.js</code> uses the <code>app.properties.js</code> file to get specific directories.</p>
@@ -277,7 +281,7 @@ Runts the unit tests.</p>
 Lints the typescript code.</p>
 <h1 id="logging">Logging</h1>
 <p>PDF Wrap uses <a href="https://github.com/mreuvers/typescript-logging">typescript-logging</a>.</p>
-<p>The configuration abstracted to the user, to enable a unified log output.</p>
+<p>The configuration is abstracted to the user, to enable a unified log output.</p>
 <h2 id="the-logger-name">The logger name</h2>
 <p>The logger name has a specific scheme in order to enable a unified and an exact as possible log output.</p>
 <p><code>&lt;namespace&gt;/&lt;file-path&gt;:&lt;class-name&gt;</code></p>
@@ -326,12 +330,21 @@ The index of the documentation. Contains a quick start and link to other parts o
 <p><strong>Guides</strong><br>
 Contains guides with a specific example of a specific part of PDF Wrap.</p>
 <p>For example: How to implement a Storage Adapter</p>
+<p><strong>API Documentation</strong><br>
+The API documentation of PDF Wrap is part of the final output, but is not actually made by MkDocs.</p>
 <p><strong>Reference Documentation</strong><br>
 Contains the full in-depth documentation about how to use PDF Wrap.</p>
 <p><strong>Development Guide</strong><br>
 Contains guides about the source code and how to develop with PDF Wrap.</p>
 <h2 id="how-to-publish-the-documentation">How to publish the documentation</h2>
-<p>TODO: Write manual</p>
+<p>In order to publish the documentation, you must have MkDocs installed
+and ghp-import must be on your PATH.</p>
+<p>Then simply run</p>
+<pre><code>yarn gulp publishDoc
+</code></pre>
+
+<p>This will generate the documentation, updates the <code>gh-pages</code> branch
+and pushes it to Github.</p>
 <h1 id="unit-testing">Unit Testing</h1>
 <p>PDF Wrap uses <a href="https://mochajs.org/">Mocha</a> to run its tests. In addition, <a href="http://www.chaijs.com/">chaijs</a> is used
 to assert test results. And for mocking classes, <a href="https://github.com/NagRock/ts-mockito">ts-mockito</a> is used.</p>
