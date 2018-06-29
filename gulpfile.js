@@ -122,7 +122,7 @@ gulp.task("typedoc", () => {
  */
 gulp.task("publishDoc", ["mkdocs"], (done) => {
 
-    spawn("ghp-import", [`${appProperties.build.dirs.docs}/mkdocs`, "-p"], {stdio: "inherit"})
+    spawn("ghp-import", [`${appProperties.build.dirs.docs}/mkdocs`, "-p", "-n"], {stdio: "inherit"})
         .once("exit", function (code) {
             if (code === 0) {
                 done();
