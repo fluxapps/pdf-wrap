@@ -36,14 +36,14 @@ gulp.task("build", ["test", "lint"], function (done) {
 /*
  * Copies javascript files, README.md, LICENSE.md and package.json to the libs directory.
  */
-gulp.task("package", ["uglifyJS", "copyDependencies", "copyPDFJS", "copyCSS", "transformPackageJSON"], function () {
+gulp.task("package", ["lib", "copyDependencies", "copyPDFJS", "copyCSS", "transformPackageJSON"], function () {
 
     return gulp
         .src([
             `${appProperties.root}/README.md`,
             `${appProperties.root}/LICENSE.md`,
             `${appProperties.root}/CHANGELOG.md`,
-            `${appProperties.build.dirs.libs}/pdf-wrap/**/*`,
+            `${appProperties.build.dirs.libs}/pdf-wrap/**/*`
         ])
         .pipe(gulp.dest(`${appProperties.build.dirs.dist}/npm`));
 });
@@ -53,6 +53,12 @@ gulp.task("package", ["uglifyJS", "copyDependencies", "copyPDFJS", "copyCSS", "t
  * Cleans the build and execute package.
  */
 gulp.task("repackage", sequence("clean", "package"));
+
+gulp.task("lib", ["uglifyJS"], () => {
+    return gulp.src(`${appProperties.build.dirs.javascript}/src/**/*.ts`)
+        .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap`))
+
+});
 
 // --- uglifyJS
 /*

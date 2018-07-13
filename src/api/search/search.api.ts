@@ -31,6 +31,11 @@ export interface DocumentSearch {
      * the results are highlighted in the DOM.
      */
     previous(): void;
+
+    /**
+     * Resets the search state.
+     */
+    reset(): void;
 }
 
 /**

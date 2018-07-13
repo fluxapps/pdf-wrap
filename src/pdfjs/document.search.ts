@@ -86,6 +86,19 @@ export class PDFjsDocumentSearch implements DocumentSearch {
         });
     }
 
+    reset(): void {
+
+        this.log.trace(() => "Reset search state");
+
+        this.findController.executeCommand("", {
+            caseSensitive: false,
+            findPrevious: false,
+            highlightAll: false,
+            phraseSearch: false,
+            query: ""
+        });
+    }
+
     private isQueryEmpty(): boolean {
         return this.lastQuery.length === 0;
     }

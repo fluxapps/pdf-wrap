@@ -39,13 +39,19 @@ export class TextHighlighting implements Highlighting {
     ) {
 
         // get the page where the mouse down event was
-        const page: Observable<Page> = fromEvent(document.viewer, "mousedown")
+        const page: Observable<Page> = merge(
+            fromEvent(document.viewer, "mousedown"),
+            fromEvent(document.viewer, "touchstart")
+        )
             .pipe(map((it) => getPageNumberByEvent(it)))
             .pipe(filter((it) => it !== undefined))
             .pipe(map((it) => this.document.getPage(it!)));
 
         // transformed selection on mouse up only inside the viewer
-        const selections: Observable<Array<Target>> = fromEvent(document.viewer, "mouseup")
+        const selections: Observable<Array<Target>> = merge(
+            fromEvent(document.viewer, "mouseup"),
+            fromEvent(document.viewer, "touchend")
+        )
             .pipe(map((_) => window.getSelection()))
             .pipe(map(transformSelection))
             .pipe(filter((it) => it.length > 0));
@@ -66,7 +72,10 @@ export class TextHighlighting implements Highlighting {
             .pipe(mergeMap((it: TextSelection) => it.onRemoveHighlighting))
             .pipe(map((_) => {/* return void */}));
 
-        const onMouseUpUnselection: Observable<void> = fromEvent(window, "mouseup")
+        const onMouseUpUnselection: Observable<void> = merge(
+            fromEvent(window, "mouseup"),
+            fromEvent(window, "touchend")
+        )
             .pipe(map((_) => window.getSelection()))
             .pipe(map(transformSelection))
             .pipe(filter((it) => it.length < 1))

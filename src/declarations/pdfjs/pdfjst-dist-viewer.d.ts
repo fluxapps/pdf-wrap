@@ -64,7 +64,7 @@ declare module "pdfjs-dist/web/pdf_viewer" {
         readonly findPrevious: boolean;
     }
 
-    export type SearchCommand = "find" | "findagain";
+    export type SearchCommand = "find" | "findagain" | "";
 
     export interface SelectedTerm {
         readonly matchIdx: number;
