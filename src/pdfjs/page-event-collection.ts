@@ -32,10 +32,7 @@ export class PDFjsPageEvenCollection implements PageEventCollection {
             .pipe(mergeMap((it) => it.onRemoveHighlighting));
 
         this.onHighlight = onTextSelection
-            .pipe(mergeMap((selection) =>
-                selection.onHighlighting
-                    .pipe(map((it) => new DrawEvent(this.rescaleManager.normalizeRectangle(it.element), it.pageNumber, it.layer)))
-            ));
+            .pipe(mergeMap((selection) => selection.onHighlighting));
     }
 
     afterElementRemoved(): Observable<DrawEvent<DrawElement>> {

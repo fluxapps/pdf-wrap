@@ -31,6 +31,7 @@ export class RescaleManager {
     normalizePolyLine(polyLine: PolyLine): PolyLine {
 
         this.log.trace(() => `Normalize poly line element: polyLineId=${polyLine.id}`);
+        this.log.debug(() => `Normalize with current scale: scale=${this.viewer.currentScale}, polyline=${JSON.stringify(polyLine)}`);
 
         return new ElementBuilderFactoryImpl().polyLine()
             .id(polyLine.id)
@@ -50,6 +51,7 @@ export class RescaleManager {
     rescalePolyLine(polyLine: PolyLine): PolyLine {
 
         this.log.trace(() => `Rescale poly line element: polyLineId=${polyLine.id}`);
+        this.log.debug(() => `Rescale with current scale: scale=${this.viewer.currentScale}, polyline=${JSON.stringify(polyLine)}`);
 
         return new ElementBuilderFactoryImpl().polyLine()
             .id(polyLine.id)
@@ -69,6 +71,7 @@ export class RescaleManager {
     normalizeRectangle(rectangle: Rectangle): Rectangle {
 
         this.log.trace(() => `Normalize rectangle element: rectangleId=${rectangle.id}`);
+        this.log.debug(() => `Normalize with current scale: scale=${this.viewer.currentScale}, rectangle=${JSON.stringify(rectangle)}`);
 
         return new ElementBuilderFactoryImpl().rectangle()
             .id(rectangle.id)
@@ -90,6 +93,7 @@ export class RescaleManager {
     rescaleRectangle(rectangle: Rectangle): Rectangle {
 
         this.log.trace(() => `Rescale rectangle element: rectangleId=${rectangle.id}`);
+        this.log.debug(() => `Rescale with current scale: scale=${this.viewer.currentScale}, rectangle=${JSON.stringify(rectangle)}`);
 
         return new ElementBuilderFactoryImpl().rectangle()
             .id(rectangle.id)
