@@ -3,13 +3,12 @@ import {Observable} from "rxjs/internal/Observable";
 import {Color} from "../api/draw/color";
 import {DocumentModel, getPageNumberByEvent, Page} from "./document.model";
 import {Canvas} from "../paint/painters";
-import {filter, map, mergeMap, share} from "rxjs/operators";
+import {filter, map, share, tap, withLatestFrom} from "rxjs/operators";
 import {DrawElement, Rectangle} from "../api/draw/elements";
 import {DrawEvent, PageLayer} from "../api/storage/page.event";
 import {CanvasRectangle} from "../paint/canvas.elements";
 import {ClientRectangle} from "./client-rectangle";
 import {Subject} from "rxjs/internal/Subject";
-import {zip} from "rxjs/internal/observable/zip";
 import {fromEvent} from "rxjs/internal/observable/fromEvent";
 import {merge} from "rxjs/internal/observable/merge";
 import {Logger} from "typescript-logging";
@@ -28,6 +27,9 @@ export class TextHighlighting implements Highlighting {
      */
     readonly onTextSelection: Observable<TextSelection>;
 
+    /**
+     * @deprecated Will be removed in the future
+     */
     readonly onTextUnselection: Observable<void>;
 
     private isEnabled: boolean = false;
@@ -43,46 +45,52 @@ export class TextHighlighting implements Highlighting {
             fromEvent(document.viewer, "mousedown"),
             fromEvent(document.viewer, "touchstart")
         )
+            .pipe(tap((_) => this.log.debug(() => "get page number by event")))
             .pipe(map((it) => getPageNumberByEvent(it)))
-            .pipe(filter((it) => it !== undefined))
-            .pipe(map((it) => this.document.getPage(it!)));
+            .pipe(filter((it) => it !== undefined && this.document.hasPage(it)))
+            .pipe(map((it) => this.document.getPage(it!)))
+            .pipe(tap((it) => this.log.debug(() => `found page number by event: ${it.pageNumber}`)));
 
         // transformed selection on mouse up only inside the viewer
         const selections: Observable<Array<Target>> = merge(
-            fromEvent(document.viewer, "mouseup"),
-            fromEvent(document.viewer, "touchend")
+            // fromEvent(document.viewer, "mouseup"),
+            // fromEvent(document.viewer, "touchend")
+            fromEvent(window.document, "selectionchange")
         )
             .pipe(map((_) => window.getSelection()))
             .pipe(map(transformSelection))
-            .pipe(filter((it) => it.length > 0));
+            .pipe(filter((it) => it.length > 0))
+            .pipe(tap((it) => this.log.debug(() => `targets: ${JSON.stringify(it)}`)));
 
         // page and selections observable zipped determines a valid text selection
-        this.onTextSelection = zip(selections, page)
+        this.onTextSelection = selections
+            .pipe(withLatestFrom(page))
+            .pipe(tap((it) => this.log.debug(() => `Page for selection: page=${it[1].pageNumber}`)))
             .pipe(filter((_) => this.isEnabled))
             .pipe(map((it) => new TextSelectionImpl(it[1])))
             .pipe(share());
 
 
         // the actions when noting is selected
-        const onHighlight: Observable<void> = this.onTextSelection
-            .pipe(mergeMap((it: TextSelection) => it.onHighlighting))
-            .pipe(map((_) => {/* return void */}));
-
-        const onRemoveHighlight: Observable<void> = this.onTextSelection
-            .pipe(mergeMap((it: TextSelection) => it.onRemoveHighlighting))
-            .pipe(map((_) => {/* return void */}));
+        // const onHighlight: Observable<void> = this.onTextSelection
+        //     .pipe(mergeMap((it: TextSelection) => it.onHighlighting))
+        //     .pipe(map((_) => {/* return void */}));
+        //
+        // const onRemoveHighlight: Observable<void> = this.onTextSelection
+        //     .pipe(mergeMap((it: TextSelection) => it.onRemoveHighlighting))
+        //     .pipe(map((_) => {/* return void */}));
 
         const onMouseUpUnselection: Observable<void> = merge(
-            fromEvent(window, "mouseup"),
-            fromEvent(window, "touchend")
+            fromEvent(document.viewer, "mouseup"),
+            fromEvent(document.viewer, "touchend")
         )
-            .pipe(map((_) => window.getSelection()))
-            .pipe(map(transformSelection))
-            .pipe(filter((it) => it.length < 1))
+            .pipe(map((_) => window.getSelection().rangeCount))
+            // .pipe(map(transformSelection))
+            .pipe(filter((it) => it < 1))
             .pipe(map((_) => {/* return void */}));
 
         // if one of them emits, nothing is selected
-        this.onTextUnselection = merge(onHighlight, onRemoveHighlight, onMouseUpUnselection);
+        this.onTextUnselection = merge(onMouseUpUnselection);
     }
 
     /**
@@ -122,6 +130,8 @@ export class TextSelectionImpl implements TextSelection {
     private readonly _onHighlighting: Subject<Rectangle> = new Subject();
     private readonly _onRemoveHighlighting: Subject<DrawElement> = new Subject();
 
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/highlight:TextSelectionImpl");
+
     constructor(
         private readonly page: Page
     ) {
@@ -140,7 +150,10 @@ export class TextSelectionImpl implements TextSelection {
      */
     clearHighlight(): void {
 
-        transformSelection(window.getSelection())
+        this.log.trace(() => "Clear highlight by text selection");
+        this.log.debug(() => `Text selection: targets=${JSON.stringify(this.targets)}`);
+
+        this.targets
             .map(this.toRelativePosition)
             .forEach((it) => {
 
@@ -151,8 +164,6 @@ export class TextSelectionImpl implements TextSelection {
 
                 new HighlightManager(this.page.highlightLayerTransparency, it).clear();
             });
-
-        this.removeSelection();
     }
 
     /**
@@ -165,19 +176,20 @@ export class TextSelectionImpl implements TextSelection {
      */
     highlight(color: Color): void {
 
-        transformSelection(window.getSelection())
+        this.log.trace(() => `Highlight text selection: color=${color.hex("#XXXXXX")}`);
+        this.log.debug(() => `Text selection: targets=${JSON.stringify(this.targets)}`);
+
+        this.targets
             .map(this.toRelativePosition)
             .forEach((it) => {
 
-                const highlightManager: HighlightManager = new HighlightManager(this.page.highlightLayer, it);
+                const highlightManager: HighlightManager = new HighlightManager(this.page.highlightLayerTransparency, it);
                 highlightManager.onRemove.subscribe(this._onRemoveHighlighting);
                 highlightManager.onAdd.subscribe(this._onHighlighting);
                 highlightManager.highlight(color);
 
-                new HighlightManager(this.page.highlightLayerTransparency, it).highlight(color);
+                // new HighlightManager(this.page.highlightLayerTransparency, it).highlight(color);
             });
-
-        this.removeSelection();
     }
 
     /**
@@ -195,17 +207,6 @@ export class TextSelectionImpl implements TextSelection {
             x: target.x - this.page.pagePosition.x,
             y: target.y - this.page.pagePosition.y
         };
-    }
-
-    private removeSelection(): void {
-
-        if (window.getSelection) {
-            if (window.getSelection().empty) {  // Chrome
-                window.getSelection().empty();
-            } else if (window.getSelection().removeAllRanges) {  // Firefox
-                window.getSelection().removeAllRanges();
-            }
-        }
     }
 }
 
@@ -331,7 +332,7 @@ export class HighlightManager {
                 .filter(this.isNotIntersected)
                 .filter(this.isSameHighlight)
                 .forEach((it) => {
-                    // because no intersection, we calculate the combined rectangle ourself
+                    // because no intersection, we calculate the combined rectangle our-self
                     highlight = ClientRectangle.fromCoordinates(
                         Math.min(highlight.left, it.clientRectangle.left),
                         Math.max(highlight.right, it.clientRectangle.right),
@@ -352,7 +353,7 @@ export class HighlightManager {
 
     private paintHighlight(rect: ClientRectangle): void {
 
-        this.log.trace(() => `Paint highlight: position={x: ${rect.left}, y: ${rect.top}`);
+        this.log.debug(() => `Paint highlight: position={x: ${rect.left}, y: ${rect.top}, width: ${rect.width}, height: ${rect.height}}`);
 
         const newHighlight: CanvasRectangle = this.canvas.rectangle()
             .fillColor(this.highlightColor!)
@@ -442,7 +443,7 @@ export function transformSelection(selection: Selection): Array<Target> {
 
     const outArray: Array<Target> = [];
 
-    if (selection.rangeCount !== 0) {
+    if (selection.rangeCount !== 0 && selection.type === "Range") {
 
         const rects: Array<ClientRect> = Array.from(selection.getRangeAt(0).getClientRects());
 

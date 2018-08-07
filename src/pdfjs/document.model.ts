@@ -35,6 +35,10 @@ export class DocumentModel {
         this.pages.set(page.pageNumber, page);
     }
 
+    hasPage(pageNumber: number): boolean {
+        return this.pages.get(pageNumber) !== undefined;
+    }
+
     /**
      * @param {number} pageNumber - the page number of the wanted page
      *
@@ -94,14 +98,22 @@ export class Page {
 export function getPageNumberByEvent(evt: Event): number | undefined {
 
     const log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/document.model:getPageNumberByEvent");
-    log.trace(() => `Try to get page number by event: event=${evt.type}`);
 
-    const dataPageNumber: string | undefined = (evt.target as Element)!.parentElement!.parentElement!.dataset.pageNumber
-        || (evt.target as Element)!.parentElement!.dataset.pageNumber || undefined;
+    try {
 
-    if (dataPageNumber !== undefined) {
-        return parseInt(dataPageNumber!, 10);
+        log.trace(() => `Try to get page number by event: event=${evt.type}`);
+
+        const dataPageNumber: string | undefined = (evt.target as Element)!.parentElement!.parentElement!.dataset.pageNumber
+            || (evt.target as Element)!.parentElement!.dataset.pageNumber || undefined;
+
+        if (dataPageNumber !== undefined) {
+            log.trace(() => `Found page number by event: event=${evt.type}, pageNumber=${dataPageNumber}`);
+            return parseInt(dataPageNumber!, 10);
+        }
+
+        return undefined;
+    } catch (e) {
+        log.info(() => e.message);
+        return undefined;
     }
-
-    return undefined;
 }

@@ -200,10 +200,14 @@ export abstract class DrawingTool extends BaseTool {
 
     private setPageByEvent(evt: Event): void {
 
-        this.log.trace(() => `Try to get a page number by an event: event=${evt.type}`);
+        try {
+            this.log.trace(() => `Try to get a page number by an event: event=${evt.type}`);
 
-        const pageNumber: number | undefined = getPageNumberByEvent(evt);
+            const pageNumber: number | undefined = getPageNumberByEvent(evt);
 
-        this._page = (pageNumber !== undefined) ? this.document.getPage(pageNumber) : undefined;
+            this._page = (pageNumber !== undefined) ? this.document.getPage(pageNumber) : undefined;
+        } catch (e) {
+            this.log.info(() => e.message);
+        }
     }
 }

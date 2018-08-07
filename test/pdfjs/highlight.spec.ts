@@ -611,6 +611,7 @@ describe('to text selection mapping', () => {
 
             const mockSelection: Selection = mock(MockSelection);
             when(mockSelection.rangeCount).thenReturn(1);
+            when(mockSelection.type).thenReturn("Range");
             when(mockSelection.getRangeAt(anyNumber())).thenReturn(instance(mockRange));
 
 
@@ -641,6 +642,7 @@ describe('to text selection mapping', () => {
 
             const mockSelection: Selection = mock(MockSelection);
             when(mockSelection.rangeCount).thenReturn(1);
+            when(mockSelection.type).thenReturn("Range");
             when(mockSelection.getRangeAt(0)).thenReturn(instance(mockRange));
 
 
