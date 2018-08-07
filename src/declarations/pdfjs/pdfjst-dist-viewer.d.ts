@@ -34,6 +34,7 @@ declare module "pdfjs-dist/web/pdf_viewer" {
 
     export interface PageView {
         readonly svg: HTMLElement;
+        readonly canvas: HTMLCanvasElement;
     }
 
     export class PDFViewer {
