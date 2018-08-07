@@ -3,8 +3,23 @@ import {
     LoggerFactory as TSLoggerFactory,
     LoggerFactoryOptions,
     LogGroupRule,
-    LogLevel
+    LogLevel as TSLogLevel
 } from "typescript-logging";
+
+/**
+ * Log Levels which can be used for the log config.
+ *
+ * @author Nicolas Märchy <nm@studer-raimann.ch>
+ * @since 1.0.0
+ */
+export enum LogLevel {
+    TRACE = "TRACE",
+    DEBUG = "DEBUG",
+    INFO = "INFO",
+    WARN = "Warn",
+    ERROR = "ERROR",
+    FATAL = "FATAL"
+}
 
 /**
  * Get access to a logger or configure the logging.
@@ -30,7 +45,7 @@ export class LoggerFactory {
             }
 
             const regex: RegExp = new RegExp(`${this.escapeDots(it.logger)}.+`);
-            options.addLogGroupRule(new LogGroupRule(regex, it.logLevel));
+            options.addLogGroupRule(new LogGroupRule(regex, TSLogLevel.fromString(it.logLevel)));
         });
 
         this.factory.configure(options);
@@ -41,7 +56,7 @@ export class LoggerFactory {
     }
 
     private static readonly defaultOptions: LoggerFactoryOptions = new LoggerFactoryOptions()
-        .addLogGroupRule(new LogGroupRule(/.+/, LogLevel.Warn));
+        .addLogGroupRule(new LogGroupRule(/.+/, TSLogLevel.fromString(LogLevel.WARN)));
 
     private static readonly factory: TSLoggerFactory = LFService.createNamedLoggerFactory("LoggerFactory", LoggerFactory.defaultOptions);
 

@@ -159,16 +159,16 @@ It allows you to define different log levels for different directories, files or
 
 `logLevel` defines one of the log level to use on this group
 
-If you are using Typescript you can use the `typescript-logging` enumerator `LogLevel`.
+If you are using Typescript you can use the enumerator `LogLevel`.
 
-If you are using Javascript you have to use the index number which represents the log level of the enumerator:
+If you are using Javascript you have to use the string value which represents the log level of the enumerator:
 
-* 0 - trace
-* 1 - debug
-* 2 - info
-* 3 - warn
-* 4 - error
-* 5 - fatal
+* `"TRACE"`
+* `"DEBUG"`
+* `"INFO"`
+* `"WARN"`
+* `"ERROR"`
+* `"FATAL"`
 
 ## Using the PDF Document Service
 
