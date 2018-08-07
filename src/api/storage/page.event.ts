@@ -8,8 +8,8 @@ import {PolyLine, Rectangle, DrawElement} from "../draw/elements";
  * @since 0.0.1
  */
 export enum PageLayer {
-    HIGHLIGHT,
-    DRAWING
+    HIGHLIGHT = "HIGHLIGHT",
+    DRAWING = "DRAWING"
 }
 
 /**
