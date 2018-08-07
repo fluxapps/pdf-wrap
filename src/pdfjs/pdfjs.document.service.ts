@@ -351,7 +351,7 @@ export class PDFjsDocument implements PDFDocument {
         for (const it of Array.from(outline)) {
             const destination: OutlineDestination = await this.viewer.pdfDocument.getDestination(it.dest);
 
-            this.log.debug(() => `Outline destination: destination=${destination}`);
+            this.log.debug(() => `Outline destination: destination=${JSON.stringify(destination)}`);
 
             const pageRef: PageRef = destination[0];
             const destPageNumber: number = (await this.viewer.pdfDocument.getPageIndex(pageRef)) + 1;
