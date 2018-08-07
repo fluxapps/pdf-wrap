@@ -175,6 +175,9 @@ The **other** tasks contain tasks which have more a general purpose, rather than
 **`copyDependencies`**<br>
 Copies the projects dependencies.
 
+**`copyImages`**<br>
+Copies the images used by PDF.js
+
 **`copyCMaps`**<br>
 Copies the cMaps of PDF.js
 

@@ -166,11 +166,20 @@ gulp.task("copyCMaps", () => {
         .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap/assets/cmaps`));
 });
 
+// --- copyImages
+/*
+ * Copies pdfJS images which are needed of pdfJS.
+ */
+gulp.task("copyImages", () => {
+    return gulp.src(`${appProperties.root}/node_modules/pdfjs-dist/web/images/*`)
+        .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap/assets/images`));
+});
+
 // --- copyPDFJS
 /*
- * Copies pdf-js files which are needed in order to use it.
+ * Copies pdfJS files which are needed in order to use it.
  */
-gulp.task("copyPDFJS", ["copyCMaps"], () => {
+gulp.task("copyPDFJS", ["copyCMaps", "copyImages"], () => {
     return gulp
         .src([
             `${appProperties.root}/node_modules/pdfjs-dist/build/pdf.worker.js`
