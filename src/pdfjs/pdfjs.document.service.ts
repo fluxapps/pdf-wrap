@@ -50,21 +50,18 @@ GlobalWorkerOptions.workerSrc = "assets/pdf.worker.js";
 let mapUrl: string = "assets/cmaps";
 
 /**
- * Sets the PDF.js worker url.
+ * Sets the assets directory.
  *
- * @param {string} url - the url to use
- */
-export function setWorkerSrc(url: string): void {
-    GlobalWorkerOptions.workerSrc = url;
-}
-
-/**
- * Sets the PDF.js cMap url.
+ * The parameter should be relative to your websites root directory
+ * without starting './' or trailing '/'.
  *
- * @param {string} url - the url to use
+ * e.g. "resources/pdf-wrap"
+ *
+ * @param {string} src - the relative src to the assets dierctory
  */
-export function setCMapUrl(url: string): void {
-    mapUrl = url;
+export function setAssetsSrc(src: string): void {
+    GlobalWorkerOptions.workerSrc = `${src}/pdf.worker.js`;
+    mapUrl = `${src}/cmaps`;
 }
 
 /**

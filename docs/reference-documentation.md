@@ -103,15 +103,18 @@ The `pdf.worker.js` and the cMaps are delivered in the `assets` directory of PDF
 Depending on how you build your project, either copy they to a directory of your choice or provide them
 somehow as resources.
 
-Either way you can set the worker and cMap url
+Either way you can set the assets src
 
 ```typescript
-setWorkerSrc("assets/libs/pdf-wrap/pdf.worker.js");
-setMapUrl("assets/libs/pdf-wrap/cMaps");
+setAssetsSrc("resources/lib/pdf-wrap/assets");
 ```
 
-In this case, we assume, that the `pdf.worker.js` and the cMaps are
-inside the `assets/libs/pdf-wrap` directory of the built project.
+In this case, we assume, that the `assets` directory is copied into the
+`resources/lib/pdf-wrap` directory of the built project.
+
+> Do NOT set the src url with starting `./` or ending `/`.
+
+The default value of the assets src is `assets`.
 
 ## Setup Logger
 

@@ -1,3 +1,5 @@
+import {setAssetsSrc} from "../../../../src/pdfjs/pdfjs.document.service";
+
 const {colorFromHex} = require("pdf-wrap/api/draw/color");
 const {PDFjsDocumentService, setWorkerSrc, setCMapUrl} = require("pdf-wrap/pdfjs/pdfjs.document.service");
 const {URI} = require("pdf-wrap/api/document.service");
@@ -78,8 +80,7 @@ export class InMemStorageAdapter {
 
 StorageRegistry.instance.add(new InMemStorageAdapter());
 
-setWorkerSrc("assets/libs/pdf-wrap/pdf.worker.js");
-setCMapUrl("assets/libs/pdf-wrap/cmaps");
+setAssetsSrc("assets/libs/pdf-wrap");
 
 class HighlightService {
 
