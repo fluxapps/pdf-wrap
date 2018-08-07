@@ -1,5 +1,5 @@
 cache:
-  ked: node
+  key: node
   paths:
     - node_modules
 
