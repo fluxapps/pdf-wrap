@@ -110,7 +110,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
         const viewer: PDFViewer = new PDFViewer({
             container: options.container,
             eventBus: new EventBus(),
-            renderer: "canvas"
+            renderer: "svg"
         });
 
         this.log.trace(() => "Get document from array buffer");
@@ -190,7 +190,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
                     {height: it.height, width: it.width},
                     (): Point => {
                         const pageView: PageView = viewer.getPageView(it.pageIndex);
-                        const pageRects: ClientRect = pageView.canvas.getClientRects()[0];
+                        const pageRects: ClientRect = pageView.svg.getClientRects()[0];
                         return {
                             x: pageRects.left,
                             y: pageRects.top
