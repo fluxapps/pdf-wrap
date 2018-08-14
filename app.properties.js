@@ -14,7 +14,8 @@ module.exports = {
         dirs: {
             javascript: build("javascript"),
             dist: build("distributions"),
-            libs: build("libs")
+            libs: build("libs"),
+            docs: build("docs")
         }
     }
 };

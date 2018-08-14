@@ -1,0 +1,16 @@
+cache:
+  key: node
+  paths:
+    - node_modules
+
+before_script:
+  - yarn install
+
+stages:
+  - test
+
+test:
+  stage: test
+  script: yarn gulp test
+  tags:
+    - node

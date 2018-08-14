@@ -1,0 +1,33 @@
+.pdf.viewport {
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.pdf-container {
+    background-color: #333333;
+}
+
+.page-layer, .canvasWrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.page-layer.transparent {
+    opacity: 0.4;
+}
+
+.page-layer.in-front {
+    z-index: 99;
+}
+
+.canvasWrapper {
+    -webkit-user-select: none;  /* Chrome all / Safari all */
+    -moz-user-select: none;     /* Firefox all */
+    -ms-user-select: none;      /* IE 10+ */
+    user-select: none;          /* Likely future */
+}
