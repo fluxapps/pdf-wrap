@@ -157,12 +157,12 @@ export class TextSelectionImpl implements TextSelection {
             .map(this.toRelativePosition)
             .forEach((it) => {
 
-                const highlightManager: HighlightManager = new HighlightManager(this.page.highlightLayer, it);
+                const highlightManager: HighlightManager = new HighlightManager(this.page.highlightLayerTransparency, it);
                 highlightManager.onRemove.subscribe(this._onRemoveHighlighting);
                 highlightManager.onAdd.subscribe(this._onHighlighting);
                 highlightManager.clear();
 
-                new HighlightManager(this.page.highlightLayerTransparency, it).clear();
+                // new HighlightManager(this.page.highlightLayerTransparency, it).clear();
             });
     }
 
