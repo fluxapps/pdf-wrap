@@ -255,7 +255,7 @@ gulp.task("pack", ["repackage"], function (done) {
  * Publishes the npm distribution.
  */
 gulp.task("publish", ["repackage"], function (done) {
-    spawn("yarn", ["publish"], {stdio: "inherit", cwd: `${appProperties.build.dirs.dist}/npm`})
+    spawn("yarn", ["publish", "--access", "public"], {stdio: "inherit", cwd: `${appProperties.build.dirs.dist}/npm`})
         .once("exit", function (code) {
             if (code === 0) {
                 done();
