@@ -314,6 +314,27 @@ yarn gulp publishDoc
 This will generate the documentation, updates the `gh-pages` branch
 and pushes it to Github.
 
+# NPM
+
+PDF Wrap is published to [npm.js](https://www.npmjs.com/package/@srag/pdf-wrap).
+
+## How to publish PDF Wrap
+
+In order to publish this project to npm you have to log in with your npm account
+
+```
+yarn login
+```
+
+Then simply run
+
+```
+yarn gulp publish
+```
+
+> It is important to use this command and **NOT `yarn publish`** directly, because the gulp command will
+prepare PDF Wrap before publishing it.
+
 # Unit Testing
 
 PDF Wrap uses [Mocha](https://mochajs.org/) to run its tests. In addition, [chaijs](http://www.chaijs.com/) is used

@@ -26,4 +26,4 @@ the reference documentation.
 ## Examples
 Looking for finished examples? Here you'll find access to examples made with PDF Wrap.
 
-[Check out examples >](link-to-github)
+[Check out examples >](https://github.com/studer-raimann/pdf-wrap/tree/master/examples)

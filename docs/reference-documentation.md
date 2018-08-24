@@ -4,7 +4,7 @@
 
 Nicolas Märchy
 
-**Version 0.0.1**
+**Version 1.0.0**
 
 Copyright &copy; 2018 studer + raimann ag, <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
 
@@ -48,12 +48,6 @@ yarn add pdf-wrap
 ```npm
 npm i pdf-wrap
 ```
-
-### Manual Installation
-
-You can download the PDF Wrap distribution from the npm repository.
-
-* [pdf-wrap.tar.zip](https://www.npmjs.com/)
 
 # Using PDF Wrap
 
