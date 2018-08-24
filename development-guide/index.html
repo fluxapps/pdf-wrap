@@ -106,6 +106,8 @@
             <li><a href="#why-using-it-this-way">Why using it this way?</a></li>
         <li class="main "><a href="#mkdocs">MkDocs</a></li>
             <li><a href="#how-to-publish-the-documentation">How to publish the documentation</a></li>
+        <li class="main "><a href="#npm">NPM</a></li>
+            <li><a href="#how-to-publish-pdf-wrap">How to publish PDF Wrap</a></li>
         <li class="main "><a href="#unit-testing">Unit Testing</a></li>
             <li><a href="#where-to-write-tests">Where to write tests</a></li>
             <li><a href="#test-style">Test style</a></li>
@@ -254,6 +256,8 @@ Generates and publishes the MkDocs.</p>
 <p>The <strong>other</strong> tasks contain tasks which have more a general purpose, rather than something specific.</p>
 <p><strong><code>copyDependencies</code></strong><br>
 Copies the projects dependencies.</p>
+<p><strong><code>copyImages</code></strong><br>
+Copies the images used by PDF.js</p>
 <p><strong><code>copyCMaps</code></strong><br>
 Copies the cMaps of PDF.js</p>
 <p><strong><code>copyPDFJS</code></strong><br>
@@ -345,6 +349,21 @@ and ghp-import must be on your PATH.</p>
 
 <p>This will generate the documentation, updates the <code>gh-pages</code> branch
 and pushes it to Github.</p>
+<h1 id="npm">NPM</h1>
+<p>PDF Wrap is published to <a href="https://www.npmjs.com/package/@srag/pdf-wrap">npm.js</a>.</p>
+<h2 id="how-to-publish-pdf-wrap">How to publish PDF Wrap</h2>
+<p>In order to publish this project to npm you have to log in with your npm account</p>
+<pre><code>yarn login
+</code></pre>
+
+<p>Then simply run</p>
+<pre><code>yarn gulp publish
+</code></pre>
+
+<blockquote>
+<p>It is important to use this command and <strong>NOT <code>yarn publish</code></strong> directly, because the gulp command will
+prepare PDF Wrap before publishing it.</p>
+</blockquote>
 <h1 id="unit-testing">Unit Testing</h1>
 <p>PDF Wrap uses <a href="https://mochajs.org/">Mocha</a> to run its tests. In addition, <a href="http://www.chaijs.com/">chaijs</a> is used
 to assert test results. And for mocking classes, <a href="https://github.com/NagRock/ts-mockito">ts-mockito</a> is used.</p>

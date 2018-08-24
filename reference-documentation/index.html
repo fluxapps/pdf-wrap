@@ -117,7 +117,7 @@
 <h1 id="pdf-wrap-reference-documentation">PDF Wrap Reference Documentation</h1>
 <p><strong>Authors</strong></p>
 <p>Nicolas Märchy</p>
-<p><strong>Version 0.0.1</strong></p>
+<p><strong>Version 1.0.0</strong></p>
 <p>Copyright &copy; 2018 studer + raimann ag, <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.</p>
 <hr />
 <h1 id="getting-started">Getting Started</h1>
@@ -148,11 +148,6 @@
 <pre><code class="npm">npm i pdf-wrap
 </code></pre>
 
-<h3 id="manual-installation">Manual Installation</h3>
-<p>You can download the PDF Wrap distribution from the npm repository.</p>
-<ul>
-<li><a href="https://www.npmjs.com/">pdf-wrap.tar.zip</a></li>
-</ul>
 <h1 id="using-pdf-wrap">Using PDF Wrap</h1>
 <p>This section goes into more detail about how you should use PDF Wrap.
 It covers topics such as using the api, toolbox and how to provide your storage adapter.</p>
@@ -189,13 +184,16 @@ you have to provide the <code>pdf.worker.js</code> as well as some cMaps.</p>
 <p>The <code>pdf.worker.js</code> and the cMaps are delivered in the <code>assets</code> directory of PDF Wrap.</p>
 <p>Depending on how you build your project, either copy they to a directory of your choice or provide them
 somehow as resources.</p>
-<p>Either way you can set the worker and cMap url</p>
-<pre><code class="typescript">setWorkerSrc(&quot;assets/libs/pdf-wrap/pdf.worker.js&quot;);
-setMapUrl(&quot;assets/libs/pdf-wrap/cMaps&quot;);
+<p>Either way you can set the assets src</p>
+<pre><code class="typescript">setAssetsSrc(&quot;resources/lib/pdf-wrap/assets&quot;);
 </code></pre>
 
-<p>In this case, we assume, that the <code>pdf.worker.js</code> and the cMaps are
-inside the <code>assets/libs/pdf-wrap</code> directory of the built project.</p>
+<p>In this case, we assume, that the <code>assets</code> directory is copied into the
+<code>resources/lib/pdf-wrap</code> directory of the built project.</p>
+<blockquote>
+<p>Do NOT set the src url with starting <code>./</code> or ending <code>/</code>.</p>
+</blockquote>
+<p>The default value of the assets src is <code>assets</code>.</p>
 <h2 id="setup-logger">Setup Logger</h2>
 <p>PDF Wrap has a default log configuration which logs everything from log level <code>Warn</code>.</p>
 <p>You can override the default config</p>
@@ -229,15 +227,15 @@ It allows you to define different log levels for different directories, files or
 </ul>
 <hr />
 <p><code>logLevel</code> defines one of the log level to use on this group</p>
-<p>If you are using Typescript you can use the <code>typescript-logging</code> enumerator <code>LogLevel</code>.</p>
-<p>If you are using Javascript you have to use the index number which represents the log level of the enumerator:</p>
+<p>If you are using Typescript you can use the enumerator <code>LogLevel</code>.</p>
+<p>If you are using Javascript you have to use the string value which represents the log level of the enumerator:</p>
 <ul>
-<li>0 - trace</li>
-<li>1 - debug</li>
-<li>2 - info</li>
-<li>3 - warn</li>
-<li>4 - error</li>
-<li>5 - fatal</li>
+<li><code>"TRACE"</code></li>
+<li><code>"DEBUG"</code></li>
+<li><code>"INFO"</code></li>
+<li><code>"WARN"</code></li>
+<li><code>"ERROR"</code></li>
+<li><code>"FATAL"</code></li>
 </ul>
 <h2 id="using-the-pdf-document-service">Using the PDF Document Service</h2>
 <p>The <code>PDFDocumentService</code> is your entry point to PDF Wrap. It provides a load method

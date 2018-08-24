@@ -76,7 +76,7 @@
 					</div>
 					<dl class="tsd-comment-tags">
 						<dt>author</dt>
-						<dd><p>Nicolas Märchy <a href="mailto:&#x6e;&#x6d;&#x40;&#x73;&#x74;&#x75;&#100;&#101;&#114;&#x2d;&#114;&#97;&#105;&#x6d;&#x61;&#x6e;&#110;&#46;&#99;&#104;">&#x6e;&#x6d;&#x40;&#x73;&#x74;&#x75;&#100;&#101;&#114;&#x2d;&#114;&#97;&#105;&#x6d;&#x61;&#x6e;&#110;&#46;&#99;&#104;</a></p>
+						<dd><p>Nicolas Märchy <a href="mailto:&#x6e;&#109;&#x40;&#115;&#116;&#117;&#100;&#x65;&#114;&#x2d;&#x72;&#97;&#105;&#109;&#97;&#x6e;&#110;&#46;&#99;&#x68;">&#x6e;&#109;&#x40;&#115;&#116;&#117;&#100;&#x65;&#114;&#x2d;&#x72;&#97;&#105;&#109;&#97;&#x6e;&#110;&#46;&#99;&#x68;</a></p>
 						</dd>
 						<dt>since</dt>
 						<dd><p>0.0.1</p>
@@ -113,6 +113,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_highlight_.textselectionimpl.html#_onhighlighting" class="tsd-kind-icon">_on<wbr>Highlighting</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_highlight_.textselectionimpl.html#_onremovehighlighting" class="tsd-kind-icon">_on<wbr>Remove<wbr>Highlighting</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_highlight_.textselectionimpl.html#log" class="tsd-kind-icon">log</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_pdfjs_highlight_.textselectionimpl.html#onhighlighting" class="tsd-kind-icon">on<wbr>Highlighting</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_pdfjs_highlight_.textselectionimpl.html#onremovehighlighting" class="tsd-kind-icon">on<wbr>Remove<wbr>Highlighting</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_highlight_.textselectionimpl.html#page" class="tsd-kind-icon">page</a></li>
@@ -129,7 +130,6 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_pdfjs_highlight_.textselectionimpl.html#clearhighlight" class="tsd-kind-icon">clear<wbr>Highlight</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_pdfjs_highlight_.textselectionimpl.html#highlight" class="tsd-kind-icon">highlight</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_highlight_.textselectionimpl.html#removeselection" class="tsd-kind-icon">remove<wbr>Selection</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_highlight_.textselectionimpl.html#torelativeposition" class="tsd-kind-icon">to<wbr>Relative<wbr>Position</a></li>
 							</ul>
 						</section>
@@ -148,7 +148,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/highlight.ts:114</li>
+									<li>Defined in pdfjs/highlight.ts:133</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -170,7 +170,7 @@
 					<div class="tsd-signature tsd-kind-icon">_on<wbr>Highlighting<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.rectangle.html" class="tsd-signature-type">Rectangle</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Subject()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in pdfjs/highlight.ts:113</li>
+							<li>Defined in pdfjs/highlight.ts:130</li>
 						</ul>
 					</aside>
 				</section>
@@ -180,7 +180,17 @@
 					<div class="tsd-signature tsd-kind-icon">_on<wbr>Remove<wbr>Highlighting<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.drawelement.html" class="tsd-signature-type">DrawElement</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Subject()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in pdfjs/highlight.ts:114</li>
+							<li>Defined in pdfjs/highlight.ts:131</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="log" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> log</h3>
+					<div class="tsd-signature tsd-kind-icon">log<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Logger</span><span class="tsd-signature-symbol"> =&nbsp;LoggerFactory.getLogger(&quot;ch/studerraimann/pdfwrap/pdfjs/highlight:TextSelectionImpl&quot;)</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in pdfjs/highlight.ts:133</li>
 						</ul>
 					</aside>
 				</section>
@@ -191,7 +201,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/_api_highlight_highlight_api_.textselection.html">TextSelection</a>.<a href="../interfaces/_api_highlight_highlight_api_.textselection.html#onhighlighting">onHighlighting</a></p>
 						<ul>
-							<li>Defined in pdfjs/highlight.ts:106</li>
+							<li>Defined in pdfjs/highlight.ts:123</li>
 						</ul>
 					</aside>
 				</section>
@@ -202,7 +212,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/_api_highlight_highlight_api_.textselection.html">TextSelection</a>.<a href="../interfaces/_api_highlight_highlight_api_.textselection.html#onremovehighlighting">onRemoveHighlighting</a></p>
 						<ul>
-							<li>Defined in pdfjs/highlight.ts:107</li>
+							<li>Defined in pdfjs/highlight.ts:124</li>
 						</ul>
 					</aside>
 				</section>
@@ -212,7 +222,7 @@
 					<div class="tsd-signature tsd-kind-icon">page<span class="tsd-signature-symbol">:</span> <a href="_pdfjs_document_model_.page.html" class="tsd-signature-type">Page</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in pdfjs/highlight.ts:117</li>
+							<li>Defined in pdfjs/highlight.ts:136</li>
 						</ul>
 					</aside>
 				</section>
@@ -229,7 +239,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/highlight.ts:109</li>
+									<li>Defined in pdfjs/highlight.ts:126</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_highlight_highlight_api_.target.html" class="tsd-signature-type">Target</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -250,7 +260,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_api_highlight_highlight_api_.textselection.html">TextSelection</a>.<a href="../interfaces/_api_highlight_highlight_api_.textselection.html#clearhighlight">clearHighlight</a></p>
 								<ul>
-									<li>Defined in pdfjs/highlight.ts:132</li>
+									<li>Defined in pdfjs/highlight.ts:151</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -274,7 +284,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_api_highlight_highlight_api_.textselection.html">TextSelection</a>.<a href="../interfaces/_api_highlight_highlight_api_.textselection.html#highlight">highlight</a></p>
 								<ul>
-									<li>Defined in pdfjs/highlight.ts:157</li>
+									<li>Defined in pdfjs/highlight.ts:177</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -298,23 +308,6 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
-					<a name="removeselection" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> remove<wbr>Selection</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
-						<li class="tsd-signature tsd-kind-icon">remove<wbr>Selection<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in pdfjs/highlight.ts:191</li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
 					<a name="torelativeposition" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> to<wbr>Relative<wbr>Position</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
@@ -324,7 +317,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/highlight.ts:182</li>
+									<li>Defined in pdfjs/highlight.ts:203</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -401,6 +394,9 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_pdfjs_highlight_.textselectionimpl.html#_onremovehighlighting" class="tsd-kind-icon">_on<wbr>Remove<wbr>Highlighting</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_pdfjs_highlight_.textselectionimpl.html#log" class="tsd-kind-icon">log</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_pdfjs_highlight_.textselectionimpl.html#onhighlighting" class="tsd-kind-icon">on<wbr>Highlighting</a>
 							</li>
@@ -418,9 +414,6 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_pdfjs_highlight_.textselectionimpl.html#highlight" class="tsd-kind-icon">highlight</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
-								<a href="_pdfjs_highlight_.textselectionimpl.html#removeselection" class="tsd-kind-icon">remove<wbr>Selection</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="_pdfjs_highlight_.textselectionimpl.html#torelativeposition" class="tsd-kind-icon">to<wbr>Relative<wbr>Position</a>
