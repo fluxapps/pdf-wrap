@@ -24,7 +24,14 @@ export class ClientRectangle implements ClientRect {
      * @returns {ClientRectangle} the resulting client rectangle
      */
     static fromCoordinates(left: number, right: number, top: number, bottom: number): ClientRectangle {
-        return new ClientRectangle(left, right, top, bottom, bottom - top, right - left);
+        return new ClientRectangle(
+            this.roundToSaveFloat(left),
+            this.roundToSaveFloat(right),
+            this.roundToSaveFloat(top),
+            this.roundToSaveFloat(bottom),
+            this.roundToSaveFloat(bottom - top),
+            this.roundToSaveFloat(right - left)
+        );
     }
 
     /**
@@ -40,7 +47,13 @@ export class ClientRectangle implements ClientRect {
      * @returns {ClientRectangle} the resulting rectangle
      */
     static fromSize(top: number, left: number, height: number, width: number): ClientRectangle {
-        return new ClientRectangle(left, left + width, top, top + height, height, width);
+        return new ClientRectangle(
+            this.roundToSaveFloat(left),
+            this.roundToSaveFloat(left + width),
+            this.roundToSaveFloat(top), this.roundToSaveFloat(top + height),
+            this.roundToSaveFloat(height),
+            this.roundToSaveFloat(width)
+        );
     }
 
     /**
@@ -58,6 +71,14 @@ export class ClientRectangle implements ClientRect {
             clientRect.bottom,
             clientRect.height,
             clientRect.width);
+    }
+
+    /**
+     * Round float values to 7 decimal places
+     * @param unsafe
+     */
+    private static roundToSaveFloat(unsafe: number): number {
+        return Number.parseFloat(unsafe.toFixed(7));
     }
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/client-rectangle:ClientRectangle");
@@ -195,7 +216,7 @@ export class ClientRectangle implements ClientRect {
      */
     subtract(other: ClientRectangle): Array<ClientRectangle> {
 
-        this.log.debug(() => `Subtract client rectangles:\n ${this.toString()}\n-${other.toString()}`);
+        this.log.debug(() => `Subtract client rectangles:\n ${this.toString()}\n - \n${other.toString()}`);
 
         if (this.top !== other.top || this.bottom !== other.bottom) {
             throw new Error("Can not subtract rectangle with uneven top or bottom attributes:"
@@ -230,7 +251,8 @@ export class ClientRectangle implements ClientRect {
             );
         }
 
-        return result;
+        // filter items which are not bigger then one unit
+        return result.filter((value: ClientRectangle, _, __) => value.area() >= 1);
     }
 
     /**
