@@ -171,7 +171,6 @@ export class PDFjsDocumentService implements PDFDocumentService {
 
                     pageData.highlightings
                         .forEach((highlight) => {
-                            drawHighlight(highlightLayer, rescaleManager.rescaleRectangle(highlight));
                             drawHighlight(highlightTransparencyLayer, rescaleManager.rescaleRectangle(highlight));
                         });
 

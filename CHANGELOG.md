@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 * Filter highlights which are to small to be visible.
 
+### Changed
+* Disable background highlight layer because its not visible with colored
+document backgrounds.
+
 ## 0.1.3 - 2018-08-23
 
 ### Fixed
