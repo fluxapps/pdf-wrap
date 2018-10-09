@@ -208,8 +208,9 @@ export class PDFjsDocumentService implements PDFDocumentService {
         const fileReader: FileReader = new FileReader();
         const fileLoadend: Promise<ArrayBuffer> = fromEvent<ArrayBuffer>(fileReader, "loadend")
             .pipe(first())
-            .pipe(map(() => fileReader.result))
+            .pipe(map(() => fileReader.result as ArrayBuffer))
             .toPromise();
+
         fromEvent(fileReader, "error").subscribe((error) => {
             this.log.error(() => `Could not read options.pdf: error=${error}`);
         });

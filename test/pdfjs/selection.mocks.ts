@@ -63,10 +63,6 @@ export class MockRange implements Range {
         throw new Error("Not implemented test stub");
     }
 
-    expand(_: ExpandGranularity): boolean {
-        throw new Error("Not implemented test stub");
-    }
-
     extractContents(): DocumentFragment {
         throw new Error("Not implemented test stub");
     }
@@ -120,6 +116,14 @@ export class MockRange implements Range {
     }
 
     surroundContents(_: Node): void {
+        throw new Error("Not implemented test stub");
+    }
+
+    comparePoint(_: Node, __: number): number {
+        throw new Error("Not implemented test stub");
+    }
+
+    intersectsNode(_: Node): boolean {
         throw new Error("Not implemented test stub");
     }
 }
