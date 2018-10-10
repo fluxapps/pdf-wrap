@@ -71,5 +71,15 @@ declare module "pdfjs-dist" {
         getPageIndex(ref: PageRef): Promise<number>;
 
         getPage(pageNumber: number): Promise<PDFPageProxy>;
+
+        /**
+         * Cleans up resources allocated by the document, e.g. created `@font-face`.
+         */
+        cleanup(): void;
+
+        /**
+         * Destroys the current document instance and terminates the worker.
+         */
+        destroy(): Promise<void>;
     }
 }

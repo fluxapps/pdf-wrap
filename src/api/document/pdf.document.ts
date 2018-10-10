@@ -66,4 +66,10 @@ export interface PDFDocument {
      * @returns {Observable<PageThumbnail>} a observable which emits the thumbnails
      */
     getThumbnails(maxSize: number, ...pageNumbers: Array<number>): Observable<PageThumbnail>;
+
+    /**
+     * Destroys allocated resources.
+     * After this method call, the document is no longer functional.
+     */
+    close(): Promise<void>;
 }

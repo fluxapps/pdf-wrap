@@ -241,11 +241,6 @@ export class PDFjsDocumentService implements PDFDocumentService {
  */
 export class PDFjsDocument implements PDFDocument {
 
-    readonly pageChange: Observable<PageChangeEvent>;
-    readonly pageCount: number;
-
-    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/pdfjs.document.service:PDFjsDocument");
-
     get currentPageNumber(): number {
         return this.viewer.currentPageNumber;
     }
@@ -263,6 +258,11 @@ export class PDFjsDocument implements PDFDocument {
         this.log.trace(() => `Set scale to ${scale}`);
         this.viewer.currentScale = scale;
     }
+
+    readonly pageChange: Observable<PageChangeEvent>;
+    readonly pageCount: number;
+
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/pdfjs.document.service:PDFjsDocument");
 
     constructor(
         private readonly viewer: PDFViewer,
@@ -344,6 +344,11 @@ export class PDFjsDocument implements PDFDocument {
                 )
                     .pipe(map(() => new PageThumbnail(canvas, it.pageNumber)));
             }));
+    }
+
+    close(): Promise<void> {
+        this.viewer.pdfDocument.cleanup();
+        return this.viewer.pdfDocument.destroy();
     }
 
     /**
