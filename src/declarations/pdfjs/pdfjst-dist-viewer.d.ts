@@ -7,7 +7,7 @@ declare module "pdfjs-dist/web/pdf_viewer" {
         pageNumber: number;
     }
 
-    export interface PagesInitializedEvent {}
+    export interface PagesLoadedEvent {}
 
     export interface PageViewport {
         readonly height: number;
@@ -27,11 +27,11 @@ declare module "pdfjs-dist/web/pdf_viewer" {
     export class EventBus {
         on(evt: "pagerendered", callback: (evt: PageRenderedEvent) => void): void;
         on(evt: "pagechanging", callback: (evt: PageChangingEvent) => void): void;
-        on(evt: "pagesinit", callback: (evt: PagesInitializedEvent) => void): void;
+        on(evt: "pagesloaded", callback: (evt: PagesLoadedEvent) => void): void;
 
         off(evt: "pagerendered", callback: (evt: PageRenderedEvent) => void): void;
         off(evt: "pagechanging", callback: (evt: PageChangingEvent) => void): void;
-        off(evt: "pagesinit", callback: (evt: PagesInitializedEvent) => void): void;
+        off(evt: "pagesloaded", callback: (evt: PagesLoadedEvent) => void): void;
 
         dispatch(eventName: string, ...args?: unknown): void;
     }

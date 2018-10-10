@@ -8,7 +8,7 @@ import {Highlighting} from "../api/highlight/highlight.api";
 import {
     EventBus,
     PageChangingEvent,
-    PageRenderedEvent,
+    PageRenderedEvent, PagesLoadedEvent,
     PageView,
     PDFFindController,
     PDFViewer
@@ -105,11 +105,20 @@ export class PDFjsDocumentService implements PDFDocumentService {
         this.log.info(() => `Load PDF file`);
 
         const pdfData: ArrayBuffer = await this.readBlob(options.pdf);
+        const eventBus: EventBus = new EventBus();
+
+        const fullyLoadPdf: Promise<PDFDocument> = new Observable((subscriber: Subscriber<PagesLoadedEvent>): TeardownLogic => {
+            this.log.trace("Listen on pagesinit event");
+            eventBus.on("pagesloaded", (it) => subscriber.next(it));
+        })
+            .pipe(first())
+            .pipe(map(() => new PDFjsDocument(viewer, highlighting, {freehand, eraser}, searchController)))
+            .toPromise();
 
         this.log.trace(() => "Create PDF viewer");
         const viewer: PDFViewer = new PDFViewer({
             container: options.container,
-            eventBus: new EventBus(),
+            eventBus,
             renderer: "svg"
         });
 
@@ -124,7 +133,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
         viewer.setDocument(pdf);
 
         const findController: PDFFindController = new PDFFindController({
-            pdfViewer: viewer
+            pdfViewer: viewer,
         });
         this.log.trace(() => "Set find controller on PDF viewer");
         viewer.setFindController(findController);
@@ -200,7 +209,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
                 documentModel.addPage(page);
             });
 
-        return new PDFjsDocument(viewer, highlighting, {freehand, eraser}, searchController);
+        return fullyLoadPdf;
     }
 
     private readBlob(data: Blob): Promise<ArrayBuffer> {

@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 * Disable background highlight layer because its not visible with colored
 document backgrounds.
+* pdf document service loadWith now resolves after the viewer is ready instead of instantly after
+creation.
 
 ## 0.1.3 - 2018-08-23
 
