@@ -90,6 +90,7 @@ declare module "pdfjs-dist/web/pdf_viewer" {
         renderer: RenderingType;
         enhanceTextSelection: boolean;
         linkService?: PDFLinkService;
+        enableWebGL: boolean;
     }
 
     export interface PageView {

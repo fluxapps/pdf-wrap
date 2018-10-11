@@ -120,6 +120,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
         this.log.trace(() => "Create PDF viewer");
         const viewer: PDFViewer = new PDFViewer({
             container: options.container,
+            enableWebGL: true,
             enhanceTextSelection: true,
             eventBus,
             linkService,

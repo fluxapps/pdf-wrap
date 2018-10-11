@@ -20,6 +20,7 @@ document backgrounds.
 creation.
 * Upgrade to typescript version ^3.1.0
 * Enable text selection enhancement.
+* Enable WebGL.
 
 ## 0.1.3 - 2018-08-23
 
