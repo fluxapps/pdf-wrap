@@ -11,7 +11,7 @@ import {
     PageRenderedEvent, PagesLoadedEvent,
     PageView,
     PDFFindController, PDFLinkService,
-    PDFViewer, RenderingType
+    PDFViewer, RenderingType, TextLayerMode
 } from "pdfjs-dist/web/pdf_viewer";
 import {
     getDocument,
@@ -121,10 +121,10 @@ export class PDFjsDocumentService implements PDFDocumentService {
         const viewer: PDFViewer = new PDFViewer({
             container: options.container,
             enableWebGL: true,
-            enhanceTextSelection: true,
             eventBus,
             linkService,
-            renderer: RenderingType.SVG
+            renderer: RenderingType.SVG,
+            textLayerMode: TextLayerMode.ENABLE_ENHANCED
         });
 
         this.log.trace(() => "Get document from array buffer");

@@ -84,11 +84,17 @@ declare module "pdfjs-dist/web/pdf_viewer" {
         CANVAS = "canvas"
     }
 
+    export const enum TextLayerMode {
+        DISABLE = 0,
+        ENABLE = 1,
+        ENABLE_ENHANCED = 2
+    }
+
     export interface ViewerOptions {
         container: HTMLElement;
         eventBus: EventBus;
         renderer: RenderingType;
-        enhanceTextSelection: boolean;
+        textLayerMode: TextLayerMode;
         linkService?: PDFLinkService;
         enableWebGL: boolean;
     }
