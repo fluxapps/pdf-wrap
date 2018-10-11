@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 * Close method to pdf document which resolves after the cleanup finished.
+* Use pdf link service for internal document links.
 
 ### Fixed
 * Filter highlights which are to small to be visible.
@@ -18,6 +19,7 @@ document backgrounds.
 * pdf document service loadWith now resolves after the viewer is ready instead of instantly after
 creation.
 * Upgrade to typescript version ^3.1.0
+* Enable text selection enhancement.
 
 ## 0.1.3 - 2018-08-23
 

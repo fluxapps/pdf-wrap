@@ -2,6 +2,7 @@
 declare module "pdfjs-dist/web/pdf_viewer" {
 
     import {PDFDocumentProxy} from "pdfjs-dist";
+    import {PDFDocument} from "../../api/document/pdf.document";
 
     export interface PageChangingEvent {
         pageNumber: number;
@@ -36,10 +37,59 @@ declare module "pdfjs-dist/web/pdf_viewer" {
         dispatch(eventName: string, ...args?: unknown): void;
     }
 
+    export class PDFLinkService {
+        /**
+         * @param {PDFLinkServiceOptions} options
+         */
+        constructor(options: PDFLinkServiceOptions);
+
+        setDocument(pdfDocument: PDFDocument, baseUrl?: string = null): void;
+
+        setViewer(pdfViewer: PDFViewer): void;
+
+        /**
+         * @returns {number}
+         */
+        get pagesCount(): number;
+
+        /**
+         * @returns {number}
+         */
+        get page(): number;
+
+        /**
+         * @param {number} value
+         */
+        set page(value: number): void;
+
+        /**
+         * @returns {number}
+         */
+        get rotation(): number;
+
+        /**
+         * @param {number} value
+         */
+        set rotation(value: number): void;
+    }
+
+    export interface PDFLinkServiceOptions {
+        eventBus: EventBus;
+        externalLinkTarget?: number;
+        externalLinkRel?: string;
+    }
+
+    export const enum RenderingType {
+        SVG = "svg",
+        CANVAS = "canvas"
+    }
+
     export interface ViewerOptions {
         container: HTMLElement;
         eventBus: EventBus;
-        renderer: "svg" | "canvas";
+        renderer: RenderingType;
+        enhanceTextSelection: boolean;
+        linkService?: PDFLinkService;
     }
 
     export interface PageView {

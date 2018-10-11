@@ -10,8 +10,8 @@ import {
     PageChangingEvent,
     PageRenderedEvent, PagesLoadedEvent,
     PageView,
-    PDFFindController,
-    PDFViewer
+    PDFFindController, PDFLinkService,
+    PDFViewer, RenderingType
 } from "pdfjs-dist/web/pdf_viewer";
 import {
     getDocument,
@@ -115,11 +115,15 @@ export class PDFjsDocumentService implements PDFDocumentService {
             .pipe(map(() => new PDFjsDocument(viewer, highlighting, {freehand, eraser}, searchController)))
             .toPromise();
 
+        const linkService: PDFLinkService = new PDFLinkService({eventBus});
+
         this.log.trace(() => "Create PDF viewer");
         const viewer: PDFViewer = new PDFViewer({
             container: options.container,
+            enhanceTextSelection: true,
             eventBus,
-            renderer: "svg"
+            linkService,
+            renderer: RenderingType.SVG
         });
 
         this.log.trace(() => "Get document from array buffer");
@@ -129,11 +133,14 @@ export class PDFjsDocumentService implements PDFDocumentService {
             data: pdfData
         });
 
+        linkService.setDocument(pdf);
+        linkService.setViewer(viewer);
+
         this.log.trace(() => "Set document on PDF viewer");
         viewer.setDocument(pdf);
 
         const findController: PDFFindController = new PDFFindController({
-            pdfViewer: viewer,
+            pdfViewer: viewer
         });
         this.log.trace(() => "Set find controller on PDF viewer");
         viewer.setFindController(findController);
