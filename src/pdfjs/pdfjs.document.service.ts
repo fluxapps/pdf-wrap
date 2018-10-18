@@ -123,7 +123,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
             enableWebGL: true,
             eventBus,
             linkService,
-            renderer: RenderingType.SVG,
+            renderer: RenderingType.CANVAS,
             textLayerMode: TextLayerMode.ENABLE_ENHANCED
         });
 
@@ -206,7 +206,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
                     {height: it.height, width: it.width},
                     (): Point => {
                         const pageView: PageView = viewer.getPageView(it.pageIndex);
-                        const pageRects: ClientRect = pageView.svg.getClientRects()[0];
+                        const pageRects: ClientRect = pageView.canvas.getClientRects()[0];
                         return {
                             x: pageRects.left,
                             y: pageRects.top
