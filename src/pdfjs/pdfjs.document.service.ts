@@ -1,5 +1,5 @@
 import {LoadingOptions, PDFDocumentService} from "../api/document.service";
-import {PDFDocument} from "../api/document/pdf.document";
+import {PDFDocument, ScalePreset} from "../api/document/pdf.document";
 import {Outline, PageThumbnail, TreeOutlineEntry} from "../api/document/document.info";
 import {Observable} from "rxjs/internal/Observable";
 import {Toolbox} from "../api/tool/toolbox";
@@ -352,6 +352,10 @@ export class PDFjsDocument implements PDFDocument {
                 )
                     .pipe(map(() => new PageThumbnail(canvas, it.pageNumber)));
             }));
+    }
+
+    scaleTo(preset: ScalePreset): void {
+        this.viewer.currentScaleValue = preset;
     }
 
     close(): Promise<void> {

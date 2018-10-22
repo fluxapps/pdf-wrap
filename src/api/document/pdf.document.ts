@@ -49,6 +49,13 @@ export interface PDFDocument {
     readonly searchController: DocumentSearch;
 
     /**
+     * Scale pages to a predefined format.
+     *
+     * @param {ScalePreset} preset
+     */
+    scaleTo(preset: ScalePreset): void;
+
+    /**
      * @returns {Promise<Outline>} the outline of a PDF
      */
     getOutline(): Promise<Outline>;
@@ -72,4 +79,12 @@ export interface PDFDocument {
      * After this method call, the document is no longer functional.
      */
     close(): Promise<void>;
+}
+
+export enum ScalePreset {
+    PAGE_WIDTH = "page-width",
+    PAGE_HIGHT = "page-height",
+    PAGE_FIT = "page-fit",
+    ACTUAL = "page-actual",
+    AUTO = "auto"
 }

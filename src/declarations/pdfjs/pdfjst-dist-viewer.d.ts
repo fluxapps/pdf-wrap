@@ -2,7 +2,7 @@
 declare module "pdfjs-dist/web/pdf_viewer" {
 
     import {PDFDocumentProxy} from "pdfjs-dist";
-    import {PDFDocument} from "../../api/document/pdf.document";
+    import {PDFDocument, ScalePreset} from "../../api/document/pdf.document";
 
     export interface PageChangingEvent {
         pageNumber: number;
@@ -109,6 +109,7 @@ declare module "pdfjs-dist/web/pdf_viewer" {
         readonly pdfDocument: PDFDocumentProxy;
         readonly eventBus: EventBus;
         currentScale: number;
+        currentScaleValue: number | ScalePreset;
         currentPageNumber: number;
 
         constructor(options: ViewerOptions);
