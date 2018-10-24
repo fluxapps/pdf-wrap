@@ -445,7 +445,7 @@ export function transformSelection(selection: Selection): Array<Target> {
 
     if (selection.rangeCount !== 0 && selection.type === "Range") {
 
-        const rects: Array<ClientRect> = Array.from(selection.getRangeAt(0).getClientRects());
+        const rects: Array<ClientRect> = Array.from(getNodeSizedClientRects(selection.getRangeAt(0)));
 
         rects
             .map((it) => ClientRectangle.from(it))
@@ -472,6 +472,99 @@ export function transformSelection(selection: Selection): Array<Target> {
     }
 
     return outArray;
+}
+
+/**
+ * Text node filter implementation.
+ *
+ * Filters nodes of the type text which contains only whitespaces taps and newlines.
+ */
+class BlankTextNodeFilter implements NodeFilter {
+    private static readonly FILTER_REGEX: RegExp = /^\s*$/g;
+    private static readonly NODE_TYPE_TEXT: number = 3;
+
+    acceptNode(it: Node): number {
+        if (it.nodeType !== BlankTextNodeFilter.NODE_TYPE_TEXT) {
+            return NodeFilter.FILTER_REJECT;
+        }
+        return !BlankTextNodeFilter.FILTER_REGEX.test(it.textContent ? it.textContent : "") ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+    }
+}
+
+/**
+ * Calculates the size of the client rects of the direct parents of the text nodes
+ * in order to fix the odd selection size given by Range::getClientRects(); in webkit browsers like safari or chrome.
+ *
+ * Text nodes which only contains spaces taps and newlines are ignored.
+ *
+ * @param {Range} range The range which should be used to calculate the client rects.
+ *
+ * @return {Array<DOMRect>} The rectangels of the selected text.
+ */
+function getNodeSizedClientRects(range: Range): Array<DOMRect> {
+
+    const log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/highlight:getNodeSizedClientRects");
+
+    // tslint:disable-next-line:strict-type-predicates
+    if (typeof document === "undefined") {
+        return Array.from(range.getClientRects() as DOMRectList);
+    }
+
+    log.debug("test entry");
+
+    const nodes: NodeIterator = document!.createNodeIterator(
+        range.commonAncestorContainer,
+        NodeFilter.SHOW_TEXT,
+        new BlankTextNodeFilter()
+    );
+
+    const selectionNodes: Array<DOMRect> = [];
+    while (nodes.nextNode()) {
+        const node: Node = nodes.referenceNode;
+
+        // skip elements until selection begins
+        if (selectionNodes.length === 0 && !node.isSameNode(range.startContainer)) {
+            continue;
+        }
+
+        // Check if we only have one line selected and calculate the offset of the selection.
+        if (range.startContainer.isSameNode(range.endContainer)) {
+            const startRange: Range = new Range();
+            startRange.setStart(node, range.startOffset);
+            startRange.setEnd(node, range.endOffset);
+            const tempRect: DOMRect = startRange.getBoundingClientRect() as DOMRect;
+            const rect: DOMRect = node.parentElement!.getBoundingClientRect() as DOMRect;
+            selectionNodes.push(new DOMRect(tempRect.left, rect.top, tempRect.width, rect.height));
+            break;
+        }
+
+        // check if we hit the start of the selection and calculate the start text offset.
+        if (node.isSameNode(range.startContainer)) {
+            const startRange: Range = new Range();
+            startRange.setStart(node, range.startOffset);
+            startRange.setEndAfter(node);
+            const tempRect: DOMRect = startRange.getBoundingClientRect() as DOMRect;
+            const rect: DOMRect = node.parentElement!.getBoundingClientRect() as DOMRect;
+            selectionNodes.push(new DOMRect(tempRect.left, rect.top, tempRect.width, rect.height));
+            continue;
+        }
+
+        // check if we hit the end of the selection and calculate the end text offset.
+        if (node.isSameNode(range.endContainer)) {
+            const startRange: Range = new Range();
+            startRange.setStartBefore(node);
+            startRange.setEnd(node, range.endOffset);
+            const tempRect: DOMRect = startRange.getBoundingClientRect() as DOMRect;
+            const rect: DOMRect = node.parentElement!.getBoundingClientRect() as DOMRect;
+            selectionNodes.push(new DOMRect(rect.left, rect.top, tempRect.width , rect.height));
+            break;
+        }
+
+        // we are in the middle of the selection at this point just add it.
+        selectionNodes.push(node.parentElement!.getBoundingClientRect() as DOMRect);
+    }
+
+    return selectionNodes;
 }
 
 function tooSmallRectangle(rect: ClientRectangle): boolean {
