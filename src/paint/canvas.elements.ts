@@ -92,7 +92,10 @@ export class CanvasPolyLine implements CanvasElement<PolyLine> {
 
     on<T extends keyof HTMLElementEventMap>(event: T): Observable<T> {
         return new Observable((subscriber: Subscriber<T>): TeardownLogic => {
-            this.element.on(event, () => subscriber.next(event));
+            const callback: () => void = (): void => subscriber.next(event);
+            this.element.on(event, callback);
+
+            return (): void => { this.element.off(event, callback); };
         });
     }
 
@@ -153,7 +156,10 @@ export class CanvasRectangle implements CanvasElement<Rectangle> {
 
     on<T extends keyof HTMLElementEventMap>(event: T): Observable<T> {
         return new Observable((subscriber: Subscriber<T>): TeardownLogic => {
-            this.element.on(event, () => subscriber.next(event));
+            const callback: () => void = (): void => subscriber.next(event);
+            this.element.on(event, callback);
+
+            return (): void => { this.element.off(event, callback); };
         });
     }
 

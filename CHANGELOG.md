@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Filter highlights which are to small to be visible.
 * Recalculate height of highlights to really fit the element instead of the selection (webkit & blink).
 * Page number detection while drawing with freehand tool.
+* Eraser tool now stops removing lines after mouse up.
 
 ### Changed
 * Disable background highlight layer because its not visible with colored

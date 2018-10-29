@@ -7,7 +7,7 @@ import {Subscriber} from "rxjs/internal-compatibility";
 import {Point} from "../../api/draw/draw.basic";
 import {Eraser, Freehand} from "../../api/tool/toolbox";
 import {Color, colorFrom, Colors} from "../../api/draw/color";
-import {map, share, takeWhile} from "rxjs/operators";
+import {map, share, takeUntil, takeWhile} from "rxjs/operators";
 import {TeardownLogic} from "rxjs/internal/types";
 import {PolyLinePainter} from "../../paint/painters";
 import {Logger} from "typescript-logging";
@@ -119,6 +119,7 @@ export class EraserTool extends DrawingTool implements Eraser {
 
                         it.on("mouseover")
                             .pipe(takeWhile(() => this.hasPage))
+                            .pipe(takeUntil(this.mouseUp))
                             .subscribe(() => {
 
                                 this.eraserLog.debug(() => `Remove drawing with id: ${it.transform().id}`);
