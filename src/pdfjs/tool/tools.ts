@@ -10,6 +10,8 @@ import {Color, colorFrom, Colors} from "../../api/draw/color";
 import {map, share, takeWhile} from "rxjs/operators";
 import {TeardownLogic} from "rxjs/internal/types";
 import {PolyLinePainter} from "../../paint/painters";
+import {Logger} from "typescript-logging";
+import {LoggerFactory} from "../../log-config";
 
 /**
  * Allows to draw with the mouse on a PDF page.
@@ -102,6 +104,8 @@ export class EraserTool extends DrawingTool implements Eraser {
 
     protected readonly onFinish: Observable<void>;
 
+    private readonly eraserLog: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/tool/tools:EraserTool");
+
     constructor(
         document: DocumentModel
     ) {
@@ -116,6 +120,8 @@ export class EraserTool extends DrawingTool implements Eraser {
                         it.on("mouseover")
                             .pipe(takeWhile(() => this.hasPage))
                             .subscribe(() => {
+
+                                this.eraserLog.debug(() => `Remove drawing with id: ${it.transform().id}`);
 
                                 const drawEvent: DrawEvent<DrawElement> = new DrawEvent(
                                     it.transform(),
