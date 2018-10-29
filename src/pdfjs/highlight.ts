@@ -32,9 +32,13 @@ export class TextHighlighting implements Highlighting {
      */
     readonly onTextUnselection: Observable<void>;
 
-    private isEnabled: boolean = false;
+    private enabled: boolean = false;
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/highlight:TextHighlighting");
+
+    get isEnabled(): boolean {
+        return this.enabled;
+    }
 
     constructor(
         private readonly document: DocumentModel
@@ -66,7 +70,7 @@ export class TextHighlighting implements Highlighting {
         this.onTextSelection = selections
             .pipe(withLatestFrom(page))
             .pipe(tap((it) => this.log.debug(() => `Page for selection: page=${it[1].pageNumber}`)))
-            .pipe(filter((_) => this.isEnabled))
+            .pipe(filter((_) => this.enabled))
             .pipe(map((it) => new TextSelectionImpl(it[1])))
             .pipe(share());
 
@@ -98,7 +102,7 @@ export class TextHighlighting implements Highlighting {
      */
     disable(): void {
         this.log.info(() => "Disable text highlighting");
-        this.isEnabled = false;
+        this.enabled = false;
     }
 
     /**
@@ -106,7 +110,7 @@ export class TextHighlighting implements Highlighting {
      */
     enable(): void {
         this.log.info(() => "Enable text highlighting");
-        this.isEnabled = true;
+        this.enabled = true;
     }
 }
 

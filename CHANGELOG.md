@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Close method to pdf document which resolves after the cleanup finished.
 * Use pdf link service for internal document links.
 * Add scaleTo method which allows scaling to predefined values.
+* Add isEnabled getter to highlight interface.
 
 ### Fixed
 * Filter highlights which are to small to be visible.

@@ -23,6 +23,11 @@ export interface Highlighting {
     readonly onTextUnselection: Observable<void>;
 
     /**
+     * True if the highlighting is enabled otherwise false.
+     */
+    readonly isEnabled: boolean;
+
+    /**
      * Enables the text highlighting feature.
      */
     enable(): void;
