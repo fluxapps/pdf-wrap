@@ -12,6 +12,7 @@ import {TeardownLogic} from "rxjs/internal/types";
 import {PolyLinePainter} from "../../paint/painters";
 import {Logger} from "typescript-logging";
 import {LoggerFactory} from "../../log-config";
+import {RescaleManager} from "../rescale-manager";
 
 /**
  * Allows to draw with the mouse on a PDF page.
@@ -30,6 +31,11 @@ export class FreehandTool extends DrawingTool implements Freehand {
     protected readonly onFinish: Observable<void>;
 
     private color: Color = colorFrom(Colors.BLACK);
+
+    /**
+     * Normalized stroke width.
+     * Therefore stroke size 1 equals to a size of 1px with a document scale of 1.
+     */
     private strokeWidth: number = 1;
 
     /**
@@ -38,7 +44,8 @@ export class FreehandTool extends DrawingTool implements Freehand {
     private polyLinePainter?: PolyLinePainter;
 
     constructor(
-        document: DocumentModel
+        document: DocumentModel,
+        private readonly rescaleManager: RescaleManager
     ) {
         super(document);
 
@@ -53,7 +60,7 @@ export class FreehandTool extends DrawingTool implements Freehand {
 
                 this.polyLinePainter
                     .borderColor(this.color)
-                    .borderWidth(this.strokeWidth)
+                    .borderWidth(this.rescaleManager.rescaleBorderWidth(this.strokeWidth))
                     .beginLine(position);
             });
 
@@ -84,6 +91,13 @@ export class FreehandTool extends DrawingTool implements Freehand {
         return this;
     }
 
+    /**
+     * Set the normalized stroke width.
+     * A stroke width of 1 equals to a size of 1px with a document scale of 1.
+     * @param {number} px The normal size of the stroke width.
+     *
+     * @return {Freehand} Returns it self for fluent calls.
+     */
     setStrokeWidth(px: number): Freehand {
         this.strokeWidth = px;
         return this;

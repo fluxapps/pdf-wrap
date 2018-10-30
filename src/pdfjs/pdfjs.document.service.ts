@@ -148,12 +148,12 @@ export class PDFjsDocumentService implements PDFDocumentService {
 
         const documentModel: DocumentModel = new DocumentModel(options.container);
 
+        const rescaleManager: RescaleManager = new RescaleManager(viewer);
+
         const searchController: DocumentSearch = new PDFjsDocumentSearch(findController);
         const highlighting: Highlighting = new TextHighlighting(documentModel);
-        const freehand: FreehandTool = new FreehandTool(documentModel);
+        const freehand: FreehandTool = new FreehandTool(documentModel, rescaleManager);
         const eraser: EraserTool = new EraserTool(documentModel);
-
-        const rescaleManager: RescaleManager = new RescaleManager(viewer);
 
         const pageEventCollection: PageEventCollection = new PDFjsPageEvenCollection(
             freehand.afterLineRendered,
