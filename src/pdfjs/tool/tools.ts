@@ -7,12 +7,15 @@ import {Subscriber} from "rxjs/internal-compatibility";
 import {Point} from "../../api/draw/draw.basic";
 import {Eraser, Freehand} from "../../api/tool/toolbox";
 import {Color, colorFrom, Colors} from "../../api/draw/color";
-import {map, share, takeUntil, takeWhile} from "rxjs/operators";
+import {bufferCount, map, share, takeUntil, takeWhile, withLatestFrom} from "rxjs/operators";
 import {TeardownLogic} from "rxjs/internal/types";
 import {PolyLinePainter} from "../../paint/painters";
 import {Logger} from "typescript-logging";
 import {LoggerFactory} from "../../log-config";
 import {RescaleManager} from "../rescale-manager";
+import {merge} from "rxjs";
+import {ClientLine, ClientPolyline} from "../client-line";
+import {CanvasElement} from "../../paint/canvas.elements";
 
 /**
  * Allows to draw with the mouse on a PDF page.
@@ -51,7 +54,8 @@ export class FreehandTool extends DrawingTool implements Freehand {
 
         this.afterLineRendered = new Observable((subscriber: Subscriber<DrawEvent<PolyLine>>): TeardownLogic => {
 
-            this.mouseDown.subscribe((it) => {
+
+            merge(this.touchStart, this.mouseDown).subscribe((it) => {
 
                 // we store the painter, because we need the same one in the other observables
                 this.polyLinePainter = this.page.drawLayer.polyLine();
@@ -64,12 +68,12 @@ export class FreehandTool extends DrawingTool implements Freehand {
                     .beginLine(position);
             });
 
-            this.mouseMove.subscribe((it) => {
+            merge(this.mouseMove, this.touchMove).subscribe((it) => {
                 const position: Point = this.calcRelativePosition(it);
                 this.polyLinePainter!.drawTo(position);
             });
 
-            this.mouseUp.subscribe((it) => {
+            merge(this.mouseUp, this.touchEnd, this.touchCancel).subscribe((it) => {
 
                 const position: Point = this.calcRelativePosition(it);
                 const createdPolyLine: PolyLine = this.polyLinePainter!
@@ -127,6 +131,52 @@ export class EraserTool extends DrawingTool implements Eraser {
 
         this.afterElementRemoved = new Observable((subscriber: Subscriber<DrawEvent<DrawElement>>): TeardownLogic => {
 
+            const touchTransform: Observable<Array<[string, ClientPolyline]>> = this.touchStart
+                .pipe(map((_) => (
+                    this.page.drawLayer.select(".drawing")
+                        .map((it) => it.transform() as PolyLine)
+                        .map((it): [string, ClientPolyline] =>
+                            [
+                                it.id,
+                                new ClientPolyline(
+                                    it.coordinates.map((point) => ({x: point.x, y: point.y}))
+                                )
+                            ]
+                        )
+                    ))
+                )
+                .pipe(share());
+
+            this.touchMove
+                .pipe(map((it) => this.calcRelativePosition(it)))
+                .pipe(bufferCount(2, 1))
+                .pipe(map((it) => new ClientLine(it[0], it[1])))
+                .pipe(withLatestFrom(touchTransform))
+                .pipe(map((it): [ClientLine, Array<[string, ClientPolyline]>] => [it[0], it[1]]))
+                .subscribe((it) => {
+                    const touchMoveLine: ClientLine = it[0];
+                    for (const [polylineId, polyline] of it[1]) {
+                        if (polyline.intersectsWith(touchMoveLine)) {
+                            const elements: Array<CanvasElement<DrawElement>> = this.page.drawLayer.select(`#${polylineId}`);
+
+                            if (elements.length > 0) {
+
+                                const element: CanvasElement<DrawElement> = elements[0];
+                                const drawEvent: DrawEvent<DrawElement> = new DrawEvent(
+                                    element.transform(),
+                                    this.page.pageNumber,
+                                    PageLayer.DRAWING
+                                );
+
+                                this.eraserLog.debug(() => `Eraser moved over ${drawEvent.element.id}`);
+
+                                subscriber.next(drawEvent);
+
+                                element.remove();
+                            }
+                        }
+                    }
+                });
             this.mouseDown.subscribe(() => {
                 this.page.drawLayer.select(".drawing")
                     .forEach((it) => {
