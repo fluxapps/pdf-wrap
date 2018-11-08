@@ -215,18 +215,21 @@ export abstract class DrawingTool extends BaseTool {
         this.mouseDown = fromEvent<MouseEvent>(document.viewer, "mousedown")
             .pipe(filter(() => this.isActive))
             .pipe(tap((it) => this.setPageByEvent(it)))
+            .pipe(tap((it) => it.preventDefault()))
             .pipe(tap((_) => this.log.trace(() => `Mouse down event from drawing tool: tool=${this.constructor.name}`)))
             .pipe(share());
 
         this.mouseMove = fromEvent<MouseEvent>(document.viewer, "mousemove")
             .pipe(filter(() => this.isActive))
             .pipe(filter(() => this.hasPage))
+            .pipe(tap((it) => it.preventDefault()))
             .pipe(tap((_) => this.log.trace(() => `Mouse move event from drawing tool: tool=${this.constructor.name}`)))
             .pipe(share());
 
         this.mouseUp = fromEvent<MouseEvent>(document.viewer, "mouseup")
             .pipe(filter(() => this.isActive))
             .pipe(filter(() => this.hasPage))
+            .pipe(tap((it) => it.preventDefault()))
             .pipe(tap((_) => {
                 this.log.trace(() => `Mouse up event from drawing tool: tool=${this.constructor.name}`);
             }))

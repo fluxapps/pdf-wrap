@@ -7,7 +7,7 @@ import {Subscriber} from "rxjs/internal-compatibility";
 import {Point} from "../../api/draw/draw.basic";
 import {Eraser, Freehand} from "../../api/tool/toolbox";
 import {Color, colorFrom, Colors} from "../../api/draw/color";
-import {bufferCount, map, share, takeUntil, takeWhile, withLatestFrom} from "rxjs/operators";
+import {bufferCount, map, share, withLatestFrom} from "rxjs/operators";
 import {TeardownLogic} from "rxjs/internal/types";
 import {PolyLinePainter} from "../../paint/painters";
 import {Logger} from "typescript-logging";
@@ -131,7 +131,7 @@ export class EraserTool extends DrawingTool implements Eraser {
 
         this.afterElementRemoved = new Observable((subscriber: Subscriber<DrawEvent<DrawElement>>): TeardownLogic => {
 
-            const touchTransform: Observable<Array<[string, ClientPolyline]>> = this.touchStart
+            const touchTransform: Observable<Array<[string, ClientPolyline]>> = merge(this.touchStart, this.mouseDown)
                 .pipe(map((_) => (
                     this.page.drawLayer.select(".drawing")
                         .map((it) => it.transform() as PolyLine)
@@ -139,7 +139,7 @@ export class EraserTool extends DrawingTool implements Eraser {
                             [
                                 it.id,
                                 new ClientPolyline(
-                                    it.coordinates.map((point) => ({x: point.x, y: point.y}))
+                                    it.coordinates
                                 )
                             ]
                         )
@@ -147,7 +147,7 @@ export class EraserTool extends DrawingTool implements Eraser {
                 )
                 .pipe(share());
 
-            this.touchMove
+            merge(this.touchMove, this.mouseMove)
                 .pipe(map((it) => this.calcRelativePosition(it)))
                 .pipe(bufferCount(2, 1))
                 .pipe(map((it) => new ClientLine(it[0], it[1])))
@@ -177,6 +177,8 @@ export class EraserTool extends DrawingTool implements Eraser {
                         }
                     }
                 });
+
+            /*
             this.mouseDown.subscribe(() => {
                 this.page.drawLayer.select(".drawing")
                     .forEach((it) => {
@@ -198,8 +200,11 @@ export class EraserTool extends DrawingTool implements Eraser {
 
                                 it.remove();
                             });
+
                 });
+
             });
+            */
         });
 
         // use our after element removed observable and map it to void in order to emit on the onFinish observable
