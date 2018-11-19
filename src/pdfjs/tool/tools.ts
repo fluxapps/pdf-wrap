@@ -7,7 +7,7 @@ import {Subscriber} from "rxjs/internal-compatibility";
 import {Point} from "../../api/draw/draw.basic";
 import {Eraser, Freehand} from "../../api/tool/toolbox";
 import {Color, colorFrom, Colors} from "../../api/draw/color";
-import {bufferCount, map, share, withLatestFrom} from "rxjs/operators";
+import {bufferCount, map, share, takeUntil, withLatestFrom} from "rxjs/operators";
 import {TeardownLogic} from "rxjs/internal/types";
 import {PolyLinePainter} from "../../paint/painters";
 import {Logger} from "typescript-logging";
@@ -153,6 +153,7 @@ export class EraserTool extends DrawingTool implements Eraser {
                 .pipe(map((it) => new ClientLine(it[0], it[1])))
                 .pipe(withLatestFrom(touchTransform))
                 .pipe(map((it): [ClientLine, Array<[string, ClientPolyline]>] => [it[0], it[1]]))
+                .pipe(takeUntil(merge(this.mouseUp, this.touchEnd)))
                 .subscribe((it) => {
                     const touchMoveLine: ClientLine = it[0];
                     for (const [polylineId, polyline] of it[1]) {
