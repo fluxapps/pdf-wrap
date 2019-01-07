@@ -28,6 +28,7 @@ creation.
 * Upgrade to typescript version ^3.1.0
 * Enable text selection enhancement.
 * Enable WebGL.
+* Mark all event handler as passive.
 
 ## 0.1.3 - 2018-08-23
 

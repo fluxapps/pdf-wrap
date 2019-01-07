@@ -46,8 +46,8 @@ export class TextHighlighting implements Highlighting {
 
         // get the page where the mouse down event was
         const page: Observable<Page> = merge(
-            fromEvent(document.viewer, "mousedown"),
-            fromEvent<TouchEvent>(document.viewer, "touchstart")
+            fromEvent(document.viewer, "mousedown", { passive: true }),
+            fromEvent<TouchEvent>(document.viewer, "touchstart", { passive: true })
         )
             .pipe(tap((_) => this.log.debug(() => "get page number by event")))
             .pipe(map((it) => getPageNumberByEvent(it)))
@@ -59,7 +59,7 @@ export class TextHighlighting implements Highlighting {
         const selections: Observable<Array<Target>> = merge(
             // fromEvent(document.viewer, "mouseup"),
             // fromEvent(document.viewer, "touchend")
-            fromEvent(window.document, "selectionchange")
+            fromEvent(window.document, "selectionchange", { passive: true })
         )
             .pipe(map((_) => window.getSelection()))
             .pipe(map(transformSelection))
@@ -85,8 +85,8 @@ export class TextHighlighting implements Highlighting {
         //     .pipe(map((_) => {/* return void */}));
 
         const onMouseUpUnselection: Observable<void> = merge(
-            fromEvent(document.viewer, "mouseup"),
-            fromEvent<TouchEvent>(document.viewer, "touchend")
+            fromEvent(document.viewer, "mouseup", { passive: true }),
+            fromEvent<TouchEvent>(document.viewer, "touchend", { passive: true })
         )
             .pipe(map((_) => window.getSelection().rangeCount))
             // .pipe(map(transformSelection))
