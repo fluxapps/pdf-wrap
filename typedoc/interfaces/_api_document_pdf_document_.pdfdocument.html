@@ -75,7 +75,7 @@
 					</div>
 					<dl class="tsd-comment-tags">
 						<dt>author</dt>
-						<dd><p>Nicolas Märchy <a href="mailto:&#x6e;&#x6d;&#x40;&#x73;&#116;&#117;&#x64;&#101;&#114;&#x2d;&#x72;&#97;&#105;&#109;&#x61;&#110;&#x6e;&#46;&#99;&#104;">&#x6e;&#x6d;&#x40;&#x73;&#116;&#117;&#x64;&#101;&#114;&#x2d;&#x72;&#97;&#105;&#109;&#x61;&#110;&#x6e;&#46;&#99;&#104;</a></p>
+						<dd><p>Nicolas Märchy <a href="mailto:&#x6e;&#x6d;&#x40;&#x73;&#116;&#117;&#x64;&#x65;&#x72;&#45;&#114;&#97;&#105;&#x6d;&#97;&#110;&#110;&#46;&#x63;&#x68;">&#x6e;&#x6d;&#x40;&#x73;&#116;&#117;&#x64;&#x65;&#x72;&#45;&#114;&#97;&#105;&#x6d;&#97;&#110;&#110;&#46;&#x63;&#x68;</a></p>
 						</dd>
 						<dt>since</dt>
 						<dd><p>0.0.1</p>
@@ -116,8 +116,10 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_api_document_pdf_document_.pdfdocument.html#close" class="tsd-kind-icon">close</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_api_document_pdf_document_.pdfdocument.html#getoutline" class="tsd-kind-icon">get<wbr>Outline</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_api_document_pdf_document_.pdfdocument.html#getthumbnails" class="tsd-kind-icon">get<wbr>Thumbnails</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_api_document_pdf_document_.pdfdocument.html#scaleto" class="tsd-kind-icon">scale<wbr>To</a></li>
 							</ul>
 						</section>
 					</div>
@@ -231,6 +233,29 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="close" class="tsd-anchor"></a>
+					<h3>close</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">close<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in api/document/pdf.document.ts:81</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Destroys allocated resources.
+									After this method call, the document is no longer functional.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
 					<a name="getoutline" class="tsd-anchor"></a>
 					<h3>get<wbr>Outline</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -240,7 +265,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in api/document/pdf.document.ts:54</li>
+									<li>Defined in api/document/pdf.document.ts:61</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -260,7 +285,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in api/document/pdf.document.ts:68</li>
+									<li>Defined in api/document/pdf.document.ts:75</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -291,6 +316,36 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="scaleto" class="tsd-anchor"></a>
+					<h3>scale<wbr>To</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">scale<wbr>To<span class="tsd-signature-symbol">(</span>preset<span class="tsd-signature-symbol">: </span><a href="../enums/_api_document_pdf_document_.scalepreset.html" class="tsd-signature-type">ScalePreset</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in api/document/pdf.document.ts:56</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Scale pages to a predefined format.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>preset: <a href="../enums/_api_document_pdf_document_.scalepreset.html" class="tsd-signature-type">ScalePreset</a></h5>
+									<div class="tsd-comment tsd-typography">
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -306,6 +361,9 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
+						<a href="../enums/_api_document_pdf_document_.scalepreset.html" class="tsd-kind-icon">Scale<wbr>Preset</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
@@ -333,10 +391,16 @@
 								<a href="_api_document_pdf_document_.pdfdocument.html#toolbox" class="tsd-kind-icon">toolbox</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="_api_document_pdf_document_.pdfdocument.html#close" class="tsd-kind-icon">close</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_api_document_pdf_document_.pdfdocument.html#getoutline" class="tsd-kind-icon">get<wbr>Outline</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_api_document_pdf_document_.pdfdocument.html#getthumbnails" class="tsd-kind-icon">get<wbr>Thumbnails</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="_api_document_pdf_document_.pdfdocument.html#scaleto" class="tsd-kind-icon">scale<wbr>To</a>
 							</li>
 						</ul>
 					</li>

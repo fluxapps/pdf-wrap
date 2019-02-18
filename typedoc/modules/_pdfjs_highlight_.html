@@ -71,6 +71,7 @@
 						<section class="tsd-index-section ">
 							<h3>Classes</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported"><a href="../classes/_pdfjs_highlight_.blanktextnodefilter.html" class="tsd-kind-icon">Blank<wbr>Text<wbr>Node<wbr>Filter</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported"><a href="../classes/_pdfjs_highlight_.highlightdata.html" class="tsd-kind-icon">Highlight<wbr>Data</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_pdfjs_highlight_.highlightmanager.html" class="tsd-kind-icon">Highlight<wbr>Manager</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_pdfjs_highlight_.texthighlighting.html" class="tsd-kind-icon">Text<wbr>Highlighting</a></li>
@@ -80,6 +81,7 @@
 						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_pdfjs_highlight_.html#getnodesizedclientrects" class="tsd-kind-icon">get<wbr>Node<wbr>Sized<wbr>Client<wbr>Rects</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_pdfjs_highlight_.html#notindex" class="tsd-kind-icon">not<wbr>Index</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_pdfjs_highlight_.html#toosmallrectangle" class="tsd-kind-icon">too<wbr>Small<wbr>Rectangle</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_pdfjs_highlight_.html#transformselection" class="tsd-kind-icon">transform<wbr>Selection</a></li>
@@ -91,6 +93,40 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Functions</h2>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="getnodesizedclientrects" class="tsd-anchor"></a>
+					<h3>get<wbr>Node<wbr>Sized<wbr>Client<wbr>Rects</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Node<wbr>Sized<wbr>Client<wbr>Rects<span class="tsd-signature-symbol">(</span>range<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Range</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">DOMRect</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in pdfjs/highlight.ts:517</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Calculates the size of the client rects of the direct parents of the text nodes
+									in order to fix the odd selection size given by Range::getClientRects(); in webkit browsers like safari or chrome.</p>
+								</div>
+								<p>Text nodes which only contains spaces taps and newlines are ignored.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>range: <span class="tsd-signature-type">Range</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The range which should be used to calculate the client rects.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">DOMRect</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>The rectangels of the selected text.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="notindex" class="tsd-anchor"></a>
 					<h3>not<wbr>Index</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
@@ -100,7 +136,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/highlight.ts:481</li>
+									<li>Defined in pdfjs/highlight.ts:587</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -129,7 +165,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/highlight.ts:477</li>
+									<li>Defined in pdfjs/highlight.ts:583</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -152,7 +188,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/highlight.ts:442</li>
+									<li>Defined in pdfjs/highlight.ts:455</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -202,6 +238,9 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../classes/_pdfjs_highlight_.blanktextnodefilter.html" class="tsd-kind-icon">Blank<wbr>Text<wbr>Node<wbr>Filter</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../classes/_pdfjs_highlight_.highlightdata.html" class="tsd-kind-icon">Highlight<wbr>Data</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
@@ -212,6 +251,9 @@
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="../classes/_pdfjs_highlight_.textselectionimpl.html" class="tsd-kind-icon">Text<wbr>Selection<wbr>Impl</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_pdfjs_highlight_.html#getnodesizedclientrects" class="tsd-kind-icon">get<wbr>Node<wbr>Sized<wbr>Client<wbr>Rects</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_pdfjs_highlight_.html#notindex" class="tsd-kind-icon">not<wbr>Index</a>

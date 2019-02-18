@@ -76,7 +76,7 @@
 					delegated to the PDFViewer instance.</p>
 					<dl class="tsd-comment-tags">
 						<dt>author</dt>
-						<dd><p>Nicolas Märchy <a href="mailto:&#x6e;&#x6d;&#x40;&#115;&#x74;&#x75;&#x64;&#101;&#114;&#45;&#114;&#x61;&#105;&#x6d;&#x61;&#110;&#110;&#46;&#x63;&#x68;">&#x6e;&#x6d;&#x40;&#115;&#x74;&#x75;&#x64;&#101;&#114;&#45;&#114;&#x61;&#105;&#x6d;&#x61;&#110;&#110;&#46;&#x63;&#x68;</a></p>
+						<dd><p>Nicolas Märchy <a href="mailto:&#x6e;&#x6d;&#64;&#x73;&#x74;&#117;&#x64;&#101;&#114;&#45;&#114;&#97;&#x69;&#x6d;&#x61;&#x6e;&#110;&#x2e;&#99;&#104;">&#x6e;&#x6d;&#64;&#x73;&#x74;&#117;&#x64;&#101;&#114;&#45;&#114;&#97;&#x69;&#x6d;&#x61;&#x6e;&#110;&#x2e;&#99;&#104;</a></p>
 						</dd>
 						<dt>since</dt>
 						<dd><p>0.0.1</p>
@@ -111,7 +111,9 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#highlighting" class="tsd-kind-icon">highlighting</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#_highlighting" class="tsd-kind-icon">_highlighting</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#dispose" class="tsd-kind-icon">dispose</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#dispose_" class="tsd-kind-icon">dispose$</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#log" class="tsd-kind-icon">log</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#pagechange" class="tsd-kind-icon">page<wbr>Change</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#pagecount" class="tsd-kind-icon">page<wbr>Count</a></li>
@@ -124,14 +126,17 @@
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#currentpagenumber" class="tsd-kind-icon">current<wbr>Page<wbr>Number</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#highlighting" class="tsd-kind-icon">highlighting</a></li>
 								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#scale" class="tsd-kind-icon">scale</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#close" class="tsd-kind-icon">close</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#getoutline" class="tsd-kind-icon">get<wbr>Outline</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#getthumbnails" class="tsd-kind-icon">get<wbr>Thumbnails</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#scaleto" class="tsd-kind-icon">scale<wbr>To</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#transformoutline" class="tsd-kind-icon">transform<wbr>Outline</a></li>
 							</ul>
 						</section>
@@ -144,13 +149,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new PDFjs<wbr>Document<span class="tsd-signature-symbol">(</span>viewer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">PDFViewer</span>, highlighting<span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_highlight_highlight_api_.highlighting.html" class="tsd-signature-type">Highlighting</a>, toolbox<span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_tool_toolbox_.toolbox.html" class="tsd-signature-type">Toolbox</a>, searchController<span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_search_search_api_.documentsearch.html" class="tsd-signature-type">DocumentSearch</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html" class="tsd-signature-type">PDFjsDocument</a></li>
+						<li class="tsd-signature tsd-kind-icon">new PDFjs<wbr>Document<span class="tsd-signature-symbol">(</span>viewer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">PDFViewer</span>, _highlighting<span class="tsd-signature-symbol">: </span><a href="_pdfjs_highlight_.texthighlighting.html" class="tsd-signature-type">TextHighlighting</a>, toolbox<span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_tool_toolbox_.toolbox.html" class="tsd-signature-type">Toolbox</a>, searchController<span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_search_search_api_.documentsearch.html" class="tsd-signature-type">DocumentSearch</a>, dispose<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html" class="tsd-signature-type">PDFjsDocument</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/pdfjs.document.service.ts:256</li>
+									<li>Defined in pdfjs/pdfjs.document.service.ts:313</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -159,13 +164,16 @@
 									<h5>viewer: <span class="tsd-signature-type">PDFViewer</span></h5>
 								</li>
 								<li>
-									<h5>highlighting: <a href="../interfaces/_api_highlight_highlight_api_.highlighting.html" class="tsd-signature-type">Highlighting</a></h5>
+									<h5>_highlighting: <a href="_pdfjs_highlight_.texthighlighting.html" class="tsd-signature-type">TextHighlighting</a></h5>
 								</li>
 								<li>
 									<h5>toolbox: <a href="../interfaces/_api_tool_toolbox_.toolbox.html" class="tsd-signature-type">Toolbox</a></h5>
 								</li>
 								<li>
 									<h5>searchController: <a href="../interfaces/_api_search_search_api_.documentsearch.html" class="tsd-signature-type">DocumentSearch</a></h5>
+								</li>
+								<li>
+									<h5>dispose: <span class="tsd-signature-type">function</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html" class="tsd-signature-type">PDFjsDocument</a></h4>
@@ -175,14 +183,33 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="highlighting" class="tsd-anchor"></a>
-					<h3>highlighting</h3>
-					<div class="tsd-signature tsd-kind-icon">highlighting<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_api_highlight_highlight_api_.highlighting.html" class="tsd-signature-type">Highlighting</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_highlighting" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _highlighting</h3>
+					<div class="tsd-signature tsd-kind-icon">_highlighting<span class="tsd-signature-symbol">:</span> <a href="_pdfjs_highlight_.texthighlighting.html" class="tsd-signature-type">TextHighlighting</a></div>
 					<aside class="tsd-sources">
-						<p>Implementation of <a href="../interfaces/_api_document_pdf_document_.pdfdocument.html">PDFDocument</a>.<a href="../interfaces/_api_document_pdf_document_.pdfdocument.html#highlighting">highlighting</a></p>
 						<ul>
-							<li>Defined in pdfjs/pdfjs.document.service.ts:260</li>
+							<li>Defined in pdfjs/pdfjs.document.service.ts:317</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="dispose" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> dispose</h3>
+					<div class="tsd-signature tsd-kind-icon">dispose<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in pdfjs/pdfjs.document.service.ts:320</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="dispose_" class="tsd-anchor"></a>
+					<h3>dispose$</h3>
+					<div class="tsd-signature tsd-kind-icon">dispose$<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Subject&lt;void&gt;()</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in pdfjs/pdfjs.document.service.ts:311</li>
 						</ul>
 					</aside>
 				</section>
@@ -192,7 +219,7 @@
 					<div class="tsd-signature tsd-kind-icon">log<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Logger</span><span class="tsd-signature-symbol"> =&nbsp;LoggerFactory.getLogger(&quot;ch/studerraimann/pdfwrap/pdfjs/pdfjs.document.service:PDFjsDocument&quot;)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in pdfjs/pdfjs.document.service.ts:238</li>
+							<li>Defined in pdfjs/pdfjs.document.service.ts:313</li>
 						</ul>
 					</aside>
 				</section>
@@ -203,7 +230,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/_api_document_pdf_document_.pdfdocument.html">PDFDocument</a>.<a href="../interfaces/_api_document_pdf_document_.pdfdocument.html#pagechange">pageChange</a></p>
 						<ul>
-							<li>Defined in pdfjs/pdfjs.document.service.ts:235</li>
+							<li>Defined in pdfjs/pdfjs.document.service.ts:309</li>
 						</ul>
 					</aside>
 				</section>
@@ -214,7 +241,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/_api_document_pdf_document_.pdfdocument.html">PDFDocument</a>.<a href="../interfaces/_api_document_pdf_document_.pdfdocument.html#pagecount">pageCount</a></p>
 						<ul>
-							<li>Defined in pdfjs/pdfjs.document.service.ts:236</li>
+							<li>Defined in pdfjs/pdfjs.document.service.ts:310</li>
 						</ul>
 					</aside>
 				</section>
@@ -225,7 +252,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/_api_document_pdf_document_.pdfdocument.html">PDFDocument</a>.<a href="../interfaces/_api_document_pdf_document_.pdfdocument.html#searchcontroller">searchController</a></p>
 						<ul>
-							<li>Defined in pdfjs/pdfjs.document.service.ts:262</li>
+							<li>Defined in pdfjs/pdfjs.document.service.ts:319</li>
 						</ul>
 					</aside>
 				</section>
@@ -236,7 +263,7 @@
 					<aside class="tsd-sources">
 						<p>Implementation of <a href="../interfaces/_api_document_pdf_document_.pdfdocument.html">PDFDocument</a>.<a href="../interfaces/_api_document_pdf_document_.pdfdocument.html#toolbox">toolbox</a></p>
 						<ul>
-							<li>Defined in pdfjs/pdfjs.document.service.ts:261</li>
+							<li>Defined in pdfjs/pdfjs.document.service.ts:318</li>
 						</ul>
 					</aside>
 				</section>
@@ -246,7 +273,7 @@
 					<div class="tsd-signature tsd-kind-icon">viewer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">PDFViewer</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in pdfjs/pdfjs.document.service.ts:259</li>
+							<li>Defined in pdfjs/pdfjs.document.service.ts:316</li>
 						</ul>
 					</aside>
 				</section>
@@ -264,7 +291,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/pdfjs.document.service.ts:240</li>
+									<li>Defined in pdfjs/pdfjs.document.service.ts:291</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -272,7 +299,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/pdfjs.document.service.ts:244</li>
+									<li>Defined in pdfjs/pdfjs.document.service.ts:295</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -282,6 +309,23 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="highlighting" class="tsd-anchor"></a>
+					<h3>highlighting</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> highlighting<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_highlight_highlight_api_.highlighting.html" class="tsd-signature-type">Highlighting</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in pdfjs/pdfjs.document.service.ts:337</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_highlight_highlight_api_.highlighting.html" class="tsd-signature-type">Highlighting</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -296,7 +340,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/pdfjs.document.service.ts:249</li>
+									<li>Defined in pdfjs/pdfjs.document.service.ts:300</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -304,7 +348,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/pdfjs.document.service.ts:253</li>
+									<li>Defined in pdfjs/pdfjs.document.service.ts:304</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -321,6 +365,24 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="close" class="tsd-anchor"></a>
+					<h3>close</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">close<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_api_document_pdf_document_.pdfdocument.html">PDFDocument</a>.<a href="../interfaces/_api_document_pdf_document_.pdfdocument.html#close">close</a></p>
+								<ul>
+									<li>Defined in pdfjs/pdfjs.document.service.ts:412</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="getoutline" class="tsd-anchor"></a>
 					<h3>get<wbr>Outline</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -331,7 +393,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_api_document_pdf_document_.pdfdocument.html">PDFDocument</a>.<a href="../interfaces/_api_document_pdf_document_.pdfdocument.html#getoutline">getOutline</a></p>
 								<ul>
-									<li>Defined in pdfjs/pdfjs.document.service.ts:279</li>
+									<li>Defined in pdfjs/pdfjs.document.service.ts:347</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -356,7 +418,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_api_document_pdf_document_.pdfdocument.html">PDFDocument</a>.<a href="../interfaces/_api_document_pdf_document_.pdfdocument.html#getthumbnails">getThumbnails</a></p>
 								<ul>
-									<li>Defined in pdfjs/pdfjs.document.service.ts:312</li>
+									<li>Defined in pdfjs/pdfjs.document.service.ts:380</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -387,6 +449,30 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="scaleto" class="tsd-anchor"></a>
+					<h3>scale<wbr>To</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">scale<wbr>To<span class="tsd-signature-symbol">(</span>preset<span class="tsd-signature-symbol">: </span><a href="../enums/_api_document_pdf_document_.scalepreset.html" class="tsd-signature-type">ScalePreset</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/_api_document_pdf_document_.pdfdocument.html">PDFDocument</a>.<a href="../interfaces/_api_document_pdf_document_.pdfdocument.html#scaleto">scaleTo</a></p>
+								<ul>
+									<li>Defined in pdfjs/pdfjs.document.service.ts:408</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>preset: <a href="../enums/_api_document_pdf_document_.scalepreset.html" class="tsd-signature-type">ScalePreset</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
 					<a name="transformoutline" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> transform<wbr>Outline</h3>
@@ -397,7 +483,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/pdfjs.document.service.ts:347</li>
+									<li>Defined in pdfjs/pdfjs.document.service.ts:442</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -442,8 +528,14 @@
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#_highlighting" class="tsd-kind-icon">_highlighting</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#dispose" class="tsd-kind-icon">dispose</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#highlighting" class="tsd-kind-icon">highlighting</a>
+								<a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#dispose_" class="tsd-kind-icon">dispose$</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#log" class="tsd-kind-icon">log</a>
@@ -466,14 +558,23 @@
 							<li class=" tsd-kind-accessor tsd-parent-kind-class">
 								<a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#currentpagenumber" class="tsd-kind-icon">current<wbr>Page<wbr>Number</a>
 							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#highlighting" class="tsd-kind-icon">highlighting</a>
+							</li>
 							<li class=" tsd-kind-accessor tsd-parent-kind-class">
 								<a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#scale" class="tsd-kind-icon">scale</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#close" class="tsd-kind-icon">close</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#getoutline" class="tsd-kind-icon">get<wbr>Outline</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#getthumbnails" class="tsd-kind-icon">get<wbr>Thumbnails</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#scaleto" class="tsd-kind-icon">scale<wbr>To</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
 								<a href="_pdfjs_pdfjs_document_service_.pdfjsdocument.html#transformoutline" class="tsd-kind-icon">transform<wbr>Outline</a>

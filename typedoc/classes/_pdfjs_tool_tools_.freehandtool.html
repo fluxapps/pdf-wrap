@@ -74,7 +74,7 @@
 					</div>
 					<dl class="tsd-comment-tags">
 						<dt>author</dt>
-						<dd><p>Nicolas Märchy <a href="mailto:&#110;&#x6d;&#64;&#115;&#x74;&#x75;&#100;&#x65;&#114;&#x2d;&#x72;&#x61;&#105;&#109;&#x61;&#110;&#x6e;&#x2e;&#99;&#104;">&#110;&#x6d;&#64;&#115;&#x74;&#x75;&#100;&#x65;&#114;&#x2d;&#x72;&#x61;&#105;&#109;&#x61;&#110;&#x6e;&#x2e;&#99;&#104;</a></p>
+						<dd><p>Nicolas Märchy <a href="mailto:&#x6e;&#x6d;&#64;&#115;&#x74;&#117;&#100;&#x65;&#x72;&#45;&#x72;&#x61;&#x69;&#x6d;&#x61;&#x6e;&#x6e;&#x2e;&#x63;&#104;">&#x6e;&#x6d;&#64;&#115;&#x74;&#117;&#100;&#x65;&#x72;&#45;&#x72;&#x61;&#x69;&#x6d;&#x61;&#x6e;&#x6e;&#x2e;&#x63;&#104;</a></p>
 						</dd>
 						<dt>since</dt>
 						<dd><p>0.0.1</p>
@@ -125,8 +125,13 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_pdfjs_tool_tools_.freehandtool.html#mouseup" class="tsd-kind-icon">mouse<wbr>Up</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-overwrite tsd-is-protected"><a href="_pdfjs_tool_tools_.freehandtool.html#onfinish" class="tsd-kind-icon">on<wbr>Finish</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_tool_tools_.freehandtool.html#polylinepainter" class="tsd-kind-icon">poly<wbr>Line<wbr>Painter</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_tool_tools_.freehandtool.html#rescalemanager" class="tsd-kind-icon">rescale<wbr>Manager</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="_pdfjs_tool_tools_.freehandtool.html#statechange" class="tsd-kind-icon">state<wbr>Change</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_tool_tools_.freehandtool.html#strokewidth" class="tsd-kind-icon">stroke<wbr>Width</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_pdfjs_tool_tools_.freehandtool.html#touchcancel" class="tsd-kind-icon">touch<wbr>Cancel</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_pdfjs_tool_tools_.freehandtool.html#touchend" class="tsd-kind-icon">touch<wbr>End</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_pdfjs_tool_tools_.freehandtool.html#touchmove" class="tsd-kind-icon">touch<wbr>Move</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_pdfjs_tool_tools_.freehandtool.html#touchstart" class="tsd-kind-icon">touch<wbr>Start</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-inherited">
@@ -157,20 +162,23 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Freehand<wbr>Tool<span class="tsd-signature-symbol">(</span>document<span class="tsd-signature-symbol">: </span><a href="_pdfjs_document_model_.documentmodel.html" class="tsd-signature-type">DocumentModel</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_pdfjs_tool_tools_.freehandtool.html" class="tsd-signature-type">FreehandTool</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Freehand<wbr>Tool<span class="tsd-signature-symbol">(</span>document<span class="tsd-signature-symbol">: </span><a href="_pdfjs_document_model_.documentmodel.html" class="tsd-signature-type">DocumentModel</a>, rescaleManager<span class="tsd-signature-symbol">: </span><a href="_pdfjs_rescale_manager_.rescalemanager.html" class="tsd-signature-type">RescaleManager</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_pdfjs_tool_tools_.freehandtool.html" class="tsd-signature-type">FreehandTool</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_pdfjs_tool_tool_basic_.drawingtool.html">DrawingTool</a>.<a href="_pdfjs_tool_tool_basic_.drawingtool.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in pdfjs/tool/tools.ts:36</li>
+									<li>Defined in pdfjs/tool/tools.ts:47</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>document: <a href="_pdfjs_document_model_.documentmodel.html" class="tsd-signature-type">DocumentModel</a></h5>
+								</li>
+								<li>
+									<h5>rescaleManager: <a href="_pdfjs_rescale_manager_.rescalemanager.html" class="tsd-signature-type">RescaleManager</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_pdfjs_tool_tools_.freehandtool.html" class="tsd-signature-type">FreehandTool</a></h4>
@@ -186,7 +194,7 @@
 					<div class="tsd-signature tsd-kind-icon">after<wbr>Line<wbr>Rendered<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_storage_page_event_.drawevent.html" class="tsd-signature-type">DrawEvent</a><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.polyline.html" class="tsd-signature-type">PolyLine</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in pdfjs/tool/tools.ts:26</li>
+							<li>Defined in pdfjs/tool/tools.ts:32</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -201,7 +209,7 @@
 					<div class="tsd-signature tsd-kind-icon">color<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_api_draw_color_.color.html" class="tsd-signature-type">Color</a><span class="tsd-signature-symbol"> =&nbsp;colorFrom(Colors.BLACK)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in pdfjs/tool/tools.ts:30</li>
+							<li>Defined in pdfjs/tool/tools.ts:36</li>
 						</ul>
 					</aside>
 				</section>
@@ -212,7 +220,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_pdfjs_tool_tool_basic_.drawingtool.html">DrawingTool</a>.<a href="_pdfjs_tool_tool_basic_.drawingtool.html#document">document</a></p>
 						<ul>
-							<li>Defined in pdfjs/tool/tool.basic.ts:157</li>
+							<li>Defined in pdfjs/tool/tool.basic.ts:178</li>
 						</ul>
 					</aside>
 				</section>
@@ -223,7 +231,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_pdfjs_tool_tool_basic_.drawingtool.html">DrawingTool</a>.<a href="_pdfjs_tool_tool_basic_.drawingtool.html#mousedown">mouseDown</a></p>
 						<ul>
-							<li>Defined in pdfjs/tool/tool.basic.ts:108</li>
+							<li>Defined in pdfjs/tool/tool.basic.ts:109</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -239,7 +247,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_pdfjs_tool_tool_basic_.drawingtool.html">DrawingTool</a>.<a href="_pdfjs_tool_tool_basic_.drawingtool.html#mousemove">mouseMove</a></p>
 						<ul>
-							<li>Defined in pdfjs/tool/tool.basic.ts:113</li>
+							<li>Defined in pdfjs/tool/tool.basic.ts:114</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -255,7 +263,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_pdfjs_tool_tool_basic_.drawingtool.html">DrawingTool</a>.<a href="_pdfjs_tool_tool_basic_.drawingtool.html#mouseup">mouseUp</a></p>
 						<ul>
-							<li>Defined in pdfjs/tool/tool.basic.ts:118</li>
+							<li>Defined in pdfjs/tool/tool.basic.ts:119</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -271,7 +279,7 @@
 					<aside class="tsd-sources">
 						<p>Overrides <a href="_pdfjs_tool_tool_basic_.drawingtool.html">DrawingTool</a>.<a href="_pdfjs_tool_tool_basic_.drawingtool.html#onfinish">onFinish</a></p>
 						<ul>
-							<li>Defined in pdfjs/tool/tools.ts:28</li>
+							<li>Defined in pdfjs/tool/tools.ts:34</li>
 						</ul>
 					</aside>
 				</section>
@@ -281,7 +289,7 @@
 					<div class="tsd-signature tsd-kind-icon">poly<wbr>Line<wbr>Painter<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_paint_painters_.polylinepainter.html" class="tsd-signature-type">PolyLinePainter</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in pdfjs/tool/tools.ts:36</li>
+							<li>Defined in pdfjs/tool/tools.ts:47</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -289,6 +297,16 @@
 							<p>Poly line painter instance used during mousedown, mousemove and mouseup.</p>
 						</div>
 					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="rescalemanager" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> rescale<wbr>Manager</h3>
+					<div class="tsd-signature tsd-kind-icon">rescale<wbr>Manager<span class="tsd-signature-symbol">:</span> <a href="_pdfjs_rescale_manager_.rescalemanager.html" class="tsd-signature-type">RescaleManager</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in pdfjs/tool/tools.ts:51</li>
+						</ul>
+					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="statechange" class="tsd-anchor"></a>
@@ -298,7 +316,7 @@
 						<p>Implementation of <a href="../interfaces/_api_tool_toolbox_.freehand.html">Freehand</a>.<a href="../interfaces/_api_tool_toolbox_.freehand.html#statechange">stateChange</a></p>
 						<p>Inherited from <a href="_pdfjs_tool_tool_basic_.basetool.html">BaseTool</a>.<a href="_pdfjs_tool_tool_basic_.basetool.html#statechange">stateChange</a></p>
 						<ul>
-							<li>Defined in pdfjs/tool/tool.basic.ts:25</li>
+							<li>Defined in pdfjs/tool/tool.basic.ts:26</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -314,9 +332,79 @@
 					<div class="tsd-signature tsd-kind-icon">stroke<wbr>Width<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;1</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in pdfjs/tool/tools.ts:31</li>
+							<li>Defined in pdfjs/tool/tools.ts:42</li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Normalized stroke width.
+							Therefore stroke size 1 equals to a size of 1px with a document scale of 1.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="touchcancel" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> touch<wbr>Cancel</h3>
+					<div class="tsd-signature tsd-kind-icon">touch<wbr>Cancel<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TouchEvent</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_pdfjs_tool_tool_basic_.drawingtool.html">DrawingTool</a>.<a href="_pdfjs_tool_tool_basic_.drawingtool.html#touchcancel">touchCancel</a></p>
+						<ul>
+							<li>Defined in pdfjs/tool/tool.basic.ts:134</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>A hot observable which emits on touch cancel event, if the touch start event was able to determine the current page.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="touchend" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> touch<wbr>End</h3>
+					<div class="tsd-signature tsd-kind-icon">touch<wbr>End<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TouchEvent</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_pdfjs_tool_tool_basic_.drawingtool.html">DrawingTool</a>.<a href="_pdfjs_tool_tool_basic_.drawingtool.html#touchend">touchEnd</a></p>
+						<ul>
+							<li>Defined in pdfjs/tool/tool.basic.ts:139</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>A hot observable which emits on touch end event, if the touch start event was able to determine the current page.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="touchmove" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> touch<wbr>Move</h3>
+					<div class="tsd-signature tsd-kind-icon">touch<wbr>Move<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TouchEvent</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_pdfjs_tool_tool_basic_.drawingtool.html">DrawingTool</a>.<a href="_pdfjs_tool_tool_basic_.drawingtool.html#touchmove">touchMove</a></p>
+						<ul>
+							<li>Defined in pdfjs/tool/tool.basic.ts:129</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>A hot observable which emits on touch move event, if the touch start event was able to determine the current page.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="touchstart" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> touch<wbr>Start</h3>
+					<div class="tsd-signature tsd-kind-icon">touch<wbr>Start<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TouchEvent</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_pdfjs_tool_tool_basic_.drawingtool.html">DrawingTool</a>.<a href="_pdfjs_tool_tool_basic_.drawingtool.html#touchstart">touchStart</a></p>
+						<ul>
+							<li>Defined in pdfjs/tool/tool.basic.ts:124</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>A hot observable which emits on touch start event.</p>
+						</div>
+					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
@@ -332,7 +420,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_pdfjs_tool_tool_basic_.drawingtool.html">DrawingTool</a>.<a href="_pdfjs_tool_tool_basic_.drawingtool.html#haspage">hasPage</a></p>
 								<ul>
-									<li>Defined in pdfjs/tool/tool.basic.ts:101</li>
+									<li>Defined in pdfjs/tool/tool.basic.ts:102</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -353,7 +441,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_pdfjs_tool_tool_basic_.basetool.html">BaseTool</a>.<a href="_pdfjs_tool_tool_basic_.basetool.html#isactive">isActive</a></p>
 								<ul>
-									<li>Defined in pdfjs/tool/tool.basic.ts:29</li>
+									<li>Defined in pdfjs/tool/tool.basic.ts:30</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -371,7 +459,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_pdfjs_tool_tool_basic_.drawingtool.html">DrawingTool</a>.<a href="_pdfjs_tool_tool_basic_.drawingtool.html#page">page</a></p>
 								<ul>
-									<li>Defined in pdfjs/tool/tool.basic.ts:90</li>
+									<li>Defined in pdfjs/tool/tool.basic.ts:91</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -401,7 +489,7 @@
 								<p>Implementation of <a href="../interfaces/_api_tool_toolbox_.freehand.html">Freehand</a>.<a href="../interfaces/_api_tool_toolbox_.freehand.html#activate">activate</a></p>
 								<p>Inherited from <a href="_pdfjs_tool_tool_basic_.basetool.html">BaseTool</a>.<a href="_pdfjs_tool_tool_basic_.basetool.html#activate">activate</a></p>
 								<ul>
-									<li>Defined in pdfjs/tool/tool.basic.ts:41</li>
+									<li>Defined in pdfjs/tool/tool.basic.ts:42</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -412,14 +500,14 @@
 					<a name="calcrelativeposition" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> calc<wbr>Relative<wbr>Position</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-						<li class="tsd-signature tsd-kind-icon">calc<wbr>Relative<wbr>Position<span class="tsd-signature-symbol">(</span>evt<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">MouseEvent</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_draw_draw_basic_.point.html" class="tsd-signature-type">Point</a></li>
+						<li class="tsd-signature tsd-kind-icon">calc<wbr>Relative<wbr>Position<span class="tsd-signature-symbol">(</span>evt<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">MouseEvent</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">TouchEvent</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_api_draw_draw_basic_.point.html" class="tsd-signature-type">Point</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_pdfjs_tool_tool_basic_.drawingtool.html">DrawingTool</a>.<a href="_pdfjs_tool_tool_basic_.drawingtool.html#calcrelativeposition">calcRelativePosition</a></p>
 								<ul>
-									<li>Defined in pdfjs/tool/tool.basic.ts:194</li>
+									<li>Defined in pdfjs/tool/tool.basic.ts:253</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -430,7 +518,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>evt: <span class="tsd-signature-type">MouseEvent</span></h5>
+									<h5>evt: <span class="tsd-signature-type">MouseEvent</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">TouchEvent</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>the event to calculate against the page</p>
 									</div>
@@ -453,7 +541,7 @@
 								<p>Implementation of <a href="../interfaces/_api_tool_toolbox_.freehand.html">Freehand</a>.<a href="../interfaces/_api_tool_toolbox_.freehand.html#deactivate">deactivate</a></p>
 								<p>Inherited from <a href="_pdfjs_tool_tool_basic_.basetool.html">BaseTool</a>.<a href="_pdfjs_tool_tool_basic_.basetool.html#deactivate">deactivate</a></p>
 								<ul>
-									<li>Defined in pdfjs/tool/tool.basic.ts:49</li>
+									<li>Defined in pdfjs/tool/tool.basic.ts:50</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -471,7 +559,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_api_tool_toolbox_.freehand.html">Freehand</a>.<a href="../interfaces/_api_tool_toolbox_.freehand.html#setcolor">setColor</a></p>
 								<ul>
-									<li>Defined in pdfjs/tool/tools.ts:80</li>
+									<li>Defined in pdfjs/tool/tools.ts:93</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -495,16 +583,26 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_api_tool_toolbox_.freehand.html">Freehand</a>.<a href="../interfaces/_api_tool_toolbox_.freehand.html#setstrokewidth">setStrokeWidth</a></p>
 								<ul>
-									<li>Defined in pdfjs/tool/tools.ts:85</li>
+									<li>Defined in pdfjs/tool/tools.ts:105</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set the normalized stroke width.
+									A stroke width of 1 equals to a size of 1px with a document scale of 1.</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>px: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The normal size of the stroke width.</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_api_tool_toolbox_.freehand.html" class="tsd-signature-type">Freehand</a></h4>
+							<p>Returns it self for fluent calls.</p>
 						</li>
 					</ul>
 				</section>
@@ -520,7 +618,7 @@
 								<p>Implementation of <a href="../interfaces/_api_tool_toolbox_.freehand.html">Freehand</a>.<a href="../interfaces/_api_tool_toolbox_.freehand.html#toggle">toggle</a></p>
 								<p>Inherited from <a href="_pdfjs_tool_tool_basic_.basetool.html">BaseTool</a>.<a href="_pdfjs_tool_tool_basic_.basetool.html#toggle">toggle</a></p>
 								<ul>
-									<li>Defined in pdfjs/tool/tool.basic.ts:57</li>
+									<li>Defined in pdfjs/tool/tool.basic.ts:58</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -577,11 +675,26 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_pdfjs_tool_tools_.freehandtool.html#polylinepainter" class="tsd-kind-icon">poly<wbr>Line<wbr>Painter</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_pdfjs_tool_tools_.freehandtool.html#rescalemanager" class="tsd-kind-icon">rescale<wbr>Manager</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="_pdfjs_tool_tools_.freehandtool.html#statechange" class="tsd-kind-icon">state<wbr>Change</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_pdfjs_tool_tools_.freehandtool.html#strokewidth" class="tsd-kind-icon">stroke<wbr>Width</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="_pdfjs_tool_tools_.freehandtool.html#touchcancel" class="tsd-kind-icon">touch<wbr>Cancel</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="_pdfjs_tool_tools_.freehandtool.html#touchend" class="tsd-kind-icon">touch<wbr>End</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="_pdfjs_tool_tools_.freehandtool.html#touchmove" class="tsd-kind-icon">touch<wbr>Move</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="_pdfjs_tool_tools_.freehandtool.html#touchstart" class="tsd-kind-icon">touch<wbr>Start</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
 								<a href="_pdfjs_tool_tools_.freehandtool.html#haspage" class="tsd-kind-icon">has<wbr>Page</a>

@@ -75,7 +75,7 @@
 					</div>
 					<dl class="tsd-comment-tags">
 						<dt>author</dt>
-						<dd><p>Nicolas Märchy <a href="mailto:&#x6e;&#x6d;&#64;&#115;&#116;&#117;&#x64;&#x65;&#x72;&#45;&#x72;&#x61;&#105;&#109;&#97;&#110;&#x6e;&#46;&#x63;&#x68;">&#x6e;&#x6d;&#64;&#115;&#116;&#117;&#x64;&#x65;&#x72;&#45;&#x72;&#x61;&#105;&#109;&#97;&#110;&#x6e;&#46;&#x63;&#x68;</a></p>
+						<dd><p>Nicolas Märchy <a href="mailto:&#x6e;&#109;&#64;&#x73;&#x74;&#117;&#x64;&#x65;&#x72;&#x2d;&#114;&#97;&#105;&#x6d;&#97;&#x6e;&#110;&#46;&#99;&#x68;">&#x6e;&#109;&#64;&#x73;&#x74;&#117;&#x64;&#x65;&#x72;&#x2d;&#114;&#97;&#105;&#x6d;&#97;&#x6e;&#110;&#46;&#99;&#x68;</a></p>
 						</dd>
 						<dt>since</dt>
 						<dd><p>0.0.1</p>
@@ -113,12 +113,12 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_rescale_manager_.rescalemanager.html#normalizeborderwidth" class="tsd-kind-icon">normalize<wbr>Border<wbr>Width</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_pdfjs_rescale_manager_.rescalemanager.html#normalizeborderwidth" class="tsd-kind-icon">normalize<wbr>Border<wbr>Width</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_rescale_manager_.rescalemanager.html#normalizedimension" class="tsd-kind-icon">normalize<wbr>Dimension</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_pdfjs_rescale_manager_.rescalemanager.html#normalizepolyline" class="tsd-kind-icon">normalize<wbr>Poly<wbr>Line</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_rescale_manager_.rescalemanager.html#normalizeposition" class="tsd-kind-icon">normalize<wbr>Position</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_pdfjs_rescale_manager_.rescalemanager.html#normalizerectangle" class="tsd-kind-icon">normalize<wbr>Rectangle</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_rescale_manager_.rescalemanager.html#rescaleborderwidth" class="tsd-kind-icon">rescale<wbr>Border<wbr>Width</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_pdfjs_rescale_manager_.rescalemanager.html#rescaleborderwidth" class="tsd-kind-icon">rescale<wbr>Border<wbr>Width</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_rescale_manager_.rescalemanager.html#rescaledimension" class="tsd-kind-icon">rescale<wbr>Dimension</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_pdfjs_rescale_manager_.rescalemanager.html#rescalepolyline" class="tsd-kind-icon">rescale<wbr>Poly<wbr>Line</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_rescale_manager_.rescalemanager.html#rescaleposition" class="tsd-kind-icon">rescale<wbr>Position</a></li>
@@ -179,26 +179,39 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="normalizeborderwidth" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> normalize<wbr>Border<wbr>Width</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<h3>normalize<wbr>Border<wbr>Width</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 						<li class="tsd-signature tsd-kind-icon">normalize<wbr>Border<wbr>Width<span class="tsd-signature-symbol">(</span>px<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/rescale-manager.ts:136</li>
+									<li>Defined in pdfjs/rescale-manager.ts:119</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Normalize the border width to a scale of one.
+										For example:
+										Rendered:        1.6px
+										Document scale:  1.6
+									Normal width:    1px</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>px: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The pixel which should get normalized.</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+							<p>The normalized value at a scale of one.</p>
 						</li>
 					</ul>
 				</section>
@@ -212,7 +225,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/rescale-manager.ts:108</li>
+									<li>Defined in pdfjs/rescale-manager.ts:138</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -267,7 +280,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/rescale-manager.ts:122</li>
+									<li>Defined in pdfjs/rescale-manager.ts:152</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -312,26 +325,39 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="rescaleborderwidth" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> rescale<wbr>Border<wbr>Width</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<h3>rescale<wbr>Border<wbr>Width</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 						<li class="tsd-signature tsd-kind-icon">rescale<wbr>Border<wbr>Width<span class="tsd-signature-symbol">(</span>px<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/rescale-manager.ts:140</li>
+									<li>Defined in pdfjs/rescale-manager.ts:134</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Rescale a normalized value to fit the current document scale.
+										For example:
+										Normal width:    1px
+										Document scale:  1.6
+									Rendered:        1.6px</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>px: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The pixel which should get rescaled.</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+							<p>The rescaled value according to the document scale.</p>
 						</li>
 					</ul>
 				</section>
@@ -345,7 +371,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/rescale-manager.ts:115</li>
+									<li>Defined in pdfjs/rescale-manager.ts:145</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -400,7 +426,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/rescale-manager.ts:129</li>
+									<li>Defined in pdfjs/rescale-manager.ts:159</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -474,7 +500,7 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_pdfjs_rescale_manager_.rescalemanager.html#viewer" class="tsd-kind-icon">viewer</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_pdfjs_rescale_manager_.rescalemanager.html#normalizeborderwidth" class="tsd-kind-icon">normalize<wbr>Border<wbr>Width</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
@@ -489,7 +515,7 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_pdfjs_rescale_manager_.rescalemanager.html#normalizerectangle" class="tsd-kind-icon">normalize<wbr>Rectangle</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_pdfjs_rescale_manager_.rescalemanager.html#rescaleborderwidth" class="tsd-kind-icon">rescale<wbr>Border<wbr>Width</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
