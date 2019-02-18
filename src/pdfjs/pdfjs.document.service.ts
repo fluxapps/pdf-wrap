@@ -133,7 +133,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
             cMapPacked: true,
             cMapUrl: mapUrl,
             data: pdfData,
-            maxImageSize: 1024 * 1024
+            maxImageSize: 4096 * 4096
         }).promise;
 
         const linkService: PDFLinkService = new PDFLinkService({
