@@ -1,18 +1,3 @@
-import {LoadingOptions, PDFDocumentService} from "../api/document.service";
-import {PDFDocument, ScalePreset} from "../api/document/pdf.document";
-import {Outline, PageThumbnail, TreeOutlineEntry} from "../api/document/document.info";
-import {Observable} from "rxjs/internal/Observable";
-import {Toolbox} from "../api/tool/toolbox";
-import {PageChangeEvent, StateChangeEvent} from "../api/event/event.api";
-import {Highlighting} from "../api/highlight/highlight.api";
-import {
-    EventBus,
-    PageChangingEvent,
-    PageRenderedEvent, PagesLoadedEvent,
-    PageView,
-    PDFFindController, PDFLinkService,
-    PDFViewer, RenderingType, TextLayerMode
-} from "pdfjs-dist/web/pdf_viewer";
 import {
     getDocument,
     GlobalWorkerOptions,
@@ -22,28 +7,48 @@ import {
     PDFDocumentProxy,
     PDFOutline
 } from "pdfjs-dist";
-import {fromPromise, Subscriber} from "rxjs/internal-compatibility";
-import {DocumentModel, Page} from "./document.model";
-import {first, map, mergeMap} from "rxjs/operators";
-import {TextHighlighting} from "./highlight";
-import {EraserTool, FreehandTool} from "./tool/tools";
-import {TeardownLogic} from "rxjs/internal/types";
-import {Canvas} from "../paint/painters";
-import {Point} from "../api/draw/draw.basic";
-import {StorageRegistry} from "../api/storage/adapter.registry";
-import {StorageAdapterWrapper} from "./storage-adapter-wrapper";
-import {PageEventCollection} from "../api/storage/page.event";
-import {PDFjsPageEvenCollection} from "./page-event-collection";
-import {merge} from "rxjs/internal/observable/merge";
-import {PolyLine, Rectangle} from "../api/draw/elements";
-import {DocumentSearch} from "../api/search/search.api";
-import {PDFjsDocumentSearch} from "./document.search";
-import {Logger} from "typescript-logging";
-import {LoggerFactory} from "../log-config";
-import {RescaleManager} from "./rescale-manager";
-import {of} from "rxjs/internal/observable/of";
-import {fromEvent} from "rxjs/internal/observable/fromEvent";
-import {LayerManager} from "./layer-manager";
+import {
+    EventBus,
+    PageChangingEvent,
+    PageRenderedEvent,
+    PagesLoadedEvent,
+    PageView,
+    PDFFindController,
+    PDFLinkService,
+    PDFViewer,
+    RenderingType,
+    TextLayerMode
+} from "pdfjs-dist/web/pdf_viewer";
+import { Subject } from "rxjs";
+import { fromPromise, Subscriber } from "rxjs/internal-compatibility";
+import { Observable } from "rxjs/internal/Observable";
+import { fromEvent } from "rxjs/internal/observable/fromEvent";
+import { merge } from "rxjs/internal/observable/merge";
+import { of } from "rxjs/internal/observable/of";
+import { TeardownLogic } from "rxjs/internal/types";
+import { first, map, mergeMap, takeUntil, tap } from "rxjs/operators";
+import { Logger } from "typescript-logging";
+import { LoadingOptions, PDFDocumentService } from "../api/document.service";
+import { Outline, PageThumbnail, TreeOutlineEntry } from "../api/document/document.info";
+import { PDFDocument, ScalePreset } from "../api/document/pdf.document";
+import { Point } from "../api/draw/draw.basic";
+import { PolyLine, Rectangle } from "../api/draw/elements";
+import { PageChangeEvent, StateChangeEvent } from "../api/event/event.api";
+import { Highlighting } from "../api/highlight/highlight.api";
+import { DocumentSearch } from "../api/search/search.api";
+import { StorageRegistry } from "../api/storage/adapter.registry";
+import { PageEventCollection } from "../api/storage/page.event";
+import { Toolbox } from "../api/tool/toolbox";
+import { LoggerFactory } from "../log-config";
+import { Canvas } from "../paint/painters";
+import { DocumentModel, Page } from "./document.model";
+import { PDFjsDocumentSearch } from "./document.search";
+import { TextHighlighting } from "./highlight";
+import { LayerManager } from "./layer-manager";
+import { PDFjsPageEvenCollection } from "./page-event-collection";
+import { RescaleManager } from "./rescale-manager";
+import { StorageAdapterWrapper } from "./storage-adapter-wrapper";
+import { EraserTool, FreehandTool } from "./tool/tools";
 
 // PDF.js defaults
 GlobalWorkerOptions.workerSrc = "assets/pdf.worker.js";
@@ -104,61 +109,90 @@ export class PDFjsDocumentService implements PDFDocumentService {
 
         this.log.info(() => `Load PDF file`);
 
+        const dispose$: Subject<void> = new Subject<void>();
         const pdfData: ArrayBuffer = await this.readBlob(options.pdf);
         const eventBus: EventBus = new EventBus();
 
         const fullyLoadPdf: Promise<PDFDocument> = new Observable((subscriber: Subscriber<PagesLoadedEvent>): TeardownLogic => {
-            this.log.trace("Listen on pagesinit event");
+            this.log.trace("Listen on pagesloaded event");
             eventBus.on("pagesloaded", (it) => subscriber.next(it));
         })
             .pipe(first())
-            .pipe(map(() => new PDFjsDocument(viewer, highlighting, {freehand, eraser}, searchController)))
+            .pipe(tap((_) => this.log.debug("'pagesloaded' event received.")))
+            .pipe(map(() => new PDFjsDocument(
+                viewer,
+                highlighting,
+                {freehand, eraser},
+                searchController,
+                (): void => { dispose$.next(); dispose$.complete(); }
+            )))
             .toPromise();
 
-        const linkService: PDFLinkService = new PDFLinkService({eventBus});
+        this.log.trace(() => "Get document from array buffer");
+        const pdf: PDFDocumentProxy = await getDocument({
+            cMapPacked: true,
+            cMapUrl: mapUrl,
+            data: pdfData,
+            maxImageSize: 1024 * 1024
+        }).promise;
+
+        const linkService: PDFLinkService = new PDFLinkService({
+            eventBus,
+            externalLinkRel: "noopener noreferrer nofollow",
+            externalLinkTarget: 0
+        });
+
+        const findController: PDFFindController = new PDFFindController({
+            eventBus,
+            linkService
+        });
 
         this.log.trace(() => "Create PDF viewer");
         const viewer: PDFViewer = new PDFViewer({
             container: options.container,
+            enablePrintAutoRotate: false,
             enableWebGL: true,
             eventBus,
+            findController,
             linkService,
+            removePageBorders: false,
+            renderInteractiveForms: false,
             renderer: RenderingType.CANVAS,
-            textLayerMode: TextLayerMode.ENABLE_ENHANCED
+            textLayerMode: TextLayerMode.ENABLE_ENHANCED,
+            useOnlyCssZoom: false
         });
 
-        this.log.trace(() => "Get document from array buffer");
-        const pdf: PDFDocumentProxy = await getDocument({
-            MapUrl: mapUrl,
-            cMapPacked: true,
-            data: pdfData
-        });
+        viewer.renderingQueue.onIdle = (): void => {
+            if (!pdf) {
+                return; // run cleanup when document is loaded
+            }
+            viewer.cleanup();
 
-        linkService.setDocument(pdf);
+            // We don't want to remove fonts used by active page SVGs.
+            if (viewer.renderer !== RenderingType.SVG) {
+                pdf.cleanup();
+            }
+        };
+
         linkService.setViewer(viewer);
 
         this.log.trace(() => "Set document on PDF viewer");
+        linkService.setDocument(pdf);
         viewer.setDocument(pdf);
-
-        const findController: PDFFindController = new PDFFindController({
-            pdfViewer: viewer
-        });
-        this.log.trace(() => "Set find controller on PDF viewer");
-        viewer.setFindController(findController);
 
         const documentModel: DocumentModel = new DocumentModel(options.container);
 
         const rescaleManager: RescaleManager = new RescaleManager(viewer);
 
         const searchController: DocumentSearch = new PDFjsDocumentSearch(findController);
-        const highlighting: Highlighting = new TextHighlighting(documentModel);
+        const highlighting: TextHighlighting = new TextHighlighting(documentModel);
         const freehand: FreehandTool = new FreehandTool(documentModel, rescaleManager);
         const eraser: EraserTool = new EraserTool(documentModel);
 
         const pageEventCollection: PageEventCollection = new PDFjsPageEvenCollection(
-            freehand.afterLineRendered,
-            eraser.afterElementRemoved,
-            highlighting.onTextSelection,
+            freehand.afterLineRendered.pipe(takeUntil(dispose$)),
+            eraser.afterElementRemoved.pipe(takeUntil(dispose$)),
+            highlighting.onTextSelection.pipe(takeUntil(dispose$)),
             rescaleManager
         );
         const storageAdapter: StorageAdapterWrapper = new StorageAdapterWrapper(StorageRegistry.instance);
@@ -166,13 +200,18 @@ export class PDFjsDocumentService implements PDFDocumentService {
         storageAdapter.start(options.layerStorage, pageEventCollection);
 
         // move draw layers to front in order to make the mouse listeners work
-        merge(freehand.stateChange, eraser.stateChange).subscribe(moveDrawLayerToFront);
+        merge(freehand.stateChange, eraser.stateChange)
+            .pipe(takeUntil(dispose$))
+            .subscribe(moveDrawLayerToFront);
 
         new Observable((subscriber: Subscriber<PageRenderedEvent>): TeardownLogic => {
             this.log.trace("Listen on pagerendered event");
-            viewer.eventBus.on("pagerendered", (ev) => subscriber.next(ev));
+            const eventHandler: (ev: PageRenderedEvent) => void = (ev: PageRenderedEvent): void => subscriber.next(ev);
+            viewer.eventBus.on("pagerendered", eventHandler);
+            return (): void => viewer.eventBus.off("pagerendered", eventHandler);
         })
             .pipe(map((it) => new LayerManager(it)))
+            .pipe(takeUntil(dispose$))
             .subscribe((it) => {
 
                 // we remove possible outdated layers, otherwise we could get duplicated ones
@@ -269,22 +308,34 @@ export class PDFjsDocument implements PDFDocument {
 
     readonly pageChange: Observable<PageChangeEvent>;
     readonly pageCount: number;
+    readonly dispose$: Subject<void> = new Subject<void>();
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/pdfjs.document.service:PDFjsDocument");
 
     constructor(
         private readonly viewer: PDFViewer,
-        readonly highlighting: Highlighting,
+        private readonly _highlighting: TextHighlighting,
         readonly toolbox: Toolbox,
-        readonly searchController: DocumentSearch
+        readonly searchController: DocumentSearch,
+        private dispose: (() => void) | null
     ) {
 
         this.pageChange = new Observable((subscriber: Subscriber<PageChangingEvent>): TeardownLogic => {
-            this.viewer.eventBus.on("pagechanging", (evt) => subscriber.next(evt));
+            const eventHandler: (ev: PageChangingEvent) => void = (ev: PageChangingEvent): void => subscriber.next(ev);
+            this.viewer.eventBus.on("pagechanging", eventHandler);
+            return (): void => {
+                viewer.eventBus.off("pagechanging", eventHandler);
+                this.log.debug("Unsubscribed from 'pagechanging event'");
+            };
         })
-            .pipe(map((it) => new PageChangeEvent(it.pageNumber)));
+            .pipe(map((it) => new PageChangeEvent(it.pageNumber)))
+            .pipe(takeUntil(this.dispose$));
 
-        this.pageCount = this.viewer.pdfDocument.pdfInfo.numPages;
+        this.pageCount = this.viewer.pdfDocument.numPages;
+    }
+
+    get highlighting(): Highlighting {
+        return this._highlighting;
     }
 
     /**
@@ -358,9 +409,27 @@ export class PDFjsDocument implements PDFDocument {
         this.viewer.currentScaleValue = preset;
     }
 
-    close(): Promise<void> {
+    async close(): Promise<void> {
+        this.viewer.renderingQueue.onIdle = null;
+        if (this.viewer.renderingQueue.idleTimeout) {
+            clearTimeout(this.viewer.renderingQueue.idleTimeout);
+            this.viewer.renderingQueue.idleTimeout = null;
+        }
+        this._highlighting.dispose();
         this.viewer.pdfDocument.cleanup();
-        return this.viewer.pdfDocument.destroy();
+        await this.viewer.pdfDocument.destroy();
+        this.viewer.setDocument(null);
+        this.viewer.linkService.setDocument(null);
+        this.viewer.findController._reset();
+        this.viewer.linkService.setViewer(null);
+        this.viewer.renderingQueue.setViewer(null);
+        this.viewer.cleanup();
+        if (!!this.dispose) {
+            this.dispose();
+            this.dispose = null;
+        }
+        this.dispose$.next();
+        this.dispose$.complete();
     }
 
     /**

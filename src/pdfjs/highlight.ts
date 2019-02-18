@@ -3,7 +3,7 @@ import {Observable} from "rxjs/internal/Observable";
 import {Color} from "../api/draw/color";
 import {DocumentModel, getPageNumberByEvent, Page} from "./document.model";
 import {Canvas} from "../paint/painters";
-import {filter, map, share, tap, withLatestFrom} from "rxjs/operators";
+import { filter, map, share, takeUntil, tap, withLatestFrom } from "rxjs/operators";
 import {DrawElement, Rectangle} from "../api/draw/elements";
 import {DrawEvent, PageLayer} from "../api/storage/page.event";
 import {CanvasRectangle} from "../paint/canvas.elements";
@@ -34,6 +34,8 @@ export class TextHighlighting implements Highlighting {
 
     private enabled: boolean = false;
 
+    private readonly dispose$: Subject<void> = new Subject<void>();
+
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/highlight:TextHighlighting");
 
     get isEnabled(): boolean {
@@ -53,18 +55,16 @@ export class TextHighlighting implements Highlighting {
             .pipe(map((it) => getPageNumberByEvent(it)))
             .pipe(filter((it) => it !== undefined && this.document.hasPage(it)))
             .pipe(map((it) => this.document.getPage(it!)))
-            .pipe(tap((it) => this.log.debug(() => `found page number by event: ${it.pageNumber}`)));
+            .pipe(tap((it) => this.log.debug(() => `found page number by event: ${it.pageNumber}`)))
+            .pipe(takeUntil(this.dispose$));
 
         // transformed selection on mouse up only inside the viewer
-        const selections: Observable<Array<Target>> = merge(
-            // fromEvent(document.viewer, "mouseup"),
-            // fromEvent(document.viewer, "touchend")
-            fromEvent(window.document, "selectionchange", { passive: true })
-        )
+        const selections: Observable<Array<Target>> = fromEvent(window.document, "selectionchange", { passive: true })
             .pipe(map((_) => window.getSelection()))
             .pipe(map(transformSelection))
             .pipe(filter((it) => it.length > 0))
-            .pipe(tap((it) => this.log.debug(() => `targets: ${JSON.stringify(it)}`)));
+            .pipe(tap((it) => this.log.debug(() => `targets: ${JSON.stringify(it)}`)))
+            .pipe(takeUntil(this.dispose$));
 
         // page and selections observable zipped determines a valid text selection
         this.onTextSelection = selections
@@ -72,6 +72,7 @@ export class TextHighlighting implements Highlighting {
             .pipe(tap((it) => this.log.debug(() => `Page for selection: page=${it[1].pageNumber}`)))
             .pipe(filter((_) => this.enabled))
             .pipe(map((it) => new TextSelectionImpl(it[1])))
+            .pipe(takeUntil(this.dispose$))
             .pipe(share());
 
 
@@ -91,10 +92,11 @@ export class TextHighlighting implements Highlighting {
             .pipe(map((_) => window.getSelection().rangeCount))
             // .pipe(map(transformSelection))
             .pipe(filter((it) => it < 1))
-            .pipe(map((_) => {/* return void */}));
+            .pipe(map((_) => {/* return void */}))
+            .pipe(takeUntil(this.dispose$));
 
         // if one of them emits, nothing is selected
-        this.onTextUnselection = merge(onMouseUpUnselection);
+        this.onTextUnselection = onMouseUpUnselection;
     }
 
     /**
@@ -111,6 +113,13 @@ export class TextHighlighting implements Highlighting {
     enable(): void {
         this.log.info(() => "Enable text highlighting");
         this.enabled = true;
+    }
+
+    dispose(): void {
+        this.disable();
+        this.dispose$.next();
+        this.dispose$.complete();
+        this.dispose$.unsubscribe();
     }
 }
 
