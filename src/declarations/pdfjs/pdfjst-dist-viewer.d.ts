@@ -1,7 +1,7 @@
-
 declare module "pdfjs-dist/web/pdf_viewer" {
 
     import {PDFDocumentProxy} from "pdfjs-dist";
+    import { PDFRenderingQueue } from "pdfjs-dist/lib/web/pdf_rendering_queue";
     import {PDFDocument, ScalePreset} from "../../api/document/pdf.document";
 
     export interface PageChangingEvent {
@@ -43,9 +43,9 @@ declare module "pdfjs-dist/web/pdf_viewer" {
          */
         constructor(options: PDFLinkServiceOptions);
 
-        setDocument(pdfDocument: PDFDocument, baseUrl?: string = null): void;
+        setDocument(pdfDocument: PDFDocument | null, baseUrl?: string = null): void;
 
-        setViewer(pdfViewer: PDFViewer): void;
+        setViewer(pdfViewer: PDFViewer | null): void;
 
         /**
          * @returns {number}
@@ -93,10 +93,16 @@ declare module "pdfjs-dist/web/pdf_viewer" {
     export interface ViewerOptions {
         container: HTMLElement;
         eventBus: EventBus;
-        renderer: RenderingType;
+        linkService: PDFLinkService;
+        findController: PDFFindController;
+        removePageBorders: boolean;
         textLayerMode: TextLayerMode;
-        linkService?: PDFLinkService;
+        renderInteractiveForms: boolean;
+        renderingQueue?: pdfRenderingQueue;
+        enablePrintAutoRotate: boolean;
+        renderer: RenderingType;
         enableWebGL: boolean;
+        useOnlyCssZoom: boolean;
     }
 
     export interface PageView {
@@ -108,21 +114,29 @@ declare module "pdfjs-dist/web/pdf_viewer" {
 
         readonly pdfDocument: PDFDocumentProxy;
         readonly eventBus: EventBus;
+        readonly renderer: RenderingType;
+        readonly renderingQueue: PDFRenderingQueue;
+        readonly linkService: PDFLinkService;
+        readonly findController: PDFFindController;
         currentScale: number;
         currentScaleValue: number | ScalePreset;
         currentPageNumber: number;
 
         constructor(options: ViewerOptions);
 
-        setDocument(pdf: PDFDocumentProxy): void;
+        setDocument(pdf: PDFDocumentProxy | null): void;
 
         getPageView(pageIndex: number): PageView;
 
         setFindController(controller: PDFFindController): void;
+        update(): void;
+
+        cleanup(): void;
     }
 
     export interface FindControllerOptions {
-        pdfViewer: PDFViewer;
+        linkService: PDFLinkService;
+        eventBus: EventBus;
     }
 
     export interface PDFSearchOptions {
@@ -148,5 +162,28 @@ declare module "pdfjs-dist/web/pdf_viewer" {
         constructor(opt: FindControllerOptions);
 
         executeCommand(cmd: SearchCommand, options: PDFSearchOptions): void;
+        _reset(): void;
+    }
+}
+
+declare module "pdfjs-dist/lib/web/pdf_rendering_queue" {
+    import { PDFViewer } from "pdfjs-dist/web/pdf_viewer";
+    export class PDFRenderingQueue {
+        pdfThumbnailViewer: PDFThumbnailViewer | null;
+        onIdle: (() => void) | null;
+        idleTimeout: number | null;
+        printing: boolean;
+        isThumbnailViewEnabled: boolean;
+
+        setViewer(viewer: PDFViewer | null): void;
+        renderHighestPriority(): void;
+    }
+}
+
+declare module "pdfjs-dist/lib/display/api" {
+    import { PDFDocumentProxy } from "pdfjs-dist";
+
+    export class PDFDocumentLoadingTask {
+        get promise(): Promise<PDFDocumentProxy>;
     }
 }

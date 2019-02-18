@@ -2,13 +2,16 @@
 // This declarations is not complete and will only include declarations needed for this library to work.
 declare module "pdfjs-dist" {
 
+    import { PDFDocumentLoadingTask } from "pdfjs-dist/lib/display/api";
+
     export class GlobalWorkerOptions {
         static workerSrc: string;
     }
 
     export interface BaseSource {
-        MapUrl: string;
+        cMapUrl: string;
         cMapPacked: boolean;
+        maxImageSize: number;
     }
 
     export interface URLSource extends BaseSource {
@@ -21,7 +24,7 @@ declare module "pdfjs-dist" {
 
     export type Source = string | ArrayBuffer | URLSource | DataSource;
 
-    export function getDocument(src: Source): Promise<PDFDocumentProxy>;
+    export function getDocument(src: Source): PDFDocumentLoadingTask;
 
     export interface PDFInfo {
         readonly numPages: number;

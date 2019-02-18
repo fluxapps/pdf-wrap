@@ -39,7 +39,7 @@
     "uglify-js": "^3.3.27"
   },
   "dependencies": {
-    "pdfjs-dist": "^2.0.489",
+    "pdfjs-dist": "2.0.943",
     "rxjs": "^6.1.0",
     "svgjs": "^2.6.2",
     "typescript-logging": "^0.6.2",
