@@ -1,13 +1,14 @@
-import {Tool} from "../../api/tool/toolbox";
-import {StateChangeEvent} from "../../api/event/event.api";
-import {Observable} from "rxjs/internal/Observable";
-import {DocumentModel, getPageNumberByEvent, Page} from "../document.model";
-import {Point} from "../../api/draw/draw.basic";
-import {delayWhen, filter, share, tap} from "rxjs/operators";
-import {Subject} from "rxjs/internal/Subject";
-import {fromEvent} from "rxjs/internal/observable/fromEvent";
-import {Logger} from "typescript-logging";
-import {LoggerFactory} from "../../log-config";
+import { merge } from "rxjs";
+import { Observable } from "rxjs/internal/Observable";
+import { fromEvent } from "rxjs/internal/observable/fromEvent";
+import { Subject } from "rxjs/internal/Subject";
+import { delayWhen, filter, share, tap } from "rxjs/operators";
+import { Logger } from "typescript-logging";
+import { Point } from "../../api/draw/draw.basic";
+import { StateChangeEvent } from "../../api/event/event.api";
+import { Tool } from "../../api/tool/toolbox";
+import { LoggerFactory } from "../../log-config";
+import { DocumentModel, getPageNumberByEvent, Page } from "../document.model";
 
 /**
  * Implements the basic features of a tool.
@@ -118,6 +119,26 @@ export abstract class DrawingTool extends BaseTool {
     protected readonly mouseUp: Observable<MouseEvent>;
 
     /**
+     * A hot observable which emits on touch start event.
+     */
+    protected readonly touchStart: Observable<TouchEvent>;
+
+    /**
+     * A hot observable which emits on touch move event, if the touch start event was able to determine the current page.
+     */
+    protected readonly touchMove: Observable<TouchEvent>;
+
+    /**
+     * A hot observable which emits on touch cancel event, if the touch start event was able to determine the current page.
+     */
+    protected readonly touchCancel: Observable<TouchEvent>;
+
+    /**
+     * A hot observable which emits on touch end event, if the touch start event was able to determine the current page.
+     */
+    protected readonly touchEnd: Observable<TouchEvent>;
+
+    /**
      * A class extending this class have to implement this observable
      * and emit nothing whenever the extending class is finished
      * with the mousedown, mousemove, mouseup chain.
@@ -158,26 +179,64 @@ export abstract class DrawingTool extends BaseTool {
     ) {
         super();
 
+        /*
+         * Prevent default to stop the browser from
+         * sending the click events as well.
+         * See: https://developer.mozilla.org/en-US/docs/Web/API/TouchEvent#Using_with_addEventListener()_and_preventDefault()
+         */
+        this.touchStart = fromEvent<TouchEvent>(document.viewer, "touchstart")
+            .pipe(filter(() => this.isActive))
+            .pipe(tap((it) => this.setPageByEvent(it)))
+            .pipe(tap((it) => it.preventDefault()))
+            .pipe(tap((_) => this.log.trace(() => `Touch start event from drawing tool: tool=${this.constructor.name}`)))
+            .pipe(share());
+
+        this.touchMove = fromEvent<TouchEvent>(document.viewer, "touchmove")
+            .pipe(filter(() => this.isActive))
+            .pipe(filter(() => this.hasPage))
+            .pipe(tap((it) => it.preventDefault()))
+            .pipe(tap((_) => this.log.trace(() => `Touch move event from drawing tool: tool=${this.constructor.name}`)))
+            .pipe(share());
+
+        this.touchEnd = fromEvent<TouchEvent>(document.viewer, "touchend")
+            .pipe(filter(() => this.isActive))
+            .pipe(filter(() => this.hasPage))
+            .pipe(tap((it) => it.preventDefault()))
+            .pipe(tap((_) => this.log.trace(() => `Touch end event from drawing tool: tool=${this.constructor.name}`)))
+            .pipe(share());
+
+        this.touchCancel = fromEvent<TouchEvent>(document.viewer, "touchcancel")
+            .pipe(filter(() => this.isActive))
+            .pipe(filter(() => this.hasPage))
+            .pipe(tap((it) => it.preventDefault()))
+            .pipe(tap((_) => this.log.trace(() => `Touch cancel event from drawing tool: tool=${this.constructor.name}`)))
+            .pipe(share());
+
         this.mouseDown = fromEvent<MouseEvent>(document.viewer, "mousedown")
             .pipe(filter(() => this.isActive))
             .pipe(tap((it) => this.setPageByEvent(it)))
+            .pipe(tap((it) => it.preventDefault()))
             .pipe(tap((_) => this.log.trace(() => `Mouse down event from drawing tool: tool=${this.constructor.name}`)))
             .pipe(share());
 
         this.mouseMove = fromEvent<MouseEvent>(document.viewer, "mousemove")
+            .pipe(filter(() => this.isActive))
             .pipe(filter(() => this.hasPage))
+            .pipe(tap((it) => it.preventDefault()))
             .pipe(tap((_) => this.log.trace(() => `Mouse move event from drawing tool: tool=${this.constructor.name}`)))
             .pipe(share());
 
         this.mouseUp = fromEvent<MouseEvent>(document.viewer, "mouseup")
+            .pipe(filter(() => this.isActive))
             .pipe(filter(() => this.hasPage))
+            .pipe(tap((it) => it.preventDefault()))
             .pipe(tap((_) => {
                 this.log.trace(() => `Mouse up event from drawing tool: tool=${this.constructor.name}`);
             }))
             .pipe(share());
 
         // We use our mouse up observable and delay it until the onFinish observable emits
-        this.mouseUp
+        merge(this.mouseUp, this.touchEnd, this.touchCancel)
             .pipe(delayWhen((_) => this.onFinish))
             .subscribe(() => {
                 this._page = undefined;
@@ -187,11 +246,31 @@ export abstract class DrawingTool extends BaseTool {
     /**
      * Calculates the relative positions to the current page.
      *
-     * @param {MouseEvent} evt - the event to calculate against the page
+     * @param {MouseEvent | TouchEvent} evt - the event to calculate against the page
      *
      * @returns {Point} the relative coordinates
      */
-    protected calcRelativePosition(evt: MouseEvent): Point {
+    protected calcRelativePosition(evt: MouseEvent | TouchEvent): Point {
+
+        if (evt instanceof TouchEvent) {
+            const touch: TouchEvent = evt as TouchEvent;
+            if (touch.touches.length === 0 && touch.changedTouches.length === 0) {
+                return { x: 0, y: 0};
+            }
+
+            if (touch.changedTouches.length === 0) {
+                return {
+                    x: touch.touches[0].clientX - this.page.pagePosition.x,
+                    y: touch.touches[0].clientY - this.page.pagePosition.y
+                };
+            }
+
+            return {
+                x: touch.changedTouches[0].clientX - this.page.pagePosition.x,
+                y: touch.changedTouches[0].clientY - this.page.pagePosition.y
+            };
+        }
+
         return {
             x: evt.clientX - this.page.pagePosition.x,
             y: evt.clientY - this.page.pagePosition.y

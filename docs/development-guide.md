@@ -3,6 +3,7 @@
 **Authors**
 
 Nicolas Märchy
+Nicolas Schäfli
 
 **Version 1.0.0**
 
@@ -42,11 +43,7 @@ rendered PDF page, so it won't cover the text.
 Is the actual PDF page rendered as svg by PDF.js.
 
 **HIGHLIGHT LAYER TRANSPARENCY**<br>
-Is the same as the *HIGHLIGHT Layer* but with less opacity (about 40%). This layer
-is required to highlight text which is not on a white background. With only
-the *HIGHLIGHT LAYER*, the highlight would not be visible at all, because of the
-non-transparent background of the *PDF LAYER*. The transparency is required
-to not cover the *PDF LAYER* completely.
+This layer contains any highlighting with an opacity of (about 40%).
 
 **DRAW LAYER**<br>
 The layer contains all drawings made by a user.
@@ -313,6 +310,27 @@ yarn gulp publishDoc
 
 This will generate the documentation, updates the `gh-pages` branch
 and pushes it to Github.
+
+# NPM
+
+PDF Wrap is published to [npm.js](https://www.npmjs.com/package/@srag/pdf-wrap).
+
+## How to publish PDF Wrap
+
+In order to publish this project to npm you have to log in with your npm account
+
+```
+yarn login
+```
+
+Then simply run
+
+```
+yarn gulp publish
+```
+
+> It is important to use this command and **NOT `yarn publish`** directly, because the gulp command will
+prepare PDF Wrap before publishing it.
 
 # Unit Testing
 

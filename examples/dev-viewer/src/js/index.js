@@ -1,17 +1,20 @@
-import {setAssetsSrc} from "../../../../src/pdfjs/pdfjs.document.service";
+import {LoggerFactory} from "@srag/pdf-wrap/log-config";
+import {PageOverlay} from "@srag/pdf-wrap/api/storage/adapter";
 
-const {colorFromHex} = require("pdf-wrap/api/draw/color");
-const {PDFjsDocumentService, setWorkerSrc, setCMapUrl} = require("pdf-wrap/pdfjs/pdfjs.document.service");
-const {URI} = require("pdf-wrap/api/document.service");
-const {StorageRegistry} = require("pdf-wrap/api/storage/adapter.registry");
-const {PageOverlay} = require("pdf-wrap/api/storage/adapter");
-const {LoggerFactory} = require("pdf-wrap/log-config");
+import {setAssetsSrc} from "@srag/pdf-wrap/pdfjs/pdfjs.document.service";
+import {colorFromHex} from "@srag/pdf-wrap/api/draw/color";
+import {PDFjsDocumentService} from "@srag/pdf-wrap/pdfjs/pdfjs.document.service";
+import {URI} from "@srag/pdf-wrap/api/document.service";
+import {StorageRegistry} from "@srag/pdf-wrap/api/storage/adapter.registry";
+import {LogLevel} from "@srag/pdf-wrap/log-config";
+
+
 
 LoggerFactory.configure({
     logGroups: [
         {
             logger: "ch/studerraimann/pdfwrap",
-            logLevel: 0
+            logLevel: LogLevel.TRACE
         }
     ]
 });
@@ -33,15 +36,15 @@ export class InMemStorageAdapter {
 
         events.afterPolyLineRendered().subscribe(it => {
             store.set(it.element.id, it);
-        });
+        }, (it) => console.error(it), () => console.log("afterPolyLineRendered complete"));
 
         events.afterRectangleRendered().subscribe(it => {
             store.set(it.element.id, it);
-        });
+        }, (it) => console.error(it), () => console.log("afterRectangleRendered complete"));
 
         events.afterElementRemoved().subscribe(it => {
             store.delete(it.element.id);
-        })
+        }, (it) => console.error(it), () => console.log("afterElementRemoved complete"))
     }
 
     loadPage(uri, pageNumber) {
@@ -219,6 +222,7 @@ export class SidebarManager {
 
         this._outline.then(outline => {
 
+            this.clearOutline();
             outline.flatList.forEach(it => {
 
                 const li = document.createElement("li");
@@ -235,6 +239,7 @@ export class SidebarManager {
 
     renderThumbnails() {
 
+        this.clearThumbnails();
         this._thumbails.subscribe(it => {
 
             const li = document.createElement("li");
@@ -249,34 +254,38 @@ export class SidebarManager {
             this._thumbnailsUlElement.appendChild(li);
         });
     }
+
+    clearThumbnails() {
+        while (this._thumbnailsUlElement.lastChild) {
+            this._thumbnailsUlElement.removeChild(this._thumbnailsUlElement.lastChild);
+        }
+    }
+
+    clearOutline() {
+        while (this._tableOfContents.lastChild) {
+            this._tableOfContents.removeChild(this._tableOfContents.lastChild);
+        }
+    }
 }
 
-const documentService = new PDFjsDocumentService();
+let documentService = null;
+let pdfDoc = null;
 
-
-new Promise(resolve => {
-
-    const request = new XMLHttpRequest();
-    request.open('GET', "assets/resources/chicken.pdf", true);
-    request.responseType = 'blob';
-    request.onload = function() {
-        resolve(request.response);
-    };
-    request.send();
-}).then(pdf => {
-    return documentService.loadWith({
+export async function loadPDF() {
+    documentService = new PDFjsDocumentService();
+    const pdf = await (await fetch("assets/resources/chicken.pdf")).blob();
+    const pdfDocument = await documentService.loadWith({
         container: document.getElementById("viewerContainer"),
         pdf: pdf,
         layerStorage: URI.from("mem://chicken.pdf")
-    })
-}).then(it => {
+    });
 
     const highlightService = new HighlightService();
 
     const highlightButton = new HighlightButton(highlightService);
     const clearButton = new ClearButton(highlightService);
-    const penButton = new PenButton(it.toolbox.freehand);
-    const eraserButton = new EraserButton(it.toolbox.eraser);
+    const penButton = new PenButton(pdfDocument.toolbox.freehand);
+    const eraserButton = new EraserButton(pdfDocument.toolbox.eraser);
 
     // search
     const searchButton = document.getElementById("search-button");
@@ -286,15 +295,15 @@ new Promise(resolve => {
     const searchField = document.getElementById("search-term");
 
     searchButton.addEventListener("click", () => {
-        it.searchController.search(searchField.value, {fuzzy: true, searchPhrase: true, highlightAll: true});
+        pdfDocument.searchController.search(searchField.value, {fuzzy: true, searchPhrase: true, highlightAll: true});
     });
 
     previousSearch.addEventListener("click", () => {
-        it.searchController.previous();
+        pdfDocument.searchController.previous();
     });
 
     nextSearch.addEventListener("click", () => {
-        it.searchController.next();
+        pdfDocument.searchController.next();
     });
 
     // zoom
@@ -302,56 +311,73 @@ new Promise(resolve => {
     const zoomOut = document.getElementById("zoom-out-button");
 
     zoomIn.addEventListener("click", () => {
-        it.scale = it.scale * 1.5;
+        pdfDocument.scale = pdfDocument.scale * 1.5;
     });
 
     zoomOut.addEventListener("click", () => {
-        it.scale = it.scale / 1.5;
+        pdfDocument.scale = pdfDocument.scale / 1.5;
     });
 
     // page navigation
     const pageNumberInput = document.getElementById("page-number");
-    pageNumberInput.innerHTML = it.currentPageNumber;
+    pageNumberInput.innerHTML = pdfDocument.currentPageNumber.toString();
 
-    it.pageChange.subscribe(it => {
-        pageNumberInput.innerHTML = it.pageNumber;
+    pdfDocument.pageChange.subscribe(it => {
+        pageNumberInput.innerHTML = it.pageNumber.toString();
     });
 
     const pageCountLabel = document.getElementById("page-count-label");
-    pageCountLabel.innerHTML = "/ " + it.pageCount;
+    pageCountLabel.innerHTML = "/ " + pdfDocument.pageCount;
 
     const previousPage = document.getElementById("previous-page");
     const nextPage = document.getElementById("next-page");
 
     previousPage.addEventListener("click", () => {
-        it.currentPageNumber = it.currentPageNumber - 1;
+        pdfDocument.currentPageNumber = pdfDocument.currentPageNumber - 1;
     });
 
     nextPage.addEventListener("click", () => {
-        it.currentPageNumber = it.currentPageNumber + 1;
+        pdfDocument.currentPageNumber = pdfDocument.currentPageNumber + 1;
     });
 
     // sidebar left
-    const sidebarManager = new SidebarManager(it);
+    const sidebarManager = new SidebarManager(pdfDocument);
     sidebarManager.renderOutline();
     sidebarManager.renderThumbnails();
 
-    it.highlighting.enable();
+    pdfDocument.highlighting.enable();
 
     // highlighting
-    it.highlighting.onTextSelection
+    pdfDocument.highlighting.onTextSelection
         .subscribe(it => {
             highlightService.textSelection = it;
             highlightButton.enable();
             clearButton.enable();
         });
 
-    it.highlighting.onTextUnselection
+    pdfDocument.highlighting.onTextUnselection
         .subscribe(() => {
             highlightButton.disable();
             clearButton.disable();
         });
-});
+    pdfDoc = pdfDocument;
 
+}
+
+export function close() {
+    console.log("close");
+    const thumbnails = document.getElementById("thumbnails");
+    while (thumbnails.lastChild) {
+        thumbnails.removeChild(thumbnails.lastChild);
+    }
+    pdfDoc.close();
+    pdfDoc = null;
+    documentService = null;
+}
+
+loadPDF();
+
+document.getElementById("close-page").addEventListener("click", close);
+document.getElementById("load-page").addEventListener("click", loadPDF);
 
 

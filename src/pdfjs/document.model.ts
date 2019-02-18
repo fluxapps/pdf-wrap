@@ -103,8 +103,8 @@ export function getPageNumberByEvent(evt: Event): number | undefined {
 
         log.trace(() => `Try to get page number by event: event=${evt.type}`);
 
-        const dataPageNumber: string | undefined = (evt.target as Element)!.parentElement!.parentElement!.dataset.pageNumber
-            || (evt.target as Element)!.parentElement!.dataset.pageNumber || undefined;
+        const parentPageElement: Element | null = (evt.target as Element)!.closest(".page");
+        const dataPageNumber: string | undefined = parentPageElement !== null ? (parentPageElement as HTMLElement).dataset.pageNumber : undefined;
 
         if (dataPageNumber !== undefined) {
             log.trace(() => `Found page number by event: event=${evt.type}, pageNumber=${dataPageNumber}`);

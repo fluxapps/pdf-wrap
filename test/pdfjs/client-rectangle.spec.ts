@@ -277,6 +277,17 @@ describe('a client rectangle', () => {
                 const expected: Array<ClientRectangle> = [ClientRectangle.fromCoordinates(5, 7, 5, 10)];
                 chai.expect(result).to.deep.equal(expected);
             });
+
+            it('should not return a client rectangle with an aria below one.', () => {
+
+                const a: ClientRectangle = ClientRectangle.fromCoordinates(7, 12.0001, 5, 10);
+                const b: ClientRectangle = ClientRectangle.fromCoordinates(7, 12, 5, 10);
+
+
+                const result: Array<ClientRectangle> = a.subtract(b);
+
+                chai.expect(result).to.be.empty;
+            });
         });
 
         describe('on the left side with even top and bottom attributes', () => {
@@ -292,6 +303,17 @@ describe('a client rectangle', () => {
 
                 const expected: Array<ClientRectangle> = [ClientRectangle.fromCoordinates(7, 10, 5, 10)];
                 chai.expect(result).to.deep.equal(expected);
+            });
+
+            it('should not return a client rectangle with an aria below one.', () => {
+
+                const a: ClientRectangle = ClientRectangle.fromCoordinates(7.0001, 12, 5, 10);
+                const b: ClientRectangle = ClientRectangle.fromCoordinates(7, 12, 5, 10);
+
+
+                const result: Array<ClientRectangle> = a.subtract(b);
+
+                chai.expect(result).to.be.empty;
             });
         });
 

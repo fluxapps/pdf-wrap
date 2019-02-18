@@ -105,6 +105,36 @@ export class RescaleManager {
             .build();
     }
 
+    /**
+     * Normalize the border width to a scale of one.
+     * For example:
+     * Rendered:        1.6px
+     * Document scale:  1.6
+     * Normal width:    1px
+     *
+     * @param {number} px   The pixel which should get normalized.
+     *
+     * @return {number} The normalized value at a scale of one.
+     */
+    normalizeBorderWidth(px: number): number {
+        return px / this.viewer.currentScale;
+    }
+
+    /**
+     * Rescale a normalized value to fit the current document scale.
+     * For example:
+     * Normal width:    1px
+     * Document scale:  1.6
+     * Rendered:        1.6px
+     *
+     * @param {number} px   The pixel which should get rescaled.
+     *
+     * @return {number}     The rescaled value according to the document scale.
+     */
+    rescaleBorderWidth(px: number): number {
+        return px * this.viewer.currentScale;
+    }
+
     private normalizeDimension(dimension: Dimension): Dimension {
         return {
             height: dimension.height / this.viewer.currentScale,
@@ -131,13 +161,5 @@ export class RescaleManager {
             x: position.x * this.viewer.currentScale,
             y: position.y * this.viewer.currentScale
         };
-    }
-
-    private normalizeBorderWidth(px: number): number {
-        return px / this.viewer.currentScale;
-    }
-
-    private rescaleBorderWidth(px: number): number {
-        return px * this.viewer.currentScale;
     }
 }

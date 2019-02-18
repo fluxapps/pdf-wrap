@@ -3,7 +3,7 @@ import {Observable} from "rxjs/internal/Observable";
 import {Color} from "../api/draw/color";
 import {DocumentModel, getPageNumberByEvent, Page} from "./document.model";
 import {Canvas} from "../paint/painters";
-import {filter, map, share, tap, withLatestFrom} from "rxjs/operators";
+import { filter, map, share, takeUntil, tap, withLatestFrom } from "rxjs/operators";
 import {DrawElement, Rectangle} from "../api/draw/elements";
 import {DrawEvent, PageLayer} from "../api/storage/page.event";
 import {CanvasRectangle} from "../paint/canvas.elements";
@@ -32,9 +32,15 @@ export class TextHighlighting implements Highlighting {
      */
     readonly onTextUnselection: Observable<void>;
 
-    private isEnabled: boolean = false;
+    private enabled: boolean = false;
+
+    private readonly dispose$: Subject<void> = new Subject<void>();
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/highlight:TextHighlighting");
+
+    get isEnabled(): boolean {
+        return this.enabled;
+    }
 
     constructor(
         private readonly document: DocumentModel
@@ -42,32 +48,31 @@ export class TextHighlighting implements Highlighting {
 
         // get the page where the mouse down event was
         const page: Observable<Page> = merge(
-            fromEvent(document.viewer, "mousedown"),
-            fromEvent(document.viewer, "touchstart")
+            fromEvent(document.viewer, "mousedown", { passive: true }),
+            fromEvent<TouchEvent>(document.viewer, "touchstart", { passive: true })
         )
             .pipe(tap((_) => this.log.debug(() => "get page number by event")))
             .pipe(map((it) => getPageNumberByEvent(it)))
             .pipe(filter((it) => it !== undefined && this.document.hasPage(it)))
             .pipe(map((it) => this.document.getPage(it!)))
-            .pipe(tap((it) => this.log.debug(() => `found page number by event: ${it.pageNumber}`)));
+            .pipe(tap((it) => this.log.debug(() => `found page number by event: ${it.pageNumber}`)))
+            .pipe(takeUntil(this.dispose$));
 
         // transformed selection on mouse up only inside the viewer
-        const selections: Observable<Array<Target>> = merge(
-            // fromEvent(document.viewer, "mouseup"),
-            // fromEvent(document.viewer, "touchend")
-            fromEvent(window.document, "selectionchange")
-        )
+        const selections: Observable<Array<Target>> = fromEvent(window.document, "selectionchange", { passive: true })
             .pipe(map((_) => window.getSelection()))
             .pipe(map(transformSelection))
             .pipe(filter((it) => it.length > 0))
-            .pipe(tap((it) => this.log.debug(() => `targets: ${JSON.stringify(it)}`)));
+            .pipe(tap((it) => this.log.debug(() => `targets: ${JSON.stringify(it)}`)))
+            .pipe(takeUntil(this.dispose$));
 
         // page and selections observable zipped determines a valid text selection
         this.onTextSelection = selections
             .pipe(withLatestFrom(page))
             .pipe(tap((it) => this.log.debug(() => `Page for selection: page=${it[1].pageNumber}`)))
-            .pipe(filter((_) => this.isEnabled))
+            .pipe(filter((_) => this.enabled))
             .pipe(map((it) => new TextSelectionImpl(it[1])))
+            .pipe(takeUntil(this.dispose$))
             .pipe(share());
 
 
@@ -81,16 +86,17 @@ export class TextHighlighting implements Highlighting {
         //     .pipe(map((_) => {/* return void */}));
 
         const onMouseUpUnselection: Observable<void> = merge(
-            fromEvent(document.viewer, "mouseup"),
-            fromEvent(document.viewer, "touchend")
+            fromEvent(document.viewer, "mouseup", { passive: true }),
+            fromEvent<TouchEvent>(document.viewer, "touchend", { passive: true })
         )
             .pipe(map((_) => window.getSelection().rangeCount))
             // .pipe(map(transformSelection))
             .pipe(filter((it) => it < 1))
-            .pipe(map((_) => {/* return void */}));
+            .pipe(map((_) => {/* return void */}))
+            .pipe(takeUntil(this.dispose$));
 
         // if one of them emits, nothing is selected
-        this.onTextUnselection = merge(onMouseUpUnselection);
+        this.onTextUnselection = onMouseUpUnselection;
     }
 
     /**
@@ -98,7 +104,7 @@ export class TextHighlighting implements Highlighting {
      */
     disable(): void {
         this.log.info(() => "Disable text highlighting");
-        this.isEnabled = false;
+        this.enabled = false;
     }
 
     /**
@@ -106,7 +112,14 @@ export class TextHighlighting implements Highlighting {
      */
     enable(): void {
         this.log.info(() => "Enable text highlighting");
-        this.isEnabled = true;
+        this.enabled = true;
+    }
+
+    dispose(): void {
+        this.disable();
+        this.dispose$.next();
+        this.dispose$.complete();
+        this.dispose$.unsubscribe();
     }
 }
 
@@ -445,7 +458,7 @@ export function transformSelection(selection: Selection): Array<Target> {
 
     if (selection.rangeCount !== 0 && selection.type === "Range") {
 
-        const rects: Array<ClientRect> = Array.from(selection.getRangeAt(0).getClientRects());
+        const rects: Array<ClientRect> = Array.from(getNodeSizedClientRects(selection.getRangeAt(0)));
 
         rects
             .map((it) => ClientRectangle.from(it))
@@ -472,6 +485,99 @@ export function transformSelection(selection: Selection): Array<Target> {
     }
 
     return outArray;
+}
+
+/**
+ * Text node filter implementation.
+ *
+ * Filters nodes of the type text which contains only whitespaces taps and newlines.
+ */
+class BlankTextNodeFilter implements NodeFilter {
+    private static readonly FILTER_REGEX: RegExp = /^\s*$/g;
+    private static readonly NODE_TYPE_TEXT: number = 3;
+
+    acceptNode(it: Node): number {
+        if (it.nodeType !== BlankTextNodeFilter.NODE_TYPE_TEXT) {
+            return NodeFilter.FILTER_REJECT;
+        }
+        return !BlankTextNodeFilter.FILTER_REGEX.test(it.textContent ? it.textContent : "") ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+    }
+}
+
+/**
+ * Calculates the size of the client rects of the direct parents of the text nodes
+ * in order to fix the odd selection size given by Range::getClientRects(); in webkit browsers like safari or chrome.
+ *
+ * Text nodes which only contains spaces taps and newlines are ignored.
+ *
+ * @param {Range} range The range which should be used to calculate the client rects.
+ *
+ * @return {Array<DOMRect>} The rectangels of the selected text.
+ */
+function getNodeSizedClientRects(range: Range): Array<DOMRect> {
+
+    const log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/highlight:getNodeSizedClientRects");
+
+    // tslint:disable-next-line:strict-type-predicates
+    if (typeof document === "undefined") {
+        return Array.from(range.getClientRects() as DOMRectList);
+    }
+
+    log.trace("Recalculate size of the selected nodes.");
+
+    const nodes: NodeIterator = document!.createNodeIterator(
+        range.commonAncestorContainer,
+        NodeFilter.SHOW_TEXT,
+        new BlankTextNodeFilter()
+    );
+
+    const selectionNodes: Array<DOMRect> = [];
+    while (nodes.nextNode()) {
+        const node: Node = nodes.referenceNode;
+
+        // skip elements until selection begins
+        if (selectionNodes.length === 0 && !node.isSameNode(range.startContainer)) {
+            continue;
+        }
+
+        // Check if we only have one line selected and calculate the offset of the selection.
+        if (range.startContainer.isSameNode(range.endContainer)) {
+            const startRange: Range = new Range();
+            startRange.setStart(node, range.startOffset);
+            startRange.setEnd(node, range.endOffset);
+            const tempRect: DOMRect = startRange.getBoundingClientRect() as DOMRect;
+            const rect: DOMRect = node.parentElement!.getBoundingClientRect() as DOMRect;
+            selectionNodes.push(new DOMRect(tempRect.left, rect.top, tempRect.width, rect.height));
+            break;
+        }
+
+        // check if we hit the start of the selection and calculate the start text offset.
+        if (node.isSameNode(range.startContainer)) {
+            const startRange: Range = new Range();
+            startRange.setStart(node, range.startOffset);
+            startRange.setEndAfter(node);
+            const tempRect: DOMRect = startRange.getBoundingClientRect() as DOMRect;
+            const rect: DOMRect = node.parentElement!.getBoundingClientRect() as DOMRect;
+            selectionNodes.push(new DOMRect(tempRect.left, rect.top, tempRect.width, rect.height));
+            continue;
+        }
+
+        // check if we hit the end of the selection and calculate the end text offset.
+        if (node.isSameNode(range.endContainer)) {
+            const startRange: Range = new Range();
+            startRange.setStartBefore(node);
+            startRange.setEnd(node, range.endOffset);
+            const tempRect: DOMRect = startRange.getBoundingClientRect() as DOMRect;
+            const rect: DOMRect = node.parentElement!.getBoundingClientRect() as DOMRect;
+            selectionNodes.push(new DOMRect(rect.left, rect.top, tempRect.width , rect.height));
+            break;
+        }
+
+        // we are in the middle of the selection at this point just add it.
+        selectionNodes.push(node.parentElement!.getBoundingClientRect() as DOMRect);
+    }
+
+    return selectionNodes;
 }
 
 function tooSmallRectangle(rect: ClientRectangle): boolean {

@@ -49,6 +49,13 @@ export interface PDFDocument {
     readonly searchController: DocumentSearch;
 
     /**
+     * Scale pages to a predefined format.
+     *
+     * @param {ScalePreset} preset
+     */
+    scaleTo(preset: ScalePreset): void;
+
+    /**
      * @returns {Promise<Outline>} the outline of a PDF
      */
     getOutline(): Promise<Outline>;
@@ -66,4 +73,18 @@ export interface PDFDocument {
      * @returns {Observable<PageThumbnail>} a observable which emits the thumbnails
      */
     getThumbnails(maxSize: number, ...pageNumbers: Array<number>): Observable<PageThumbnail>;
+
+    /**
+     * Destroys allocated resources.
+     * After this method call, the document is no longer functional.
+     */
+    close(): Promise<void>;
+}
+
+export enum ScalePreset {
+    PAGE_WIDTH = "page-width",
+    PAGE_HIGHT = "page-height",
+    PAGE_FIT = "page-fit",
+    ACTUAL = "page-actual",
+    AUTO = "auto"
 }
