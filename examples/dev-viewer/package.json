@@ -7,7 +7,7 @@
   "license": "GPL-3.0",
   "scripts": {
     "copyCSS": "cp -r src/css build/www",
-    "copyPDFjs": "mkdir -p build/www/assets/libs/pdf-wrap && cp -r node_modules/pdf-wrap/assets/* build/www/assets/libs/pdf-wrap",
+    "copyPDFjs": "mkdir -p build/www/assets/libs/pdf-wrap && cp -r node_modules/@srag/pdf-wrap/assets/* build/www/assets/libs/pdf-wrap",
     "copyResources": "cp src/index.html build/www && cp -r src/assets/* build/www/assets",
     "build": "yarn webpack && yarn run copyResources && yarn run copyPDFjs && yarn run copyCSS",
     "clean": "rm -r build",
@@ -18,7 +18,5 @@
     "webpack": "^4.12.0",
     "webpack-cli": "^3.0.3"
   },
-  "dependencies": {
-    "log4js": "^2.9.0"
-  }
+  "dependencies": {}
 }
