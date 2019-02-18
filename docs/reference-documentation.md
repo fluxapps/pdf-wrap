@@ -3,6 +3,7 @@
 **Authors**
 
 Nicolas Märchy
+Nicolas Schäfli
 
 **Version 1.0.0**
 
@@ -281,7 +282,7 @@ pdf.toolbox.freehand.stateChange
 **Limitations:**
 
 * The Freehand tool can **not** draw over multiple PDF pages at once
-* The Freehand tool does **not** work with touchscreen
+* The Freehand tool touchscreen support is **experimental**.
 
 The Freehand tool as additional setters:
 

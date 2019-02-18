@@ -3,6 +3,7 @@
 **Authors**
 
 Nicolas Märchy
+Nicolas Schäfli
 
 **Version 1.0.0**
 
@@ -42,11 +43,7 @@ rendered PDF page, so it won't cover the text.
 Is the actual PDF page rendered as svg by PDF.js.
 
 **HIGHLIGHT LAYER TRANSPARENCY**<br>
-Is the same as the *HIGHLIGHT Layer* but with less opacity (about 40%). This layer
-is required to highlight text which is not on a white background. With only
-the *HIGHLIGHT LAYER*, the highlight would not be visible at all, because of the
-non-transparent background of the *PDF LAYER*. The transparency is required
-to not cover the *PDF LAYER* completely.
+This layer contains any highlighting with an opacity of (about 40%).
 
 **DRAW LAYER**<br>
 The layer contains all drawings made by a user.
