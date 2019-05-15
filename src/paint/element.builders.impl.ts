@@ -1,8 +1,14 @@
-import {ElementBuilderFactory, PolyLineBuilder, RectangleBuilder} from "../api/draw/element.builders";
+import {
+    BorderElementBuilder, CircleBuilder,
+    ElementBuilderFactory, EllipseBuilder, FormBuilder,
+    LineBuilder,
+    PolyLineBuilder,
+    RectangleBuilder
+} from "../api/draw/element.builders";
 import {Dimension, Point} from "../api/draw/draw.basic";
-import {PolyLine, Rectangle} from "../api/draw/elements";
+import { Circle, Ellipse, Line, PolyLine, Rectangle } from "../api/draw/elements";
 import {Color, colorFrom, Colors} from "../api/draw/color";
-import {DrawablePolyLine, DrawableRectangle} from "./elements.impl";
+import { DrawableCircle, DrawableEllipse, DrawableLine, DrawablePolyLine, DrawableRectangle } from "./elements.impl";
 import uuid from "uuid-js";
 import {Logger} from "typescript-logging";
 import {LoggerFactory} from "../log-config";
@@ -22,6 +28,69 @@ export class ElementBuilderFactoryImpl implements ElementBuilderFactory {
     rectangle(): RectangleBuilder {
         return new RectangleBuilderImpl();
     }
+
+    circle(): CircleBuilder {
+        return new CircleBuilderImpl();
+    }
+
+    ellipse(): EllipseBuilder {
+        return new EllipseBuilderImpl();
+    }
+
+    line(): LineBuilder {
+        return new LineBuilderImpl();
+    }
+}
+
+/**
+ * Abstract border element builder.
+ *
+ * @author Nicolas Schaefli <ns@studer-raimann.ch>
+ * @since 0.3.0
+ */
+abstract class AbstractBorderElementBuilder<T, R> implements BorderElementBuilder<T, R> {
+    protected _id: string = `$svg${uuid.create(4).toString()}`;
+    protected _borderColor: Color = colorFrom(Colors.BLACK);
+    protected _borderWidth: number = 1;
+
+    id(value: string): T {
+        this._id = value;
+        return (this as unknown) as T;
+    }
+
+    borderColor(value: Color): T {
+        this._borderColor = value;
+        return (this as unknown) as T;
+    }
+
+    borderWidth(px: number): T {
+        this._borderWidth = px;
+        return (this as unknown) as T;
+    }
+
+    abstract build(): R;
+}
+
+/**
+ * Abstract form element builder.
+ *
+ * @author Nicolas Schaefli <ns@studer-raimann.ch>
+ * @since 0.3.0
+ */
+abstract class AbstractFormBuilder<T, R> extends AbstractBorderElementBuilder<T, R> implements FormBuilder<T, R> {
+
+    protected _position: Point = {x: 0, y: 0};
+    protected _fillColor: Color = colorFrom(Colors.BLACK);
+
+    fillColor(value: Color): T {
+        this._fillColor = value;
+        return (this as unknown) as T;
+    }
+
+    position(value: Point): T {
+        this._position = value;
+        return (this as unknown) as T;
+    }
 }
 
 /**
@@ -30,29 +99,11 @@ export class ElementBuilderFactoryImpl implements ElementBuilderFactory {
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
  */
-export class PolyLineBuilderImpl implements PolyLineBuilder {
+export class PolyLineBuilderImpl extends AbstractBorderElementBuilder<PolyLineBuilder, PolyLine> implements PolyLineBuilder {
 
-    private _id: string = `$svg${uuid.create(4).toString()}`;
-    private _borderColor: Color = colorFrom(Colors.BLACK);
-    private _borderWidth: number = 1;
     private _coordinates: Array<Point> = [];
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/element.builders.impl:PolyLineBuilderImpl");
-
-    id(value: string): PolyLineBuilder {
-        this._id = value;
-        return this;
-    }
-
-    borderColor(value: Color): PolyLineBuilder {
-        this._borderColor = value;
-        return this;
-    }
-
-    borderWidth(px: number): PolyLineBuilder {
-        this._borderWidth = px;
-        return this;
-    }
 
     coordinates(value: Array<Point>): PolyLineBuilder {
         this._coordinates = value;
@@ -78,44 +129,14 @@ export class PolyLineBuilderImpl implements PolyLineBuilder {
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
  */
-export class RectangleBuilderImpl implements RectangleBuilder {
+export class RectangleBuilderImpl extends AbstractFormBuilder<RectangleBuilder, Rectangle> implements RectangleBuilder {
 
-    private _id: string = `$svg${uuid.create(4).toString()}`;
-    private _borderColor: Color = colorFrom(Colors.NONE);
-    private _borderWidth: number = 1;
-    private _fillColor: Color = colorFrom(Colors.BLACK);
     private _dimension: Dimension = {height: 0, width: 0};
-    private _position: Point = {x: 0, y: 0};
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/element.builders.impl:RectangleBuilderImpl");
 
-    id(value: string): RectangleBuilder {
-        this._id = value;
-        return this;
-    }
-
-    borderColor(value: Color): RectangleBuilder {
-        this._borderColor = value;
-        return this;
-    }
-
-    borderWidth(px: number): RectangleBuilder {
-        this._borderWidth = px;
-        return this;
-    }
-
-    fillColor(value: Color): RectangleBuilder {
-        this._fillColor = value;
-        return this;
-    }
-
     dimension(value: Dimension): RectangleBuilder {
         this._dimension = value;
-        return this;
-    }
-
-    position(value: Point): RectangleBuilder {
-        this._position = value;
         return this;
     }
 
@@ -131,5 +152,104 @@ export class RectangleBuilderImpl implements RectangleBuilder {
             this._id,
             this._position
         );
+    }
+}
+
+/**
+ * Default line builder implementation.
+ *
+ * @author Nicolas Schaefli <ns@studer-raimann.ch>
+ * @since 0.3.0
+ */
+export class LineBuilderImpl extends AbstractBorderElementBuilder<LineBuilder, Line> implements LineBuilder {
+
+    private _start: Point = {x: 0, y: 0};
+    private _end: Point = {x: 0, y: 0};
+
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/element.builders.impl:LineBuilderImpl");
+
+    end(value: Point): LineBuilder {
+        this._start = value;
+        return this;
+    }
+
+    start(value: Point): LineBuilder {
+        this._end = value;
+        return this;
+    }
+
+    build(): Line {
+        this.log.trace(() => `Build line element: lineId=${this._id}`);
+        return new DrawableLine(
+           this._borderColor,
+           this._borderWidth,
+           this._id,
+           this._start,
+           this._end
+        );
+    }
+}
+
+/**
+ * Default circle builder implementation.
+ *
+ * @author Nicolas Schaefli <ns@studer-raimann.ch>
+ * @since 0.3.0
+ */
+export class CircleBuilderImpl extends AbstractFormBuilder<CircleBuilder, Circle> implements CircleBuilder {
+
+    private _diameter: number = 100;
+
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/element.builders.impl:CircleBuilderImpl");
+
+
+    build(): Circle {
+        this.log.trace(() => `Build circle element: circleId=${this._id}`);
+
+        return new DrawableCircle(
+            this._borderColor,
+            this._borderWidth,
+            this._diameter,
+            this._fillColor,
+            this._id,
+            this._position
+        );
+    }
+
+    diameter(value: number): CircleBuilder {
+        this._diameter = value;
+        return this;
+    }
+}
+
+/**
+ * Default ellipse builder implementation.
+ *
+ * @author Nicolas Schaefli <ns@studer-raimann.ch>
+ * @since 0.3.0
+ */
+export class EllipseBuilderImpl extends AbstractFormBuilder<EllipseBuilder, Ellipse> implements EllipseBuilder {
+
+    private _dimension: Dimension = {height: 100, width: 100};
+
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/element.builders.impl:EllipseBuilderImpl");
+
+
+    build(): Ellipse {
+        this.log.trace(() => `Build ellipse element: ellipseId=${this._id}`);
+
+        return new DrawableEllipse(
+            this._borderColor,
+            this._borderWidth,
+            this._dimension,
+            this._fillColor,
+            this._id,
+            this._position
+        );
+    }
+
+    dimension(value: Dimension): EllipseBuilder {
+        this._dimension = value;
+        return this;
     }
 }

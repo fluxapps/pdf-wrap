@@ -1,5 +1,5 @@
 import {Color} from "./color";
-import {PolyLine, Rectangle} from "./elements";
+import { Circle, Ellipse, Line, PolyLine, Rectangle } from "./elements";
 import {Dimension, Point} from "./draw.basic";
 
 /**
@@ -11,6 +11,19 @@ import {Dimension, Point} from "./draw.basic";
 export interface ElementBuilderFactory {
     rectangle(): RectangleBuilder;
     polyLine(): PolyLineBuilder;
+
+    /**
+     * @since 0.3.0
+     */
+    line(): LineBuilder;
+    /**
+     * @since 0.3.0
+     */
+    circle(): CircleBuilder;
+    /**
+     * @since 0.3.0
+     */
+    ellipse(): EllipseBuilder;
 }
 
 /**
@@ -61,4 +74,35 @@ export interface FormBuilder<T, R> extends BorderElementBuilder<T, R> {
  */
 export interface RectangleBuilder extends FormBuilder<RectangleBuilder, Rectangle> {
     dimension(value: Dimension): RectangleBuilder;
+}
+
+/**
+ * Describes a builder for a {@link Line} element.
+ *
+ * @author Nicolas Schaefli <ns@studer-raimann.ch>
+ * @since 0.3.0
+ */
+export interface LineBuilder extends BorderElementBuilder<LineBuilder, Line> {
+    start(value: Point): LineBuilder;
+    end(value: Point): LineBuilder;
+}
+
+/**
+ * Describes a builder for a {@link Circle} element.
+ *
+ * @author Nicolas Schaefli <ns@studer-raimann.ch>
+ * @since 0.3.0
+ */
+export interface CircleBuilder extends FormBuilder<CircleBuilder, Circle> {
+    diameter(value: number): CircleBuilder;
+}
+
+/**
+ * Describes a builder for an {@link Ellipse} element.
+ *
+ * @author Nicolas Schaefli <ns@studer-raimann.ch>
+ * @since 0.3.0
+ */
+export interface EllipseBuilder extends FormBuilder<EllipseBuilder, Ellipse> {
+    dimension(value: Dimension): EllipseBuilder;
 }

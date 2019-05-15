@@ -1,5 +1,5 @@
 import {Canvas} from "./painters";
-import {PolyLine, Rectangle} from "../api/draw/elements";
+import { Circle, Ellipse, Line, PolyLine, Rectangle } from "../api/draw/elements";
 import {Dimension, Point} from "../api/draw/draw.basic";
 import {Color} from "../api/draw/color";
 
@@ -65,6 +65,70 @@ export class DrawableRectangle implements Rectangle, DrawableElement {
     draw(canvas: Canvas): void {
 
         canvas.rectangle()
+            .id(this.id)
+            .borderColor(this.borderColor)
+            .borderWidth(this.borderWidth)
+            .fillColor(this.fillColor)
+            .position(this.position)
+            .dimension(this.dimension)
+            .paint();
+    }
+}
+
+export class DrawableLine implements Line, DrawableElement {
+    constructor(
+        readonly borderColor: Color,
+        readonly borderWidth: number,
+        readonly id: string,
+        readonly start: Point,
+        readonly end: Point,
+    ) {}
+
+    draw(canvas: Canvas): void {
+        canvas.line()
+            .id(this.id)
+            .borderColor(this.borderColor)
+            .borderWidth(this.borderWidth)
+            .start(this.start)
+            .end(this.end)
+            .paint();
+    }
+}
+
+export class DrawableCircle implements Circle, DrawableElement {
+    constructor(
+        readonly borderColor: Color,
+        readonly borderWidth: number,
+        readonly diameter: number,
+        readonly fillColor: Color,
+        readonly id: string,
+        readonly position: Point
+    ) {}
+
+    draw(canvas: Canvas): void {
+        canvas.circle()
+            .id(this.id)
+            .borderColor(this.borderColor)
+            .borderWidth(this.borderWidth)
+            .fillColor(this.fillColor)
+            .position(this.position)
+            .diameter(this.diameter)
+            .paint();
+    }
+}
+
+export class DrawableEllipse implements Ellipse, DrawableElement {
+    constructor(
+        readonly borderColor: Color,
+        readonly borderWidth: number,
+        readonly dimension: Dimension,
+        readonly fillColor: Color,
+        readonly id: string,
+        readonly position: Point
+    ) {}
+
+    draw(canvas: Canvas): void {
+        canvas.ellipse()
             .id(this.id)
             .borderColor(this.borderColor)
             .borderWidth(this.borderWidth)

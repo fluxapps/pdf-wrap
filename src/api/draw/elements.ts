@@ -52,3 +52,42 @@ export interface Form extends BorderElement {
 export interface Rectangle extends Form {
     readonly dimension: Dimension;
 }
+
+/**
+ * Describes a line which can be drawn.
+ *
+ * @author Nicolas Schaefli <ns@studer-raimann.ch>
+ * @since 0.3.0
+ */
+export interface Line extends BorderElement {
+    readonly start: Point;
+    readonly end: Point;
+}
+
+/**
+ * Describes a circle which can be drawn.
+ *
+ * @author Nicolas Schaefli <ns@studer-raimann.ch>
+ * @since 0.3.0
+ */
+export interface Circle extends Form {
+    readonly diameter: number;
+}
+
+/**
+ * Describes an ellipse which can be drawn.
+ *
+ * @author Nicolas Schaefli <ns@studer-raimann.ch>
+ * @since 0.3.0
+ */
+export interface Ellipse extends Form {
+
+    /**
+     * Describes the length and height of the object.
+     *
+     *            |
+     * ------------------------
+     *            |
+     */
+    readonly dimension: Dimension;
+}
