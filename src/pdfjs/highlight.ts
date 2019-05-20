@@ -61,6 +61,7 @@ export class TextHighlighting implements Highlighting {
         // transformed selection on mouse up only inside the viewer
         const selections: Observable<Array<Target>> = fromEvent(window.document, "selectionchange", { passive: true })
             .pipe(map((_) => window.getSelection()))
+            .pipe(filter((it): it is Selection => it !== null))
             .pipe(map(transformSelection))
             .pipe(filter((it) => it.length > 0))
             .pipe(tap((it) => this.log.debug(() => `targets: ${JSON.stringify(it)}`)))
@@ -89,7 +90,7 @@ export class TextHighlighting implements Highlighting {
             fromEvent(document.viewer, "mouseup", { passive: true }),
             fromEvent<TouchEvent>(document.viewer, "touchend", { passive: true })
         )
-            .pipe(map((_) => window.getSelection().rangeCount))
+            .pipe(map((_) => window.getSelection()!.rangeCount))
             // .pipe(map(transformSelection))
             .pipe(filter((it) => it < 1))
             .pipe(map((_) => {/* return void */}))
@@ -137,7 +138,7 @@ export class TextSelectionImpl implements TextSelection {
     readonly onRemoveHighlighting: Observable<DrawEvent<DrawElement>>;
 
     get targets(): Array<Target> {
-        return transformSelection(window.getSelection());
+        return transformSelection(window.getSelection()!);
     }
 
     private readonly _onHighlighting: Subject<Rectangle> = new Subject();

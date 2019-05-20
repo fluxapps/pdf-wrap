@@ -1,7 +1,14 @@
 import {HighlightManager, transformSelection} from "../../src/pdfjs/highlight";
 import * as chai from "chai";
 import {ClientRectangle} from "../../src/pdfjs/client-rectangle";
-import {Canvas, PolyLinePainter, RectanglePainter} from "../../src/paint/painters";
+import {
+    Canvas,
+    CirclePainter,
+    EllipsePainter,
+    LinePainter,
+    PolyLinePainter,
+    RectanglePainter
+} from "../../src/paint/painters";
 import {CanvasElement, CanvasRectangle} from "../../src/paint/canvas.elements";
 import {DrawElement, Rectangle} from "../../src/api/draw/elements";
 import {colorFrom, Colors} from "../../src/api/draw/color";
@@ -32,6 +39,15 @@ class MockCanvas implements Canvas {
     }
     select(): Array<CanvasElement<DrawElement>> {
         throw new Error("Not implemented test stub");
+    }
+    circle(): CirclePainter {
+        throw new Error("Not implemented test stub");
+    }
+    ellipse(): EllipsePainter {
+        throw new Error("Not implemented test stub");;
+    }
+    line(): LinePainter {
+        throw new Error("Not implemented test stub");;
     }
 }
 

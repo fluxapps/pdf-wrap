@@ -10,9 +10,9 @@
   ],
   "author": "studer + raimann ag",
   "license": "GPL-3.0",
-  "engines" : {
-    "node": ">=10.9.0 <11.0.0",
-    "yarn": ">=1.12.1 <=1.14.0"
+  "engines": {
+    "node": ">=10.9.0 <13.0.0",
+    "yarn": ">=1.13.0 <2.0.0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.3",
@@ -36,10 +36,10 @@
     "gulp-uglify": "^3.0.0",
     "mocha": "^5.2.0",
     "ts-mockito": "^2.3.0",
-    "tslint": "^5.11.0",
+    "tslint": "^5.16.0",
     "tslint-eslint-rules": "^5.3.1",
     "typedoc": "^0.11.1",
-    "typescript": "^3.1.0",
+    "typescript": "^3.4.5",
     "uglify-js": "^3.3.27"
   },
   "dependencies": {
