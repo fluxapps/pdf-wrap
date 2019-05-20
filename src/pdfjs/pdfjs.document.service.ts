@@ -22,6 +22,7 @@ import {
 import { Subject } from "rxjs";
 import { fromPromise, Subscriber } from "rxjs/internal-compatibility";
 import { Observable } from "rxjs/internal/Observable";
+import { fromArray } from "rxjs/internal/observable/fromArray";
 import { fromEvent } from "rxjs/internal/observable/fromEvent";
 import { merge } from "rxjs/internal/observable/merge";
 import { of } from "rxjs/internal/observable/of";
@@ -183,12 +184,14 @@ export class PDFjsDocumentService implements PDFDocumentService {
         viewer.setDocument(pdf);
 
         const documentModel: DocumentModel = new DocumentModel(options.container,
-            fromPromise(fullyLoadPdf)
+
+            merge(fromArray([1]), fromPromise(fullyLoadPdf)
                 .pipe(
                     first<PDFDocument>(),
                     flatMap((it) => it.pageChange),
-                    map((it) => it.pageNumber),
+                    map((it) => it.pageNumber)
                 )
+            )
         );
 
         const rescaleManager: RescaleManager = new RescaleManager(viewer);
