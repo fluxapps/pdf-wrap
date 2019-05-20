@@ -6,7 +6,6 @@ const copyNodeModules = require("copy-node-modules");
 const file = require("gulp-file");
 const spawn = require("child_process").spawn;
 const uglify = require("gulp-uglify");
-const sequence = require("gulp-sequence");
 const gulpTslint = require("gulp-tslint");
 const tslint = require("tslint");
 const typedoc = require("gulp-typedoc");
@@ -24,86 +23,10 @@ gulp.task("clean", function () {
     return del(`${appProperties.build.dir}/**`, {force: false});
 });
 
-// --- build
-/*
- * Transpiles typescript and runs the tests.
- */
-gulp.task("build", ["test", "lint"], function (done) {
-    done();
-});
-
-// --- package
-/*
- * Copies javascript files, README.md, LICENSE.md and package.json to the libs directory.
- */
-gulp.task("package", ["lib", "copyDependencies", "copyPDFJS", "copyCSS", "transformPackageJSON"], function () {
-
-    return gulp
-        .src([
-            `${appProperties.root}/README.md`,
-            `${appProperties.root}/LICENSE.md`,
-            `${appProperties.root}/CHANGELOG.md`,
-            `${appProperties.build.dirs.libs}/pdf-wrap/**/*`
-        ])
-        .pipe(gulp.dest(`${appProperties.build.dirs.dist}/npm`));
-});
-
-// --- repackage
-/*
- * Cleans the build and execute package.
- */
-gulp.task("repackage", sequence("clean", "package"));
-
-gulp.task("lib", ["uglifyJS"], () => {
-    return gulp.src(`${appProperties.build.dirs.javascript}/src/**/*.ts`)
-        .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap`))
-
-});
-
-// --- uglifyJS
-/*
- * Uglifies javascript files.
- */
-gulp.task("uglifyJS", ["build"], function () {
-
-    const options = {
-        output: {
-            beautify: false
-        },
-        nameCache: null,
-        toplevel: false,
-        ie8: false,
-        warnings: false
-    };
-
-    return gulp.src(`${appProperties.build.dirs.javascript}/src/**/*.js`)
-        .pipe(uglify(options))
-        .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap`))
-});
-
 
 // docs -----------------------------------------------------
 
 // --- mkdocs
-/*
- * Generates the full PDF Wrap documentation
- */
-gulp.task("mkdocs", ["typedoc"], (done) => {
-
-    spawn("mkdocs", ["build"], {stdio: "inherit"})
-        .once("exit", function (code) {
-            if (code === 0) {
-
-                gulp.src(`${appProperties.build.dirs.docs}/typedoc/**/*`)
-                    .pipe(gulp.dest(`${appProperties.build.dirs.docs}/mkdocs/typedoc`))
-                    .on("end", done)
-                    .on("error", done);
-
-            } else {
-                done(`Process finished with exit code ${code}`);
-            }
-        });
-});
 
 // --- typedoc
 /*
@@ -122,11 +45,31 @@ gulp.task("typedoc", () => {
         }));
 });
 
+/*
+ * Generates the full PDF Wrap documentation
+ */
+gulp.task("mkdocs", gulp.series("typedoc", (done) => {
+
+    spawn("mkdocs", ["build"], {stdio: "inherit"})
+        .once("exit", function (code) {
+            if (code === 0) {
+
+                gulp.src(`${appProperties.build.dirs.docs}/typedoc/**/*`)
+                    .pipe(gulp.dest(`${appProperties.build.dirs.docs}/mkdocs/typedoc`))
+                    .on("end", done)
+                    .on("error", done);
+
+            } else {
+                done(`Process finished with exit code ${code}`);
+            }
+        });
+}));
+
 // --- publishDoc
 /*
  * Builds and publishes the documentation
  */
-gulp.task("publishDoc", ["mkdocs"], (done) => {
+gulp.task("publishDoc", gulp.series("mkdocs", (done) => {
 
     spawn("ghp-import", [`${appProperties.build.dirs.docs}/mkdocs`, "-p", "-n"], {stdio: "inherit"})
         .once("exit", function (code) {
@@ -136,7 +79,7 @@ gulp.task("publishDoc", ["mkdocs"], (done) => {
                 done(`Process finished with exit code ${code}`);
             }
         });
-});
+}));
 
 // other ----------------------------------------------------
 
@@ -179,13 +122,13 @@ gulp.task("copyImages", () => {
 /*
  * Copies pdfJS files which are needed in order to use it.
  */
-gulp.task("copyPDFJS", ["copyCMaps", "copyImages"], () => {
+gulp.task("copyPDFJS", gulp.series(gulp.parallel("copyCMaps", "copyImages"), () => {
     return gulp
         .src([
             `${appProperties.root}/node_modules/pdfjs-dist/build/pdf.worker.js`
         ])
         .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap/assets`));
-});
+}));
 
 // -- copyCSS
 /*
@@ -232,46 +175,13 @@ gulp.task("transpileTypescript", function () {
         .pipe(gulp.dest(appProperties.build.dirs.javascript));
 });
 
-// npm ------------------------------------------------------
-
-// --- pack
-/*
- * Executes yarn pack.
- */
-gulp.task("pack", ["repackage"], function (done) {
-
-    spawn("yarn", ["pack"], {stdio: "inherit", cwd: `${appProperties.build.dirs.dist}/npm`})
-        .once("exit", function (code) {
-            if (code === 0) {
-                done();
-            } else {
-                done(`Process finished with exit code ${code}`);
-            }
-        });
-});
-
-// --- publish
-/*
- * Publishes the npm distribution.
- */
-gulp.task("publish", ["repackage"], function (done) {
-    spawn("yarn", ["publish", "--access", "public"], {stdio: "inherit", cwd: `${appProperties.build.dirs.dist}/npm`})
-        .once("exit", function (code) {
-            if (code === 0) {
-                done();
-            } else {
-                done(`Process finished with exit code ${code}`);
-            }
-        });
-});
-
 // verification ---------------------------------------------
 
 // --- test
 /*
  * Runs the tests
  */
-gulp.task("test", ["transpileTypescript"], function (done) {
+gulp.task("test", gulp.series("transpileTypescript", (done) => {
     spawn("yarn", ["mocha"], {stdio: "inherit"})
         .once("exit", function (code) {
             if (code === 0) {
@@ -280,7 +190,7 @@ gulp.task("test", ["transpileTypescript"], function (done) {
                 done(`Process finished with exit code ${code}`);
             }
         });
-});
+}));
 
 // --- lint
 /*
@@ -298,3 +208,92 @@ gulp.task("lint", () =>
             allowWarnings: false
         }))
 );
+
+// --- build
+/*
+ * Transpiles typescript and runs the tests.
+ */
+gulp.task("build", gulp.parallel("test", "lint"));
+
+// --- uglifyJS
+/*
+ * Uglifies javascript files.
+ */
+gulp.task("uglifyJS", gulp.series("build", function () {
+
+    const options = {
+        output: {
+            beautify: false
+        },
+        nameCache: null,
+        toplevel: false,
+        ie8: false,
+        warnings: false
+    };
+
+    return gulp.src(`${appProperties.build.dirs.javascript}/src/**/*.js`)
+        .pipe(uglify(options))
+        .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap`))
+}));
+
+// --- package
+gulp.task("lib", gulp.series("uglifyJS", () => {
+    return gulp.src(`${appProperties.build.dirs.javascript}/src/**/*.ts`)
+        .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap`))
+
+}));
+
+/*
+ * Copies javascript files, README.md, LICENSE.md and package.json to the libs directory.
+ */
+gulp.task("package", gulp.series(gulp.parallel("lib", "copyDependencies", "copyPDFJS", "copyCSS", "transformPackageJSON"), function () {
+
+    return gulp
+        .src([
+            `${appProperties.root}/README.md`,
+            `${appProperties.root}/LICENSE.md`,
+            `${appProperties.root}/CHANGELOG.md`,
+            `${appProperties.build.dirs.libs}/pdf-wrap/**/*`
+        ])
+        .pipe(gulp.dest(`${appProperties.build.dirs.dist}/npm`));
+}));
+
+// --- repackage
+/*
+ * Cleans the build and execute package.
+ */
+gulp.task("repackage", gulp.series("clean", "package"));
+
+// npm ------------------------------------------------------
+
+// --- pack
+/*
+ * Executes yarn pack.
+ */
+gulp.task("pack", gulp.series("repackage", function (done) {
+
+    spawn("yarn", ["pack"], {stdio: "inherit", cwd: `${appProperties.build.dirs.dist}/npm`})
+        .once("exit", function (code) {
+            if (code === 0) {
+                done();
+            } else {
+                done(`Process finished with exit code ${code}`);
+            }
+        });
+}));
+
+// --- publish
+/*
+ * Publishes the npm distribution.
+ */
+gulp.task("publish", gulp.series("repackage", function (done) {
+    spawn("yarn", ["publish", "--access", "public"], {stdio: "inherit", cwd: `${appProperties.build.dirs.dist}/npm`})
+        .once("exit", function (code) {
+            if (code === 0) {
+                done();
+            } else {
+                done(`Process finished with exit code ${code}`);
+            }
+        });
+}));
+
