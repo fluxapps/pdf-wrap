@@ -424,7 +424,7 @@ class SVGPolyLinePainter implements PolyLinePainter {
             .fill("none")
             .attr("id", this._id)
             .addClass("drawing")
-            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`});
+            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha});
     }
 }
 
@@ -486,10 +486,10 @@ class SVGRectanglePainter implements RectanglePainter {
         this.log.trace(() => `Paint rectangle on svg: rectangleId=${this._id}`);
 
         const rect: svgjs.Rect = this.svg.rect(this._dimension.width, this._dimension.height)
-            .fill(`${this._fillColor.hex("#XXXXXX")}`)
+            .fill({color: `${this._fillColor.hex("#XXXXXX")}`, opacity: this._fillColor.alpha})
             .attr("id", this._id)
             .addClass("drawing")
-            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`})
+            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha})
             .move(this._position.x, this._position.y);
 
         return new CanvasRectangle(rect);
@@ -541,7 +541,7 @@ class SVGLinePainter implements LinePainter {
         const line: svgjs.Line = this.svg.line(this._start.x, this._start.y, this._end.x, this._end.y)
             .attr("id", this._id)
             .addClass("drawing")
-            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`});
+            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha});
 
         return new CanvasLine(line);
     }
@@ -597,10 +597,10 @@ class SVGCirclePainter implements CirclePainter {
         this.log.trace(() => `Paint circle on svg: circleId=${this._id}`);
 
         const circle: svgjs.Circle = this.svg.circle(this._diameter)
-            .fill(`${this._fillColor.hex("#XXXXXX")}`)
+            .fill({color: `${this._fillColor.hex("#XXXXXX")}`, opacity: this._fillColor.alpha})
             .attr("id", this._id)
             .addClass("drawing")
-            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`})
+            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha})
             .move(this._position.x, this._position.y);
 
         return new CanvasCircle(circle);
@@ -657,10 +657,10 @@ class SVGEllipsePainter implements EllipsePainter {
         this.log.trace(() => `Paint ellipse on svg: ellipseId=${this._id}`);
 
         const ellipse: svgjs.Ellipse = this.svg.ellipse(this._dimension.width, this._dimension.height)
-            .fill(`${this._fillColor.hex("#XXXXXX")}`)
+            .fill({color: `${this._fillColor.hex("#XXXXXX")}`, opacity: this._fillColor.alpha})
             .attr("id", this._id)
             .addClass("drawing")
-            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`})
+            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha})
             .move(this._position.x, this._position.y);
 
         return new CanvasEllipse(ellipse);
