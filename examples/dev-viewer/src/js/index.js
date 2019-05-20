@@ -1,3 +1,4 @@
+import "../index.html";
 import {LoggerFactory} from "@srag/pdf-wrap/log-config";
 import {PageOverlay} from "@srag/pdf-wrap/api/storage/adapter";
 
