@@ -26,7 +26,7 @@ import { fromEvent } from "rxjs/internal/observable/fromEvent";
 import { merge } from "rxjs/internal/observable/merge";
 import { of } from "rxjs/internal/observable/of";
 import { TeardownLogic } from "rxjs/internal/types";
-import { first, map, mergeMap, takeUntil, tap } from "rxjs/operators";
+import { first, flatMap, map, mergeMap, takeUntil, tap } from "rxjs/operators";
 import { Logger } from "typescript-logging";
 import { LoadingOptions, PDFDocumentService } from "../api/document.service";
 import { Outline, PageThumbnail, TreeOutlineEntry } from "../api/document/document.info";
@@ -38,6 +38,7 @@ import { Highlighting } from "../api/highlight/highlight.api";
 import { DocumentSearch } from "../api/search/search.api";
 import { StorageRegistry } from "../api/storage/adapter.registry";
 import { PageEventCollection } from "../api/storage/page.event";
+import { Forms } from "../api/tool/forms";
 import { Toolbox } from "../api/tool/toolbox";
 import { LoggerFactory } from "../log-config";
 import { Canvas } from "../paint/painters";
@@ -48,6 +49,7 @@ import { LayerManager } from "./layer-manager";
 import { PDFjsPageEvenCollection } from "./page-event-collection";
 import { RescaleManager } from "./rescale-manager";
 import { StorageAdapterWrapper } from "./storage-adapter-wrapper";
+import { FormFactory } from "./tool/forms";
 import { EraserTool, FreehandTool } from "./tool/tools";
 
 // PDF.js defaults
@@ -122,7 +124,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
             .pipe(map(() => new PDFjsDocument(
                 viewer,
                 highlighting,
-                {freehand, eraser},
+                {freehand, eraser, forms},
                 searchController,
                 (): void => { dispose$.next(); dispose$.complete(); }
             )))
@@ -180,7 +182,14 @@ export class PDFjsDocumentService implements PDFDocumentService {
         linkService.setDocument(pdf);
         viewer.setDocument(pdf);
 
-        const documentModel: DocumentModel = new DocumentModel(options.container);
+        const documentModel: DocumentModel = new DocumentModel(options.container,
+            fromPromise(fullyLoadPdf)
+                .pipe(
+                    first<PDFDocument>(),
+                    flatMap((it) => it.pageChange),
+                    map((it) => it.pageNumber),
+                )
+        );
 
         const rescaleManager: RescaleManager = new RescaleManager(viewer);
 
@@ -188,6 +197,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
         const highlighting: TextHighlighting = new TextHighlighting(documentModel);
         const freehand: FreehandTool = new FreehandTool(documentModel, rescaleManager);
         const eraser: EraserTool = new EraserTool(documentModel);
+        const forms: Forms = new FormFactory(documentModel);
 
         const pageEventCollection: PageEventCollection = new PDFjsPageEvenCollection(
             freehand.afterLineRendered.pipe(takeUntil(dispose$)),

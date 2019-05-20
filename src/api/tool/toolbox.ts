@@ -1,6 +1,7 @@
 import {Observable} from "rxjs/internal/Observable";
 import {StateChangeEvent} from "../event/event.api";
 import {Color} from "../draw/color";
+import { Forms } from "./forms";
 
 /**
  * Describes a collections of tools that can be used
@@ -12,6 +13,7 @@ import {Color} from "../draw/color";
 export interface Toolbox {
     readonly freehand: Freehand;
     readonly eraser: Eraser;
+    readonly forms: Forms;
 }
 
 /**

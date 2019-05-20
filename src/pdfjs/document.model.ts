@@ -1,3 +1,4 @@
+import { Observable } from "rxjs";
 import {Canvas} from "../paint/painters";
 import {Dimension, Point} from "../api/draw/draw.basic";
 import {Logger} from "typescript-logging";
@@ -16,9 +17,14 @@ export class DocumentModel {
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/document.model:DocumentModel");
 
+    private currentPageNumber: number = 0;
+
     constructor(
-        readonly viewer: HTMLElement
-    ) {}
+        readonly viewer: HTMLElement,
+        currentPage$: Observable<number>
+    ) {
+        currentPage$.subscribe((it) => this.currentPageNumber = it);
+    }
 
     /**
      * Adds the given {@code page} to this document model.
@@ -41,13 +47,14 @@ export class DocumentModel {
 
     /**
      * @param {number} pageNumber - the page number of the wanted page
+     *                              if no page number is given the current page will be returned.
      *
      * @returns {Page} the found page
-     * @throws {Error} if no page matching the given {@code pageNumber} could be found
+     * @throws {Error} if no page is matching the given {@code pageNumber}.
      */
-    getPage(pageNumber: number): Page {
+    getPage(pageNumber?: number): Page {
 
-        const page: Page | undefined = this.pages.get(pageNumber);
+        const page: Page | undefined = this.pages.get(pageNumber || this.currentPageNumber);
 
         if (page !== undefined) {
             return page;
