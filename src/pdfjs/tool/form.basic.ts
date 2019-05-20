@@ -31,7 +31,6 @@ export abstract class AbstractBorderForm<T> implements BorderForm<T> {
 }
 
 export abstract class AbstractStandardForm<T> extends AbstractBorderForm<T> implements StandardForm<T> {
-    position: Point = {x: 0, y: 0};
     fillColor: Color = colorFrom(Colors.BLACK);
 
 }
