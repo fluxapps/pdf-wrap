@@ -200,7 +200,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
         const highlighting: TextHighlighting = new TextHighlighting(documentModel);
         const freehand: FreehandTool = new FreehandTool(documentModel, rescaleManager);
         const eraser: EraserTool = new EraserTool(documentModel);
-        const forms: Forms = new FormFactory(documentModel);
+        const forms: Forms = new FormFactory(documentModel, rescaleManager);
 
         const pageEventCollection: PageEventCollection = new PDFjsPageEvenCollection(
             freehand.afterLineRendered.pipe(takeUntil(dispose$)),

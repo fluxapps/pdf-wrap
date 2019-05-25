@@ -6,6 +6,7 @@ import { BorderForm, Forms, StandardForm } from "../../api/tool/forms";
 import { LoggerFactory } from "../../log-config";
 import { CanvasCircle, CanvasEllipse, CanvasLine, CanvasRectangle } from "../../paint/canvas.elements";
 import { DocumentModel, Page } from "../document.model";
+import { RescaleManager } from "../rescale-manager";
 import { AbstractBorderForm, AbstractStandardForm } from "./form.basic";
 
 /**
@@ -18,7 +19,7 @@ class LineForm extends AbstractBorderForm<Line> {
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/tool/forms:LineForm");
 
-    constructor(document: DocumentModel) {
+    constructor(document: DocumentModel, private readonly rescaleManager: RescaleManager) {
         super(document);
     }
 
@@ -31,7 +32,7 @@ class LineForm extends AbstractBorderForm<Line> {
         };
         const canvasLine: CanvasLine = page.drawLayer.line()
             .borderColor(this.borderColor)
-            .borderWidth(this.borderWith)
+            .borderWidth(this.rescaleManager.rescalePixel(this.borderWith))
             .start(start)
             .end(end)
             .paint();
@@ -53,7 +54,7 @@ class RectangleForm extends AbstractStandardForm<Rectangle> {
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/tool/forms:RectangleForm");
 
-    constructor(document: DocumentModel) {
+    constructor(document: DocumentModel, private readonly rescaleManager: RescaleManager) {
         super(document);
     }
 
@@ -63,7 +64,7 @@ class RectangleForm extends AbstractStandardForm<Rectangle> {
         const size: number = Math.min(page.pageDimension.width, page.pageDimension.height) * 0.15;
 
         const canvasRectangle: CanvasRectangle = page.drawLayer.rectangle()
-            .borderWidth(this.borderWith)
+            .borderWidth(this.rescaleManager.rescalePixel(this.borderWith))
             .borderColor(this.borderColor)
             .fillColor(this.fillColor)
             .position(position)
@@ -90,7 +91,7 @@ class EllipseForm extends AbstractStandardForm<Ellipse> {
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/tool/forms:EllipseForm");
 
-    constructor(document: DocumentModel) {
+    constructor(document: DocumentModel, private readonly rescaleManager: RescaleManager) {
         super(document);
     }
 
@@ -100,7 +101,7 @@ class EllipseForm extends AbstractStandardForm<Ellipse> {
         const size: number = Math.min(page.pageDimension.width, page.pageDimension.height) * 0.15;
 
         const canvasEllipse: CanvasEllipse = page.drawLayer.ellipse()
-            .borderWidth(this.borderWith)
+            .borderWidth(this.rescaleManager.rescalePixel(this.borderWith))
             .borderColor(this.borderColor)
             .fillColor(this.fillColor)
             .position(position)
@@ -127,7 +128,7 @@ class CircleForm extends AbstractStandardForm<Circle> {
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/tool/forms:CircleForm");
 
-    constructor(document: DocumentModel) {
+    constructor(document: DocumentModel, private readonly rescaleManager: RescaleManager) {
         super(document);
     }
 
@@ -137,7 +138,7 @@ class CircleForm extends AbstractStandardForm<Circle> {
         const size: number = Math.min(page.pageDimension.width, page.pageDimension.height) * 0.20;
 
         const canvasCircle: CanvasCircle = page.drawLayer.circle()
-            .borderWidth(this.borderWith)
+            .borderWidth(this.rescaleManager.rescalePixel(this.borderWith))
             .borderColor(this.borderColor)
             .fillColor(this.fillColor)
             .position(position)
@@ -165,13 +166,13 @@ export class FormFactory implements Forms {
     private _line: LineForm | null = null;
     private _rectangle: RectangleForm | null = null;
 
-    constructor(private readonly document: DocumentModel) {
+    constructor(private readonly document: DocumentModel, private readonly rescaleManager: RescaleManager) {
 
     }
 
     get circle(): StandardForm<Circle> {
         if (!this._circle) {
-            this._circle = new CircleForm(this.document);
+            this._circle = new CircleForm(this.document, this.rescaleManager);
         }
 
         return this._circle;
@@ -179,7 +180,7 @@ export class FormFactory implements Forms {
 
     get ellipse(): StandardForm<Ellipse> {
         if (!this._ellipse) {
-            this._ellipse = new EllipseForm(this.document);
+            this._ellipse = new EllipseForm(this.document, this.rescaleManager);
         }
 
         return this._ellipse;
@@ -187,7 +188,7 @@ export class FormFactory implements Forms {
 
     get line(): BorderForm<Line> {
         if (!this._line) {
-            this._line = new LineForm(this.document);
+            this._line = new LineForm(this.document, this.rescaleManager);
         }
 
         return this._line;
@@ -195,7 +196,7 @@ export class FormFactory implements Forms {
 
     get rectangle(): StandardForm<Rectangle> {
         if (!this._rectangle) {
-            this._rectangle = new RectangleForm(this.document);
+            this._rectangle = new RectangleForm(this.document, this.rescaleManager);
         }
 
         return this._rectangle;
