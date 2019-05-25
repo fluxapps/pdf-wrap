@@ -18,8 +18,8 @@ export abstract class AbstractBorderForm<T> implements BorderForm<T> {
     protected get position(): Point {
         const page: Page = this.document.getPage();
         return {
-            x: page.pagePosition.x + (page.pageDimension.width * 0.3),
-            y: page.pagePosition.y + (page.pageDimension.height * 0.1),
+            x: page.pageDimension.width * 0.45,
+            y: page.pageDimension.height * 0.1
         };
     }
 
