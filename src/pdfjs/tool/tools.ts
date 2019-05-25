@@ -64,7 +64,7 @@ export class FreehandTool extends DrawingTool implements Freehand {
 
                 this.polyLinePainter
                     .borderColor(this.color)
-                    .borderWidth(this.rescaleManager.rescaleBorderWidth(this.strokeWidth))
+                    .borderWidth(this.rescaleManager.rescalePixel(this.strokeWidth))
                     .beginLine(position);
             });
 
