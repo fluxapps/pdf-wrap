@@ -23,7 +23,7 @@ function createMockRectangle(): Rectangle {
         dimension: {width: 2, height: 2},
         fillColor: colorFrom(Colors.YELLOW),
         id: "svg-mock",
-        position: {x: 0, y: 0}
+        position: {x: 0, y: 0, z: 0}
     };
 }
 
@@ -44,10 +44,10 @@ class MockCanvas implements Canvas {
         throw new Error("Not implemented test stub");
     }
     ellipse(): EllipsePainter {
-        throw new Error("Not implemented test stub");;
+        throw new Error("Not implemented test stub");
     }
     line(): LinePainter {
-        throw new Error("Not implemented test stub");;
+        throw new Error("Not implemented test stub");
     }
 }
 
@@ -95,7 +95,7 @@ describe('a highlight manager', () => {
                     dimension: {width: 5, height: 2.04}, // 2% tolerance
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 2, y: 3}
+                    position: {x: 2, y: 3, z: 0}
                 });
 
                 const newHighlight: CanvasRectangle = mock(CanvasRectangle);
@@ -119,7 +119,7 @@ describe('a highlight manager', () => {
                 verify(existingHighlight.remove()).once();
                 verify(mockRectanglePainter.dimension(deepEqual({width: 3, height: 2}))).once();
                 verify(mockRectanglePainter.fillColor(deepEqual(colorFrom(Colors.YELLOW)))).once();
-                verify(mockRectanglePainter.position(deepEqual({x: 2, y: 3}))).once();
+                verify(mockRectanglePainter.position(deepEqual({x: 2, y: 3, z: 0}))).once();
             });
         });
 
@@ -139,7 +139,7 @@ describe('a highlight manager', () => {
                     dimension: {width: 5, height: 1.97}, // 2% tolerance
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 2, y: 3}
+                    position: {x: 2, y: 3, z: 0}
                 });
 
                 const newHighlight: CanvasRectangle = mock(CanvasRectangle);
@@ -163,7 +163,7 @@ describe('a highlight manager', () => {
                 verify(existingHighlight.remove()).once();
                 verify(mockRectanglePainter.dimension(deepEqual({width: 3, height: 2}))).once();
                 verify(mockRectanglePainter.fillColor(deepEqual(colorFrom(Colors.YELLOW)))).once();
-                verify(mockRectanglePainter.position(deepEqual({x: 2, y: 3}))).once();
+                verify(mockRectanglePainter.position(deepEqual({x: 2, y: 3, z: 0}))).once();
             });
         });
 
@@ -183,7 +183,7 @@ describe('a highlight manager', () => {
                     dimension: {width: 8, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 2, y: 3}
+                    position: {x: 2, y: 3, z: 0}
                 });
 
                 const newHighlight: CanvasRectangle = mock(CanvasRectangle);
@@ -208,8 +208,8 @@ describe('a highlight manager', () => {
                 verify(mockRectanglePainter.dimension(deepEqual({width: 3, height: 2}))).once();
                 verify(mockRectanglePainter.dimension(deepEqual({width: 2, height: 2}))).once();
                 verify(mockRectanglePainter.fillColor(deepEqual(colorFrom(Colors.YELLOW)))).twice();
-                verify(mockRectanglePainter.position(deepEqual({x: 2, y: 3}))).once();
-                verify(mockRectanglePainter.position(deepEqual({x: 8, y: 3}))).once();
+                verify(mockRectanglePainter.position(deepEqual({x: 2, y: 3, z: 0}))).once();
+                verify(mockRectanglePainter.position(deepEqual({x: 8, y: 3, z: 0}))).once();
             });
         });
 
@@ -229,7 +229,7 @@ describe('a highlight manager', () => {
                     dimension: {width: 2, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 4, y: 3}
+                    position: {x: 4, y: 3, z: 0}
                 });
 
 
@@ -258,7 +258,7 @@ describe('a highlight manager', () => {
                     dimension: {width: 2, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 4, y: 3}
+                    position: {x: 4, y: 3, z: 0}
                 });
 
 
@@ -290,7 +290,7 @@ describe('a highlight manager', () => {
                     dimension: {width: 2, height: 1.97},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 4, y: 9}
+                    position: {x: 4, y: 9, z: 0}
                 });
 
                 const newHighlight: CanvasRectangle = mock(CanvasRectangle);
@@ -314,7 +314,7 @@ describe('a highlight manager', () => {
                 verify(existingHighlight.remove()).never();
                 verify(mockRectanglePainter.dimension(deepEqual({width: 4, height: 2}))).once();
                 verify(mockRectanglePainter.fillColor(deepEqual(colorFrom(Colors.YELLOW)))).once();
-                verify(mockRectanglePainter.position(deepEqual({x: 5, y: 3}))).once();
+                verify(mockRectanglePainter.position(deepEqual({x: 5, y: 3, z: 0}))).once();
             });
         });
 
@@ -334,7 +334,7 @@ describe('a highlight manager', () => {
                     dimension: {width: 2, height: 2.04}, // 2% tolerance
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 4, y: 3}
+                    position: {x: 4, y: 3, z: 0}
                 });
 
                 const newHighlight: CanvasRectangle = mock(CanvasRectangle);
@@ -358,7 +358,7 @@ describe('a highlight manager', () => {
                 verify(existingHighlight.remove()).once();
                 verify(mockRectanglePainter.dimension(deepEqual({width: 5, height: 2}))).once();
                 verify(mockRectanglePainter.fillColor(deepEqual(colorFrom(Colors.YELLOW)))).once();
-                verify(mockRectanglePainter.position(deepEqual({x: 4, y: 3}))).once();
+                verify(mockRectanglePainter.position(deepEqual({x: 4, y: 3, z: 0}))).once();
             });
         });
 
@@ -379,7 +379,7 @@ describe('a highlight manager', () => {
                     dimension: {width: 4, height: 1.97}, // 2% tolerance
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 2, y: 3}
+                    position: {x: 2, y: 3, z: 0}
                 });
                 when(secondExistingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
@@ -387,7 +387,7 @@ describe('a highlight manager', () => {
                     dimension: {width: 4, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove-2",
-                    position: {x: 8, y: 3}
+                    position: {x: 8, y: 3, z: 0}
                 });
 
                 const newHighlight: CanvasRectangle = mock(CanvasRectangle);
@@ -412,7 +412,7 @@ describe('a highlight manager', () => {
                 verify(secondExistingHighlight.remove()).once();
                 verify(mockRectanglePainter.dimension(deepEqual({width: 10, height: 2}))).once();
                 verify(mockRectanglePainter.fillColor(deepEqual(colorFrom(Colors.YELLOW)))).once();
-                verify(mockRectanglePainter.position(deepEqual({x: 2, y: 3}))).once();
+                verify(mockRectanglePainter.position(deepEqual({x: 2, y: 3, z: 0}))).once();
             });
         });
 
@@ -433,7 +433,7 @@ describe('a highlight manager', () => {
                     dimension: {width: 4, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 2, y: 3}
+                    position: {x: 2, y: 3, z: 0}
                 });
                 when(secondExistingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
@@ -441,7 +441,7 @@ describe('a highlight manager', () => {
                     dimension: {width: 4, height: 2},
                     fillColor: colorFrom(Colors.GREEN),
                     id: "svg-to-remove-2",
-                    position: {x: 8, y: 3}
+                    position: {x: 8, y: 3, z: 0}
                 });
 
                 const newHighlight: CanvasRectangle = mock(CanvasRectangle);
@@ -468,8 +468,8 @@ describe('a highlight manager', () => {
                 verify(mockRectanglePainter.dimension(deepEqual({width: 3, height: 2}))).once();
                 verify(mockRectanglePainter.fillColor(deepEqual(colorFrom(Colors.YELLOW)))).once();
                 verify(mockRectanglePainter.fillColor(deepEqual(colorFrom(Colors.GREEN)))).once();
-                verify(mockRectanglePainter.position(deepEqual({x: 2, y: 3}))).once();
-                verify(mockRectanglePainter.position(deepEqual({x: 9, y: 3}))).once();
+                verify(mockRectanglePainter.position(deepEqual({x: 2, y: 3, z: 0}))).once();
+                verify(mockRectanglePainter.position(deepEqual({x: 9, y: 3, z: 0}))).once();
             });
         });
 
@@ -489,7 +489,7 @@ describe('a highlight manager', () => {
                     dimension: {width: 8, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 4, y: 3}
+                    position: {x: 4, y: 3, z: 0}
                 });
 
 
@@ -518,7 +518,7 @@ describe('a highlight manager', () => {
                     dimension: {width: 8, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 2, y: 3}
+                    position: {x: 2, y: 3, z: 0}
                 });
 
                 const newHighlight: CanvasRectangle = mock(CanvasRectangle);
@@ -543,9 +543,9 @@ describe('a highlight manager', () => {
                 verify(mockRectanglePainter.dimension(deepEqual({width: 2, height: 2}))).once();
                 verify(mockRectanglePainter.fillColor(deepEqual(colorFrom(Colors.YELLOW)))).twice();
                 verify(mockRectanglePainter.fillColor(deepEqual(colorFrom(Colors.GREEN)))).once();
-                verify(mockRectanglePainter.position(deepEqual({x: 2, y: 3}))).once();
-                verify(mockRectanglePainter.position(deepEqual({x: 8, y: 3}))).once();
-                verify(mockRectanglePainter.position(deepEqual({x: 5, y: 3}))).once();
+                verify(mockRectanglePainter.position(deepEqual({x: 2, y: 3, z: 0}))).once();
+                verify(mockRectanglePainter.position(deepEqual({x: 8, y: 3, z: 0}))).once();
+                verify(mockRectanglePainter.position(deepEqual({x: 5, y: 3, z: 0}))).once();
 
             });
         });
@@ -566,7 +566,7 @@ describe('a highlight manager', () => {
                     dimension: {width: 3, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 2, y: 3}
+                    position: {x: 2, y: 3, z: 0}
                 });
 
                 const newHighlight: CanvasRectangle = mock(CanvasRectangle);
@@ -590,7 +590,7 @@ describe('a highlight manager', () => {
                 verify(existingHighlight.remove()).once();
                 verify(mockRectanglePainter.dimension(deepEqual({width: 7, height: 2}))).once();
                 verify(mockRectanglePainter.fillColor(deepEqual(colorFrom(Colors.YELLOW)))).once();
-                verify(mockRectanglePainter.position(deepEqual({x: 2, y: 3}))).once();
+                verify(mockRectanglePainter.position(deepEqual({x: 2, y: 3, z: 0}))).once();
             });
         });
     });

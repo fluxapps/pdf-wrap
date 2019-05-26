@@ -7,7 +7,7 @@ import {StorageRegistry} from "../../../src/api/storage/adapter.registry";
 function mockStorageAdapter(uri: URI): StorageAdapter {
     /* tslint:disable: no-empty */
     return {
-        loadPage: (_, __): Promise<PageOverlay> => Promise.resolve(new PageOverlay(1, [], [])),
+        loadPage: (_, __): Promise<PageOverlay> => Promise.resolve(new PageOverlay(1, [], [], [], [], [], [])),
         register: (): URI => uri,
         start: (_, __): void => {}
     };
