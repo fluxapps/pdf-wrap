@@ -207,12 +207,12 @@ export class CanvasCircle implements CanvasElement<Circle> {
     }
 
     private get position(): Point {
-        const [x, y]: [number, number] = [parseFloat(this.element.attr("x")), parseFloat(this.element.attr("y"))];
+        const [x, y]: [number, number] = [this.element.x(), this.element.y()];
         return {x, y};
     }
 
     private get diameter(): number {
-        return (parseFloat(this.element.attr("radius")) * 2);
+        return (parseFloat(this.element.attr("r")) * 2);
     }
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/canvas.elements:CanvasCircle");
@@ -272,14 +272,14 @@ export class CanvasEllipse implements CanvasElement<Ellipse> {
     }
 
     private get position(): Point {
-        const [x, y]: [number, number] = [parseFloat(this.element.attr("x")), parseFloat(this.element.attr("y"))];
+        const [x, y]: [number, number] = [this.element.x(), this.element.y()];
         return {x, y};
     }
 
     private get dimension(): Dimension {
         const [height, width]: [number, number] = [
-            parseFloat(this.element.attr("height")),
-            parseFloat(this.element.attr("width"))
+            parseFloat(this.element.attr("ry")) * 2,
+            parseFloat(this.element.attr("rx")) * 2
         ];
         return {height, width};
     }

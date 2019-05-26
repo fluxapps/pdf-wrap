@@ -33,7 +33,7 @@ import { LoadingOptions, PDFDocumentService } from "../api/document.service";
 import { Outline, PageThumbnail, TreeOutlineEntry } from "../api/document/document.info";
 import { PDFDocument, ScalePreset } from "../api/document/pdf.document";
 import { Point } from "../api/draw/draw.basic";
-import { PolyLine, Rectangle } from "../api/draw/elements";
+import { Circle, Ellipse, Line, PolyLine, Rectangle } from "../api/draw/elements";
 import { PageChangeEvent, StateChangeEvent } from "../api/event/event.api";
 import { Highlighting } from "../api/highlight/highlight.api";
 import { DocumentSearch } from "../api/search/search.api";
@@ -206,6 +206,10 @@ export class PDFjsDocumentService implements PDFDocumentService {
             freehand.afterLineRendered.pipe(takeUntil(dispose$)),
             eraser.afterElementRemoved.pipe(takeUntil(dispose$)),
             highlighting.onTextSelection.pipe(takeUntil(dispose$)),
+            forms.rectangle.afterPaintCompleted.pipe(takeUntil(dispose$)),
+            forms.ellipse.afterPaintCompleted.pipe(takeUntil(dispose$)),
+            forms.circle.afterPaintCompleted.pipe(takeUntil(dispose$)),
+            forms.line.afterPaintCompleted.pipe(takeUntil(dispose$)),
             rescaleManager
         );
         const storageAdapter: StorageAdapterWrapper = new StorageAdapterWrapper(StorageRegistry.instance);
@@ -240,11 +244,23 @@ export class PDFjsDocumentService implements PDFDocumentService {
 
                     pageData.highlightings
                         .forEach((highlight) => {
-                            drawHighlight(highlightTransparencyLayer, rescaleManager.rescaleRectangle(highlight));
+                            drawRectangle(highlightTransparencyLayer, rescaleManager.rescaleRectangle(highlight));
                         });
 
                     pageData.drawings
-                        .forEach((drawing) => draw(drawLayer, rescaleManager.rescalePolyLine(drawing)));
+                        .forEach((drawing) => drawPolyline(drawLayer, rescaleManager.rescalePolyLine(drawing)));
+
+                    pageData.rectangles
+                        .forEach((rectangles) => drawRectangle(drawLayer, rescaleManager.rescaleRectangle(rectangles)));
+
+                    pageData.ellipses
+                        .forEach((ellipses) => drawEllipse(drawLayer, rescaleManager.rescaleEllipse(ellipses)));
+
+                    pageData.circles
+                        .forEach((circles) => drawCircle(drawLayer, rescaleManager.rescaleCircle(circles)));
+
+                    pageData.lines
+                        .forEach((lines) => drawLine(drawLayer, rescaleManager.rescaleLine(lines)));
                 });
 
                 const page: Page = new Page(
@@ -487,7 +503,7 @@ export class PDFjsDocument implements PDFDocument {
  * @param {Canvas} on - the canvas to draw on
  * @param {PolyLine} drawing - the drawing to draw
  */
-function draw(on: Canvas, drawing: PolyLine): void {
+function drawPolyline(on: Canvas, drawing: PolyLine): void {
     on.polyLine()
     .id(drawing.id)
     .borderColor(drawing.borderColor)
@@ -497,20 +513,70 @@ function draw(on: Canvas, drawing: PolyLine): void {
 }
 
 /**
- * Draws the given {@code highlight} on the given {@code on} {@link Canvas}.
+ * Draws the given {@code ellipse} on the given {@code on} {@link Canvas}.
  *
  * @param {Canvas} on - the canvas to draw on
- * @param {Rectangle} highlight - the highlight to draw
+ * @param {Ellipse} ellipse - the ellipse to draw
  */
-function drawHighlight(on: Canvas, highlight: Rectangle): void {
+function drawEllipse(on: Canvas, ellipse: Ellipse): void {
+    on.ellipse()
+        .id(ellipse.id)
+        .dimension(ellipse.dimension)
+        .position(ellipse.position)
+        .fillColor(ellipse.fillColor)
+        .borderColor(ellipse.borderColor)
+        .borderWidth(ellipse.borderWidth)
+        .paint();
+}
+
+/**
+ * Draws the given {@code circle} on the given {@code on} {@link Canvas}.
+ *
+ * @param {Canvas} on - the canvas to draw on
+ * @param {Ellipse} circle - the circle to draw
+ */
+function drawCircle(on: Canvas, circle: Circle): void {
+    on.circle()
+        .id(circle.id)
+        .diameter(circle.diameter)
+        .position(circle.position)
+        .fillColor(circle.fillColor)
+        .borderColor(circle.borderColor)
+        .borderWidth(circle.borderWidth)
+        .paint();
+}
+
+/**
+ * Draws the given {@code line} on the given {@code on} {@link Canvas}.
+ *
+ * @param {Canvas} on - the canvas to draw on
+ * @param {Line} line - the line to draw
+ */
+function drawLine(on: Canvas, line: Line): void {
+    on.line()
+        .id(line.id)
+        .start(line.start)
+        .end(line.end)
+        .borderColor(line.borderColor)
+        .borderWidth(line.borderWidth)
+        .paint();
+}
+
+/**
+ * Draws the given {@code rectangle} on the given {@code on} {@link Canvas}.
+ *
+ * @param {Canvas} on - the canvas to draw on
+ * @param {Rectangle} rectangle - the rectangle to draw
+ */
+function drawRectangle(on: Canvas, rectangle: Rectangle): void {
 
     on.rectangle()
-    .id(highlight.id)
-    .dimension(highlight.dimension)
-    .position(highlight.position)
-    .fillColor(highlight.fillColor)
-    .borderColor(highlight.borderColor)
-    .borderWidth(highlight.borderWidth)
+    .id(rectangle.id)
+    .dimension(rectangle.dimension)
+    .position(rectangle.position)
+    .fillColor(rectangle.fillColor)
+    .borderColor(rectangle.borderColor)
+    .borderWidth(rectangle.borderWidth)
     .paint();
 }
 

@@ -10,7 +10,7 @@ export abstract class AbstractBorderForm<T> implements BorderForm<T> {
 
     borderColor: Color = colorFrom(Colors.BLACK);
     borderWith: number = 1;
-    protected readonly _afterPaintCompleted: Subject<DrawEvent<T>> = new Subject();
+    protected readonly _afterPaintCompleted: Subject<DrawEvent<T>> = new Subject<DrawEvent<T>>();
 
     // tslint:disable-next-line
     readonly afterPaintCompleted: Observable<DrawEvent<T>> = this._afterPaintCompleted.asObservable();
