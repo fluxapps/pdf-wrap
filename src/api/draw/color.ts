@@ -188,6 +188,7 @@ const HEX_COLOR_REGX: RegExp = /^([A-Fa-f0-9]{2})([A-Fa-f0-9]{2})([A-Fa-f0-9]{2}
 const HEX_COLOR_ALPHA_REGX: RegExp = /^([A-Fa-f0-9]{2})([A-Fa-f0-9]{2})([A-Fa-f0-9]{2})([A-Fa-f0-9]{2})$/;
 
 function decToHex(decimal: number): string {
+    decimal = Math.round(decimal);
     if (decimal < 16) {
         return `0${decimal.toString(HEX).toUpperCase()}`;
     }
