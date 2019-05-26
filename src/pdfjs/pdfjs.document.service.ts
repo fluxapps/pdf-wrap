@@ -277,7 +277,8 @@ export class PDFjsDocumentService implements PDFDocumentService {
                         const pageRects: ClientRect = pageView.canvas.getClientRects()[0];
                         return {
                             x: pageRects.left,
-                            y: pageRects.top
+                            y: pageRects.top,
+                            z: 0
                         };
                     }
                 );

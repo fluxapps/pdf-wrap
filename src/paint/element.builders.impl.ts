@@ -79,7 +79,7 @@ abstract class AbstractBorderElementBuilder<T, R> implements BorderElementBuilde
  */
 abstract class AbstractFormBuilder<T, R> extends AbstractBorderElementBuilder<T, R> implements FormBuilder<T, R> {
 
-    protected _position: Point = {x: 0, y: 0};
+    protected _position: Point = {x: 0, y: 0, z: 0};
     protected _fillColor: Color = colorFrom(Colors.BLACK);
 
     fillColor(value: Color): T {
@@ -163,8 +163,8 @@ export class RectangleBuilderImpl extends AbstractFormBuilder<RectangleBuilder, 
  */
 export class LineBuilderImpl extends AbstractBorderElementBuilder<LineBuilder, Line> implements LineBuilder {
 
-    private _start: Point = {x: 0, y: 0};
-    private _end: Point = {x: 0, y: 0};
+    private _start: Point = {x: 0, y: 0, z: 0};
+    private _end: Point = {x: 0, y: 0, z: 0};
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/element.builders.impl:LineBuilderImpl");
 

@@ -19,7 +19,8 @@ export abstract class AbstractBorderForm<T> implements BorderForm<T> {
         const page: Page = this.document.getPage();
         return {
             x: page.pageDimension.width * 0.45,
-            y: page.pageDimension.height * 0.1
+            y: page.pageDimension.height * 0.1,
+            z: -1
         };
     }
 

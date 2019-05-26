@@ -28,7 +28,8 @@ class LineForm extends AbstractBorderForm<Line> {
         const start: Point = this.position;
         const end: Point = {
             x: start.x + (Math.min(page.pageDimension.width, page.pageDimension.height) * 0.4),
-            y: start.y
+            y: start.y,
+            z: start.z
         };
         const canvasLine: CanvasLine = page.drawLayer.line()
             .borderColor(this.borderColor)

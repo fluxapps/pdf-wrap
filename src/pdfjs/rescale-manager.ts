@@ -282,14 +282,16 @@ export class RescaleManager {
     private normalizePosition(position: Point): Point {
         return {
             x: this.normalizePixel(position.x),
-            y: this.normalizePixel(position.y)
+            y: this.normalizePixel(position.y),
+            z: position.z
         };
     }
 
     private rescalePosition(position: Point): Point {
         return {
             x: this.rescalePixel(position.x),
-            y: this.rescalePixel(position.y)
+            y: this.rescalePixel(position.y),
+            z: position.z
         };
     }
 }

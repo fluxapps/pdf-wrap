@@ -14,6 +14,23 @@ import {
     CanvasRectangle
 } from "./canvas.elements";
 
+function moveToZPosition(element: svgjs.Element, position: Point): void {
+
+    // Only position elements which have a valid z axis.
+    if (position.z <= 0) {
+        return;
+    }
+
+    // Move the element because we have no position setter ...
+    for (let i: number = element.position(); i < position.z; i++) {
+        element.forward();
+    }
+
+    for (let i: number = element.position(); i > position.z; i--) {
+        element.backward();
+    }
+}
+
 /**
  * Describes a canvas which can be used to draw elements on.
  *
@@ -420,11 +437,14 @@ class SVGPolyLinePainter implements PolyLinePainter {
 
         this.log.trace(() => `Paint poly line on svg: polyLineId=${this._id}`);
 
-        return this.svg.polyline(this.flatCoordinates)
+        const polyline: svgjs.PolyLine = this.svg.polyline(this.flatCoordinates)
             .fill("none")
             .attr("id", this._id)
             .addClass("drawing")
             .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha});
+
+        moveToZPosition(polyline, this._coordinates[0]);
+        return polyline;
     }
 }
 
@@ -442,7 +462,7 @@ class SVGRectanglePainter implements RectanglePainter {
     private _borderColor: Color = colorFrom(Colors.NONE);
     private _borderWidth: number = 0;
     private _fillColor: Color = colorFrom(Colors.BLACK);
-    private _position: Point = {x: 0, y: 0};
+    private _position: Point = {x: 0, y: 0, z: 0};
     private _dimension: Dimension = {height: 0, width: 0};
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/SVGRectanglePainter");
@@ -492,6 +512,8 @@ class SVGRectanglePainter implements RectanglePainter {
             .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha})
             .move(this._position.x, this._position.y);
 
+        moveToZPosition(rect, this._position);
+
         return new CanvasRectangle(rect);
     }
 }
@@ -501,8 +523,8 @@ class SVGLinePainter implements LinePainter {
     private _id: string = `svg${uuid.create(4).toString()}`;
     private _borderColor: Color = colorFrom(Colors.NONE);
     private _borderWidth: number = 0;
-    private _start: Point = { x: 0, y: 0};
-    private _end: Point = { x: 0, y: 0};
+    private _start: Point = { x: 0, y: 0, z: 0};
+    private _end: Point = { x: 0, y: 0, z: 0};
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/SVGLinePainter");
 
@@ -543,6 +565,8 @@ class SVGLinePainter implements LinePainter {
             .addClass("drawing")
             .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha});
 
+        moveToZPosition(line, this._start);
+
         return new CanvasLine(line);
     }
 }
@@ -553,7 +577,7 @@ class SVGCirclePainter implements CirclePainter {
     private _borderColor: Color = colorFrom(Colors.NONE);
     private _borderWidth: number = 0;
     private _fillColor: Color = colorFrom(Colors.BLACK);
-    private _position: Point = {x: 0, y: 0};
+    private _position: Point = {x: 0, y: 0, z: 0};
     private _diameter: number = 0;
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/SVGCirclePainter");
@@ -603,6 +627,8 @@ class SVGCirclePainter implements CirclePainter {
             .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha})
             .move(this._position.x, this._position.y);
 
+        moveToZPosition(circle, this._position);
+
         return new CanvasCircle(circle);
     }
 }
@@ -613,7 +639,7 @@ class SVGEllipsePainter implements EllipsePainter {
     private _borderColor: Color = colorFrom(Colors.NONE);
     private _borderWidth: number = 0;
     private _fillColor: Color = colorFrom(Colors.BLACK);
-    private _position: Point = {x: 0, y: 0};
+    private _position: Point = {x: 0, y: 0, z: 0};
     private _dimension: Dimension = {height: 0, width: 0};
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/SVGEllipsePainter");
@@ -662,6 +688,8 @@ class SVGEllipsePainter implements EllipsePainter {
             .addClass("drawing")
             .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha})
             .move(this._position.x, this._position.y);
+
+        moveToZPosition(ellipse, this._position);
 
         return new CanvasEllipse(ellipse);
     }

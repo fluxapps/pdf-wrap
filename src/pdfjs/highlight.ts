@@ -372,7 +372,7 @@ export class HighlightManager {
         const newHighlight: CanvasRectangle = this.canvas.rectangle()
             .fillColor(this.highlightColor!)
             .dimension({height: rect.height, width: rect.width})
-            .position({x: rect.left, y: rect.top})
+            .position({x: rect.left, y: rect.top, z: 0})
             .paint();
 
         this._onAdd.next(newHighlight.transform());
@@ -406,7 +406,7 @@ export class HighlightManager {
                 const newRect: CanvasRectangle = this.canvas.rectangle()
                     .borderColor(data.rectangle.borderColor)
                     .fillColor(data.rectangle.fillColor)
-                    .position({x: result.left, y: result.top})
+                    .position({x: result.left, y: result.top, z: 0})
                     .dimension({height: result.height, width: result.width})
                     .paint();
 

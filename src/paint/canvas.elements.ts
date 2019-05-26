@@ -70,9 +70,9 @@ export class CanvasPolyLine implements CanvasElement<PolyLine> {
 
         return pairwise((this.element.attr("points") as string).split(","))
             .map<Point>((it) => {
-                const [x, y]: [number, number] = [parseFloat(it[0]), parseFloat(it[1])];
+                const [x, y, z]: [number, number, number] = [parseFloat(it[0]), parseFloat(it[1]), this.element.position()];
 
-                return {x, y};
+                return {x, y, z};
             });
     }
 
@@ -138,8 +138,12 @@ export class CanvasRectangle implements CanvasElement<Rectangle> {
     }
 
     private get position(): Point {
-        const [x, y]: [number, number] = [parseFloat(this.element.attr("x")), parseFloat(this.element.attr("y"))];
-        return {x, y};
+        const [x, y, z]: [number, number, number] = [
+            parseFloat(this.element.attr("x")),
+            parseFloat(this.element.attr("y")),
+            this.element.position()
+        ];
+        return {x, y, z};
     }
 
     private get dimension(): Dimension {
@@ -207,8 +211,8 @@ export class CanvasCircle implements CanvasElement<Circle> {
     }
 
     private get position(): Point {
-        const [x, y]: [number, number] = [this.element.x(), this.element.y()];
-        return {x, y};
+        const [x, y, z]: [number, number, number] = [this.element.x(), this.element.y(), this.element.position()];
+        return {x, y, z};
     }
 
     private get diameter(): number {
@@ -272,8 +276,8 @@ export class CanvasEllipse implements CanvasElement<Ellipse> {
     }
 
     private get position(): Point {
-        const [x, y]: [number, number] = [this.element.x(), this.element.y()];
-        return {x, y};
+        const [x, y, z]: [number, number, number] = [this.element.x(), this.element.y(), this.element.position()];
+        return {x, y, z};
     }
 
     private get dimension(): Dimension {
@@ -339,14 +343,16 @@ export class CanvasLine implements CanvasElement<Line> {
     private get start(): Point {
         return {
             x: parseFloat(this.element.attr("x1")),
-            y: parseFloat(this.element.attr("y1"))
+            y: parseFloat(this.element.attr("y1")),
+            z: this.element.position()
         };
     }
 
     private get end(): Point {
         return {
             x: parseFloat(this.element.attr("x2")),
-            y: parseFloat(this.element.attr("y2"))
+            y: parseFloat(this.element.attr("y2")),
+            z: this.element.position()
         };
     }
 
