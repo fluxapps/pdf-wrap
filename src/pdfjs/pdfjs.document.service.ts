@@ -28,7 +28,7 @@ import { fromEvent } from "rxjs/internal/observable/fromEvent";
 import { merge } from "rxjs/internal/observable/merge";
 import { of } from "rxjs/internal/observable/of";
 import { TeardownLogic } from "rxjs/internal/types";
-import { first, flatMap, map, mergeMap, takeUntil, tap } from "rxjs/operators";
+import { filter, first, flatMap, map, mergeMap, takeUntil, tap } from "rxjs/operators";
 import { Logger } from "typescript-logging";
 import { LoadingOptions, PDFDocumentService } from "../api/document.service";
 import { Outline, PageThumbnail, TreeOutlineEntry } from "../api/document/document.info";
@@ -203,6 +203,59 @@ export class PDFjsDocumentService implements PDFDocumentService {
         const eraser: EraserTool = new EraserTool(documentModel);
         const forms: Forms = new FormFactory(documentModel, rescaleManager);
         const selectionTool: SelectionTool = new SelectionTool(documentModel, forms);
+
+        freehand.stateChange
+            .pipe(
+                filter((it) => it.isActive),
+                takeUntil(dispose$)
+            )
+            .subscribe(() => {
+                eraser.deactivate();
+                selectionTool.deactivate();
+                highlighting.disable();
+            });
+
+        eraser.stateChange
+            .pipe(
+                filter((it) => it.isActive),
+                takeUntil(dispose$)
+            )
+            .subscribe(() => {
+                freehand.deactivate();
+                selectionTool.deactivate();
+                highlighting.disable();
+            });
+
+        selectionTool.stateChange
+            .pipe(
+                filter((it) => it.isActive),
+                takeUntil(dispose$)
+            )
+            .subscribe(() => {
+                freehand.deactivate();
+                eraser.deactivate();
+                highlighting.disable();
+            });
+
+        highlighting.stateChange
+            .pipe(
+                filter((it) => it.isActive),
+                takeUntil(dispose$)
+            )
+            .subscribe(() => {
+                freehand.deactivate();
+                eraser.deactivate();
+                selectionTool.deactivate();
+            });
+
+        // Default to highlighting if no tool is active.
+        merge(highlighting.stateChange, freehand.stateChange, eraser.stateChange, selectionTool.stateChange)
+            .pipe(takeUntil(dispose$))
+            .subscribe(() => {
+                if (!(highlighting.isEnabled || freehand.isActive || eraser.isActive || selectionTool.isActive)) {
+                    highlighting.enable();
+                }
+            });
 
         const pageEventCollection: PageEventCollection = new PDFjsPageEvenCollection(
             merge(freehand.afterLineRendered, selectionTool.afterPolyLineModified).pipe(takeUntil(dispose$)),

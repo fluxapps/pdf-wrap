@@ -1,5 +1,6 @@
 import {Color} from "../draw/color";
 import {Observable} from "rxjs/internal/Observable";
+import { StateChangeEvent } from "../event/event.api";
 import {DrawEvent} from "../storage/page.event";
 import {DrawElement, Rectangle} from "../draw/elements";
 
@@ -23,6 +24,13 @@ export interface Highlighting {
     readonly onTextUnselection: Observable<void>;
 
     /**
+     * A hot {@code Observable} which emits the new state of the feature after a change occurred.
+     *
+     * @since 0.3.0
+     */
+    readonly stateChange: Observable<StateChangeEvent>;
+
+    /**
      * True if the highlighting is enabled otherwise false.
      */
     readonly isEnabled: boolean;
@@ -36,6 +44,13 @@ export interface Highlighting {
      * Disables the text highlighting feature.
      */
     disable(): void;
+
+    /**
+     * Toggles the text highlighting feature.
+     *
+     * @since 0.3.0
+     */
+    toggle(): void;
 }
 
 /**

@@ -1,3 +1,4 @@
+import { StateChangeEvent } from "../api/event/event.api";
 import {Highlighting, Target, TextSelection} from "../api/highlight/highlight.api";
 import {Observable} from "rxjs/internal/Observable";
 import {Color} from "../api/draw/color";
@@ -32,9 +33,18 @@ export class TextHighlighting implements Highlighting {
      */
     readonly onTextUnselection: Observable<void>;
 
+    /**
+     * Emits the new state of the text highlight mode.
+     *
+     * @since 0.3.0
+     */
+    readonly stateChange: Observable<StateChangeEvent>;
+
     private enabled: boolean = false;
 
     private readonly dispose$: Subject<void> = new Subject<void>();
+
+    private readonly _stateChange: Subject<StateChangeEvent> = new Subject();
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/highlight:TextHighlighting");
 
@@ -45,6 +55,8 @@ export class TextHighlighting implements Highlighting {
     constructor(
         private readonly document: DocumentModel
     ) {
+
+        this.stateChange = this._stateChange.asObservable();
 
         // get the page where the mouse down event was
         const page: Observable<Page> = merge(
@@ -106,6 +118,7 @@ export class TextHighlighting implements Highlighting {
     disable(): void {
         this.log.info(() => "Disable text highlighting");
         this.enabled = false;
+        this._stateChange.next(new StateChangeEvent(this.enabled));
     }
 
     /**
@@ -114,6 +127,20 @@ export class TextHighlighting implements Highlighting {
     enable(): void {
         this.log.info(() => "Enable text highlighting");
         this.enabled = true;
+        this._stateChange.next(new StateChangeEvent(this.enabled));
+    }
+
+    /**
+     * Toggles the text selection for a user.
+     *
+     * @since 0.3.0
+     */
+    toggle(): void {
+        if (this.enabled) {
+            this.disable();
+        } else {
+            this.enable();
+        }
     }
 
     dispose(): void {
