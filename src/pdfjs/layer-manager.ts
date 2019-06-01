@@ -1,6 +1,6 @@
 import {PageRenderedEvent} from "pdfjs-dist/web/pdf_viewer";
 import {Canvas, SVGCanvas} from "../paint/painters";
-import svgjs from "svgjs";
+import svgjs from "svg.js";
 
 /**
  * Creates and appends the different page layers to the DOM.

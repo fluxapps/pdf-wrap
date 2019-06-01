@@ -1,5 +1,5 @@
 import {Observable} from "rxjs/internal/Observable";
-import {StateChangeEvent} from "../event/event.api";
+import { SelectionChangeEvent, StateChangeEvent } from "../event/event.api";
 import {Color} from "../draw/color";
 import { Forms } from "./forms";
 
@@ -14,6 +14,7 @@ export interface Toolbox {
     readonly freehand: Freehand;
     readonly eraser: Eraser;
     readonly forms: Forms;
+    readonly selection: Selection;
 }
 
 /**
@@ -54,3 +55,11 @@ export interface Freehand extends Tool {
  * @since 0.0.1
  */
 export interface Eraser extends Tool {}
+
+/**
+ * Describes a selection tool which is used to
+ * select arbitrary elements on the PDF Document.
+ */
+export interface Selection extends Tool {
+    readonly onElementSelection: Observable<SelectionChangeEvent>;
+}

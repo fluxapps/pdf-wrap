@@ -1,8 +1,18 @@
-import { Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import {Canvas} from "../paint/painters";
 import {Dimension, Point} from "../api/draw/draw.basic";
 import {Logger} from "typescript-logging";
 import {LoggerFactory} from "../log-config";
+
+/**
+ * Describes a visibility change of a page within the PDF viewer.
+ *
+ * @author Nicolas Schaefli <ns@studer-raimann.ch>
+ * @since 0.3.0
+ */
+export class PageVisibilityChangeEvent {
+    constructor(readonly visible: boolean, readonly page: Page) {}
+}
 
 /**
  * Holds information about a PDF.
@@ -14,8 +24,15 @@ import {LoggerFactory} from "../log-config";
 export class DocumentModel {
 
     private readonly pages: Map<number, Page> = new Map();
+    private readonly elementPageMap: Map<Element, Page> = new Map();
+    private readonly pageVisibilityMap: Map<Page, boolean> = new Map();
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/document.model:DocumentModel");
+    private readonly intersections: IntersectionObserver;
+    private readonly _onPageVisibilityChange: Subject<PageVisibilityChangeEvent> = new Subject();
+
+    // tslint:disable-next-line
+    readonly onPageVisibilityChange: Observable<PageVisibilityChangeEvent> = this._onPageVisibilityChange.asObservable();
 
     private currentPageNumber: number = 0;
 
@@ -24,6 +41,28 @@ export class DocumentModel {
         currentPage$: Observable<number>
     ) {
         currentPage$.subscribe((it) => this.currentPageNumber = it);
+        this.intersections = new IntersectionObserver(this.pageIntersectionEventHandler.bind(this), {
+            root: viewer,
+            rootMargin: "0px",
+            threshold: [0, 1]
+        });
+    }
+
+    /**
+     * Returns all currently visible pages.
+     *
+     * @author Nicolas Schaefli <ns@studer-raimann.ch>
+     * @since 0.3.0
+     */
+    get visiblePages(): ReadonlyArray<Page> {
+        const visiblePages: Array<Page> = [];
+        for (const [page, visible] of this.pageVisibilityMap.entries()) {
+            if (visible) {
+                visiblePages.push(page);
+            }
+        }
+
+        return visiblePages;
     }
 
     /**
@@ -37,6 +76,27 @@ export class DocumentModel {
     addPage(page: Page): void {
 
         this.log.trace(() => `Add page to document model: pageNumber=${page.pageNumber}`);
+
+        // Clean up old page
+        const oldPage: Page | undefined = this.pages.get(page.pageNumber);
+        if (!!oldPage && this.elementPageMap.has(oldPage.container)) {
+            this.intersections.unobserve(oldPage.container);
+            this.elementPageMap.delete(oldPage.container);
+            this.pageVisibilityMap.delete(oldPage);
+            this.log.trace(() => `Page intersection observer detached: pageNumber=${oldPage.pageNumber}`);
+
+            // Page has been discarded and will never show up again, therefore emit visibility false for this page
+            // in order to give listener a change to discard events for the old page.
+            this.log.trace(`Page intersection event: page=${page.pageNumber} visible=false ratio=0`);
+            this._onPageVisibilityChange.next(new PageVisibilityChangeEvent(
+                false,
+                oldPage
+            ));
+        }
+
+        this.intersections.observe(page.container);
+        this.elementPageMap.set(page.container, page);
+        this.log.trace(() => `Page intersection observer attached: pageNumber=${page.pageNumber}`);
 
         this.pages.set(page.pageNumber, page);
     }
@@ -61,6 +121,39 @@ export class DocumentModel {
         }
 
         throw Error(`No such page exists: pageNumber=${pageNumber}`);
+    }
+
+    /**
+     * Releases all resources.
+     * The object must not be used after this method is called.
+     *
+     * @author Nicolas Schaefli <ns@studer-raimann.ch>
+     * @since 0.3.0
+     */
+    dispose(): void {
+        this.intersections.disconnect();
+        this.pages.clear();
+        this.elementPageMap.clear();
+    }
+
+    private pageIntersectionEventHandler(changes: Array<IntersectionObserverEntry>): void {
+        changes.forEach((it) => {
+
+            // Do not mess with time critical code and deffer events until the task queue is idle.
+            window.requestIdleCallback(() => {
+                const page: Page = this.elementPageMap.get(it.target)!;
+                const visible: boolean = it.isIntersecting;
+                if (visible !== this.pageVisibilityMap.get(page)) {
+                    this.log.trace(`Page intersection event: page=${page.pageNumber} visible=${it.isIntersecting} ratio=${it.intersectionRatio}`);
+                    this._onPageVisibilityChange.next(new PageVisibilityChangeEvent(
+                        visible,
+                        page
+                    ));
+
+                    this.pageVisibilityMap.set(page, visible);
+                }
+            });
+        });
     }
 }
 

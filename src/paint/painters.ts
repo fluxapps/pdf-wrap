@@ -1,4 +1,4 @@
-import * as svgjs from "svgjs";
+import * as svgjs from "svg.js";
 import { Logger } from "typescript-logging";
 import uuid from "uuid-js";
 import { Color, colorFrom, Colors } from "../api/draw/color";
@@ -117,6 +117,9 @@ export class SVGCanvas implements Canvas {
      * Currently supported types:
      * - {@link CanvasRectangle}
      * - {@link CanvasPolyLine}
+     * - {@link CanvasEllipse}
+     * - {@link CanvasCircle}
+     * - {@link CanvasLine}
      *
      * @param {string} selector - a html selector
      *
@@ -140,6 +143,15 @@ export class SVGCanvas implements Canvas {
                     break;
                 case "polyline":
                     canvasElements.push(new CanvasPolyLine(element as svgjs.PolyLine));
+                    break;
+                case "ellipse":
+                    canvasElements.push(new CanvasEllipse(element as svgjs.Ellipse));
+                    break;
+                case "circle":
+                    canvasElements.push(new CanvasCircle(element as svgjs.Circle));
+                    break;
+                case "line":
+                    canvasElements.push(new CanvasLine(element as svgjs.Line));
                     break;
             }
         }

@@ -1,3 +1,4 @@
+import "./polyfill";
 import {
     getDocument,
     GlobalWorkerOptions,
@@ -51,7 +52,7 @@ import { PDFjsPageEvenCollection } from "./page-event-collection";
 import { RescaleManager } from "./rescale-manager";
 import { StorageAdapterWrapper } from "./storage-adapter-wrapper";
 import { FormFactory } from "./tool/forms";
-import { EraserTool, FreehandTool } from "./tool/tools";
+import { EraserTool, FreehandTool, SelectionTool } from "./tool/tools";
 
 // PDF.js defaults
 GlobalWorkerOptions.workerSrc = "assets/pdf.worker.js";
@@ -125,9 +126,9 @@ export class PDFjsDocumentService implements PDFDocumentService {
             .pipe(map(() => new PDFjsDocument(
                 viewer,
                 highlighting,
-                {freehand, eraser, forms},
+                {freehand, eraser, forms, selection: selectionTool},
                 searchController,
-                (): void => { dispose$.next(); dispose$.complete(); }
+                (): void => { dispose$.next(); dispose$.complete(); documentModel.dispose(); }
             )))
             .toPromise();
 
@@ -201,15 +202,16 @@ export class PDFjsDocumentService implements PDFDocumentService {
         const freehand: FreehandTool = new FreehandTool(documentModel, rescaleManager);
         const eraser: EraserTool = new EraserTool(documentModel);
         const forms: Forms = new FormFactory(documentModel, rescaleManager);
+        const selectionTool: SelectionTool = new SelectionTool(documentModel, forms);
 
         const pageEventCollection: PageEventCollection = new PDFjsPageEvenCollection(
-            freehand.afterLineRendered.pipe(takeUntil(dispose$)),
-            eraser.afterElementRemoved.pipe(takeUntil(dispose$)),
+            merge(freehand.afterLineRendered, selectionTool.afterPolyLineModified).pipe(takeUntil(dispose$)),
+            merge(eraser.afterElementRemoved, selectionTool.onElementRemoved).pipe(takeUntil(dispose$)),
             highlighting.onTextSelection.pipe(takeUntil(dispose$)),
-            forms.rectangle.afterPaintCompleted.pipe(takeUntil(dispose$)),
-            forms.ellipse.afterPaintCompleted.pipe(takeUntil(dispose$)),
-            forms.circle.afterPaintCompleted.pipe(takeUntil(dispose$)),
-            forms.line.afterPaintCompleted.pipe(takeUntil(dispose$)),
+            merge(forms.rectangle.afterPaintCompleted, selectionTool.afterRectangleModified).pipe(takeUntil(dispose$)),
+            merge(forms.ellipse.afterPaintCompleted, selectionTool.afterEllipseModified).pipe(takeUntil(dispose$)),
+            merge(forms.circle.afterPaintCompleted, selectionTool.afterCircleModified).pipe(takeUntil(dispose$)),
+            merge(forms.line.afterPaintCompleted, selectionTool.afterLineModified).pipe(takeUntil(dispose$)),
             rescaleManager
         );
         const storageAdapter: StorageAdapterWrapper = new StorageAdapterWrapper(StorageRegistry.instance);
@@ -217,7 +219,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
         storageAdapter.start(options.layerStorage, pageEventCollection);
 
         // move draw layers to front in order to make the mouse listeners work
-        merge(freehand.stateChange, eraser.stateChange)
+        merge(freehand.stateChange, eraser.stateChange, selectionTool.stateChange)
             .pipe(takeUntil(dispose$))
             .subscribe(moveDrawLayerToFront);
 
@@ -238,6 +240,11 @@ export class PDFjsDocumentService implements PDFDocumentService {
                 const highlightTransparencyLayer: Canvas = it.createHighlightTransparencyLayer();
                 const drawLayer: Canvas = it.createDrawingLayer();
 
+                // Restore draw-layer position after page repainting. (for example after Zoom-In / Zoom-Out
+                if (freehand.isActive || eraser.isActive || selectionTool.isActive) {
+                    moveDrawLayerToFront(new StateChangeEvent(true));
+                }
+
                 // this can easily made async without awaiting it
                 this.log.trace(() => `Load page data: pageNumber=${it.pageNumber}`);
                 storageAdapter.loadPage(options.layerStorage, it.pageNumber).then((pageData) => {
@@ -247,20 +254,41 @@ export class PDFjsDocumentService implements PDFDocumentService {
                             drawRectangle(highlightTransparencyLayer, rescaleManager.rescaleRectangle(highlight));
                         });
 
+                    const drawQueue: Map<number, () => void> = new Map();
+
                     pageData.drawings
-                        .forEach((drawing) => drawPolyline(drawLayer, rescaleManager.rescalePolyLine(drawing)));
+                        .forEach((drawing) => drawQueue.set(
+                            drawing.coordinates[0].z,
+                            () => drawPolyline(drawLayer, rescaleManager.rescalePolyLine(drawing)))
+                        );
 
                     pageData.rectangles
-                        .forEach((rectangles) => drawRectangle(drawLayer, rescaleManager.rescaleRectangle(rectangles)));
+                        .forEach((rectangles) => drawQueue.set(
+                            rectangles.position.z,
+                            () => drawRectangle(drawLayer, rescaleManager.rescaleRectangle(rectangles))
+                        ));
 
                     pageData.ellipses
-                        .forEach((ellipses) => drawEllipse(drawLayer, rescaleManager.rescaleEllipse(ellipses)));
+                        .forEach((ellipses) => drawQueue.set(
+                            ellipses.position.z,
+                            () => drawEllipse(drawLayer, rescaleManager.rescaleEllipse(ellipses)))
+                        );
 
                     pageData.circles
-                        .forEach((circles) => drawCircle(drawLayer, rescaleManager.rescaleCircle(circles)));
+                        .forEach((circles) => drawQueue.set(
+                            circles.position.z,
+                            () => drawCircle(drawLayer, rescaleManager.rescaleCircle(circles)))
+                        );
 
                     pageData.lines
-                        .forEach((lines) => drawLine(drawLayer, rescaleManager.rescaleLine(lines)));
+                        .forEach((lines) => drawQueue.set(
+                            lines.start.z,
+                            () => drawLine(drawLayer, rescaleManager.rescaleLine(lines)))
+                        );
+
+                    for (const item of drawQueue.values()) {
+                        item();
+                    }
                 });
 
                 const page: Page = new Page(
