@@ -12,7 +12,23 @@ import { ElementDragEventMap, ElementResizeEventMap } from "./events";
 
 import svgjs from "svg.js";
 
-window.SVG = svgjs;
+// Do really nasty stuff to fix the test environment which hasn't a window.
+/* tslint:disable */
+if (typeof window === "undefined") {
+    global.SVG = svgjs;
+    svgjs.extend = () => {};
+    // @ts-ignore
+    svgjs.Element = {};
+    svgjs.Element.prototype = {};
+    svgjs.Element.prototype.selectize = {};
+    svgjs.Element.prototype.resize = {};
+    svgjs.Element.prototype.selectize.defaults = {};
+    svgjs.Element.prototype.resize.defaults = {};
+} else {
+    window.SVG = svgjs;
+}
+/* tslint:enable */
+
 import "svg.select.js";
 import "svg.draggable.js";
 import "svg.resize.js";
