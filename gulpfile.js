@@ -5,7 +5,7 @@ const del = require("del");
 const copyNodeModules = require("copy-node-modules");
 const file = require("gulp-file");
 const spawn = require("child_process").spawn;
-const uglify = require("gulp-uglify");
+const terser = require("gulp-terser");
 const gulpTslint = require("gulp-tslint");
 const tslint = require("tslint");
 const typedoc = require("gulp-typedoc");
@@ -215,11 +215,11 @@ gulp.task("lint", () =>
  */
 gulp.task("build", gulp.parallel("test", "lint"));
 
-// --- uglifyJS
+// --- minify
 /*
- * Uglifies javascript files.
+ * Minify javascript files.
  */
-gulp.task("uglifyJS", gulp.series("build", function () {
+gulp.task("minify", gulp.series("build", function () {
 
     const options = {
         output: {
@@ -232,12 +232,12 @@ gulp.task("uglifyJS", gulp.series("build", function () {
     };
 
     return gulp.src(`${appProperties.build.dirs.javascript}/src/**/*.js`)
-        .pipe(uglify(options))
+        .pipe(terser(options))
         .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap`))
 }));
 
 // --- package
-gulp.task("lib", gulp.series("uglifyJS", () => {
+gulp.task("lib", gulp.series("minify", () => {
     return gulp.src(`${appProperties.build.dirs.javascript}/src/**/*.ts`)
         .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap`))
 
