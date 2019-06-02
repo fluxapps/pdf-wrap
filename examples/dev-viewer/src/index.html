@@ -3,124 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <title>Simple Viewer</title>
-
-    <link rel="stylesheet" href="css/normalize.css"/>
-    <link rel="stylesheet" href="css/skeleton.css"/>
-
-    <link rel="stylesheet" href="assets/libs/pdf-wrap/pdf-wrap.css"/>
-
-    <style>
-
-        html, body {
-            height: 100%;
-        }
-
-        .pdf-container {
-            overflow: scroll;
-            height: 100%;
-            position: relative;
-        }
-
-        .middle.aligned {
-            text-align: center;
-        }
-
-        .sidebar {
-            background-color: white;
-            overflow-y: scroll;
-        }
-
-        .sidebar.left {
-            float: left;
-        }
-
-        .sidebar.right {
-            float: right;
-        }
-
-        .dark {
-            background-color: #333333;
-        }
-
-        .padded {
-            padding: 10px;
-        }
-
-        ul.no.style {
-            list-style: none;
-        }
-
-        li.center.aligned {
-            text-align: center;
-        }
-
-        .positioned-viewport {
-            top: 239px!important;
-            left: 335px!important;
-            right: 160px!important;
-        }
-
-    </style>
 </head>
 <body>
 
-    <div class="container">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="#">DevPDFViewer</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-        <div class="row">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="actionDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Actions
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="actionDropdown">
+                        <a class="dropdown-item" id="zoom-in-button">Zoom In</a>
+                        <a  class="dropdown-item" id="zoom-out-button">Zoom Out</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" id="previous-page">Previous Page</a>
+                        <a class="dropdown-item" id="next-page">Next Page</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" id="load-page">Load</a>
+                        <a class="dropdown-item" id="close-page">Close</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="toolsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Tools
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="toolsDropdown">
+                        <a class="dropdown-item" href="#" id="pen-button">Pen</a>
+                        <a class="dropdown-item" href="#" id="eraser-button">Eraser</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#" id="selection-tool">Selection</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#" id="highlight-button">Highlight</a>
+                        <a class="dropdown-item" href="#" id="clear-button">Clear</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="formsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Forms
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="formsDropdown">
+                        <a id="rectangle-button" class="dropdown-item" href="#">Rectangle</a>
+                        <a id="circle-button" class="dropdown-item" href="#">Circle</a>
+                        <a id="ellipse-button" class="dropdown-item" href="#">Ellipse</a>
+                        <a id="line-button" class="dropdown-item" href="#">Line</a>
+                    </div>
+                </li>
+            </ul>
+            <div class="form-row justify-content-end">
+                <input id="highlight-color" type="text" class="form-control smy-2 col-md-2" value="#FFFF00FF"/>
+                <input id="fill-color" type="text" class="form-control col-md-2" value="#FFFF0000"/>
+                <input id="border-color" type="text" class="form-control col-md-2" value="#FF0000FF"/>
+                <div class="input-group col-md-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon4">Border Size</span>
+                    </div>
+                    <input id="border-size" type="number" class="form-control" value="5" placeholder="Highlight Color" aria-label="Highlight Color" aria-describedby="basic-addon4">
+                </div>
 
-            <div class="twelve columns">
-                <h1 class="middle aligned">Dev PDF Viewer</h1>
             </div>
-
-            <div class="twelve middle aligned columns">
-
-                <button id="highlight-button">Highlight</button>
-                <input id="highlight-color" value="#FFFF00" type="text" />
-                <button id="clear-button">Clear</button>
-                <button id="pen-button">Pen</button>
-                <button id="eraser-button">Eraser</button>
-
-                <button id="rectangle-button">Rectangle</button>
-                <button id="circle-button">Circle</button>
-                <button id="ellipse-button">Ellipse</button>
-                <button id="line-button">Line</button>
-                <input id="border-color" value="#FFFF00" type="text" />
-                <input id="fill-color" value="#FFFF00" type="text" />
-                <input id="border-size" value="1" type="number" />
-
-            </div>
-            <div class="twelve middle aligned columns">
-
-                <button id="search-button">Search</button>
-                <input id="search-term" type="text" />
-                <button id="previous-button">Previous</button>
-                <button id="next-button">Next</button>
-
-            </div>
-
-            <div class="twelve middle aligned columns">
-
-                <button id="zoom-in-button">+</button>
-                <button id="zoom-out-button">-</button>
-                <span id="page-number"></span>
-                <span id="page-count-label"></span>
-
-                <button id="previous-page"><-</button>
-                <button id="next-page">-></button>
-
-                <button id="load-page">Load</button>
-                <button id="close-page">Close</button>
-
-            </div>
-            <div class="twelve middle aligned columns">
-
-
-
-            </div>
-
         </div>
 
-    </div>
+    </nav>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+        <div class="collapse navbar-collapse" id="subNavbarContent">
+            <div class="nav mr-auto nav-pills">
+                <span>Page:</span>&nbsp;
+                <span id="page-number"></span>&nbsp;
+                <span id="page-count-label"></span>
+            </div>
+
+            <ul class="navbar-nav mr-auto navbar-dark">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="selection-action-dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Selection Actions
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="selection-action-dropdown">
+                        <a  class="dropdown-item" id="selection-forwards">Forwards</a>
+                        <a  class="dropdown-item" id="selection-backwards">Backwards</a>
+                        <a  class="dropdown-item" id="selection-to-front">To Front</a>
+                        <a  class="dropdown-item" id="selection-to-back">To Back</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" id="selection-remove">Remove Selection</a>
+                    </div>
+                </li>
+            </ul>
+
+            <form class="nav form-inline justify-content-end">
+
+                <div class="input-group mr-sm-2">
+                    <input id="search-term" type="text" class="form-control" aria-label="Search" placeholder="Search" />
+                    <div class="input-group-append">
+                        <button id="previous-button" class="btn btn-outline-secondary" type="button"><</button>
+                        <button id="next-button" class="btn btn-outline-secondary" type="button">></button>
+                    </div>
+                </div>
+                <div class="form-group mr-sm-2">
+                    <button id="search-button" class="form-control btn btn-primary" type="button">Search</button>
+                </div>
+            </form>
+        </div>
+
+    </nav>
 
     <div class="padded sidebar left">
         <h4>Table of Contents</h4>
@@ -143,8 +134,5 @@
         </div>
 
     </div>
-
-    <script src="main.js"></script>
-
 </body>
 </html>

@@ -1,6 +1,7 @@
 const path = require("path");
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
 
@@ -9,28 +10,37 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, "build", "www"),
-        filename: "main.js",
-        publicPath: "/"
+        filename: "[name].js"
     },
 
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
         new HtmlWebpackPlugin({
-            template: './src/index.html'
-        })
+            template: 'src/index.html'
+        }),
+        new CopyWebpackPlugin([
+            {from: "src/assets", to: "assets"},
+            {from: "node_modules/@srag/pdf-wrap/assets", to: "assets/libs/pdf-wrap"},
+            {from: "node_modules/@srag/pdf-wrap/assets/images", to: "images"},
+        ]),
     ],
 
-    devtool: "none",
+    devtool: "source-map",
     mode: "development",
 
     module: {
         rules: [{
             test: /\.css$/,
-            loaders: ['style', 'css']
+            loaders: ['style-loader/url', 'file-loader']
         }, {
             test: /\.html$/,
             loader: "raw-loader" // loaders: ['raw-loader'] is also perfectly acceptable.
-        }]
+        },
+            {
+                test: /\.(png|jpe?g|gif|svg|bcmap)$/,
+                loader: "file-loader"
+            }
+        ]
     },
 
     devServer: {

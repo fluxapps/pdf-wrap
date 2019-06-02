@@ -1,0 +1,52 @@
+html, body {
+    height: 100%;
+}
+
+.pdf-container {
+    overflow: scroll;
+    height: 100%;
+    position: relative;
+}
+
+.pdf-container * {
+    box-sizing: content-box !important;
+}
+
+.middle.aligned {
+    text-align: center;
+}
+
+.sidebar {
+    background-color: white;
+    overflow-y: scroll;
+}
+
+.sidebar.left {
+    float: left;
+}
+
+.sidebar.right {
+    float: right;
+}
+
+.dark {
+    background-color: #333333;
+}
+
+.padded {
+    padding: 10px;
+}
+
+ul.no.style {
+    list-style: none;
+}
+
+li.center.aligned {
+    text-align: center;
+}
+
+.positioned-viewport {
+    top: 239px!important;
+    left: 335px!important;
+    right: 160px!important;
+}
