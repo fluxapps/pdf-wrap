@@ -36,7 +36,7 @@ gulp.task("typedoc", () => {
     return gulp.src(`${appProperties.root}/src/**/*.ts`)
         .pipe(typedoc({
             module: "commonjs",
-            target: "es5",
+            target: "es2015",
             out: `${appProperties.build.dirs.docs}/typedoc`,
             name: "PDF Wrap",
             externalPattern: `${appProperties.root}/node_modules/**`,
