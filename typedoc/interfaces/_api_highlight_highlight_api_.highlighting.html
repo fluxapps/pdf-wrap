@@ -74,7 +74,7 @@
 					</div>
 					<dl class="tsd-comment-tags">
 						<dt>author</dt>
-						<dd><p>Nicolas Märchy <a href="mailto:&#110;&#x6d;&#64;&#115;&#x74;&#117;&#100;&#x65;&#114;&#x2d;&#114;&#x61;&#105;&#109;&#97;&#110;&#110;&#x2e;&#x63;&#104;">&#110;&#x6d;&#64;&#115;&#x74;&#117;&#100;&#x65;&#114;&#x2d;&#114;&#x61;&#105;&#109;&#97;&#110;&#110;&#x2e;&#x63;&#104;</a></p>
+						<dd><p>Nicolas Märchy <a href="mailto:&#110;&#x6d;&#x40;&#115;&#116;&#117;&#100;&#x65;&#x72;&#x2d;&#114;&#97;&#105;&#x6d;&#x61;&#110;&#x6e;&#x2e;&#99;&#x68;">&#110;&#x6d;&#x40;&#115;&#116;&#117;&#100;&#x65;&#x72;&#x2d;&#114;&#97;&#105;&#x6d;&#x61;&#110;&#x6e;&#x2e;&#99;&#x68;</a></p>
 						</dd>
 						<dt>since</dt>
 						<dd><p>0.0.1</p>
@@ -106,6 +106,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_api_highlight_highlight_api_.highlighting.html#isenabled" class="tsd-kind-icon">is<wbr>Enabled</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_api_highlight_highlight_api_.highlighting.html#ontextselection" class="tsd-kind-icon">on<wbr>Text<wbr>Selection</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_api_highlight_highlight_api_.highlighting.html#ontextunselection" class="tsd-kind-icon">on<wbr>Text<wbr>Unselection</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_api_highlight_highlight_api_.highlighting.html#statechange" class="tsd-kind-icon">state<wbr>Change</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -113,6 +114,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_api_highlight_highlight_api_.highlighting.html#disable" class="tsd-kind-icon">disable</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_api_highlight_highlight_api_.highlighting.html#enable" class="tsd-kind-icon">enable</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_api_highlight_highlight_api_.highlighting.html#toggle" class="tsd-kind-icon">toggle</a></li>
 							</ul>
 						</section>
 					</div>
@@ -126,7 +128,7 @@
 					<div class="tsd-signature tsd-kind-icon">is<wbr>Enabled<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in api/highlight/highlight.api.ts:28</li>
+							<li>Defined in api/highlight/highlight.api.ts:36</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -141,7 +143,7 @@
 					<div class="tsd-signature tsd-kind-icon">on<wbr>Text<wbr>Selection<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="_api_highlight_highlight_api_.textselection.html" class="tsd-signature-type">TextSelection</a><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in api/highlight/highlight.api.ts:18</li>
+							<li>Defined in api/highlight/highlight.api.ts:19</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -157,13 +159,33 @@
 					<div class="tsd-signature tsd-kind-icon">on<wbr>Text<wbr>Unselection<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in api/highlight/highlight.api.ts:23</li>
+							<li>Defined in api/highlight/highlight.api.ts:24</li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>A hot {@code Observable} which emits when a text selection is removed.</p>
 						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="statechange" class="tsd-anchor"></a>
+					<h3>state<wbr>Change</h3>
+					<div class="tsd-signature tsd-kind-icon">state<wbr>Change<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/_api_event_event_api_.statechangeevent.html" class="tsd-signature-type">StateChangeEvent</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in api/highlight/highlight.api.ts:31</li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>A hot {@code Observable} which emits the new state of the feature after a change occurred.</p>
+						</div>
+						<dl class="tsd-comment-tags">
+							<dt>since</dt>
+							<dd><p>0.3.0</p>
+							</dd>
+						</dl>
 					</div>
 				</section>
 			</section>
@@ -179,7 +201,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in api/highlight/highlight.api.ts:38</li>
+									<li>Defined in api/highlight/highlight.api.ts:46</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -201,13 +223,40 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in api/highlight/highlight.api.ts:33</li>
+									<li>Defined in api/highlight/highlight.api.ts:41</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Enables the text highlighting feature.</p>
 								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="toggle" class="tsd-anchor"></a>
+					<h3>toggle</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">toggle<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in api/highlight/highlight.api.ts:53</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Toggles the text highlighting feature.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>since</dt>
+									<dd><p>0.3.0</p>
+									</dd>
+								</dl>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
@@ -242,11 +291,17 @@
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_api_highlight_highlight_api_.highlighting.html#ontextunselection" class="tsd-kind-icon">on<wbr>Text<wbr>Unselection</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_api_highlight_highlight_api_.highlighting.html#statechange" class="tsd-kind-icon">state<wbr>Change</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_api_highlight_highlight_api_.highlighting.html#disable" class="tsd-kind-icon">disable</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_api_highlight_highlight_api_.highlighting.html#enable" class="tsd-kind-icon">enable</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="_api_highlight_highlight_api_.highlighting.html#toggle" class="tsd-kind-icon">toggle</a>
 							</li>
 						</ul>
 					</li>

@@ -355,6 +355,30 @@ pdf.toolbox.freehand.toggle();
 <p>The Eraser can only remove strokes made with the Freehand tool.</p>
 <p>In order to remove a stroke, the eraser tool needs to be activated
 and the stroke needs to be crossed with the mouse while the mouse is pressed.</p>
+<h3 id="selection">Selection</h3>
+<p><strong>Limitations:</strong>
+<em> The selected element can not be moved from one page to another.
+</em> Multiselection is currently not supported.</p>
+<p>The selection can be used to select forms or drawings.</p>
+<p>An element selection supports the following operations:
+<em> Resizing
+</em> Repositioning
+<em> Color change of the element (Fill &amp; Border)
+</em> Change of the drawing sequence (z axis) </p>
+<h3 id="forms">Forms</h3>
+<p>The forms tool places form elements onto the document which may be transformed with the selection tool.</p>
+<p>Currently there are four types of forms supported:
+<em> Rectangles
+</em> Ellipse
+<em> Circles
+</em> Lines</p>
+<p>Forms can be placed with the forms tool located in the <em>toolbox</em>.</p>
+<pre><code class="typescript">pdf.toolbox.forms.circle.fillColor = colorFromHex(&quot;#F006&quot;);
+pdf.toolbox.forms.circle.borderColor = colorFromHex(&quot;#0F06&quot;);
+pdf.toolbox.forms.circle.create();
+pdf.toolbox.forms.circle.create(); // Will have the same colors then the first circle.
+</code></pre>
+
 <h2 id="using-the-highlighting">Using the highlighting</h2>
 <p><strong>Limitations:</strong></p>
 <ul>

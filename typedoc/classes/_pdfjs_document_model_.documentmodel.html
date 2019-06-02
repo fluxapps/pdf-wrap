@@ -74,7 +74,7 @@
 					</div>
 					<dl class="tsd-comment-tags">
 						<dt>author</dt>
-						<dd><p>Nicolas Märchy <a href="mailto:&#110;&#109;&#64;&#x73;&#116;&#117;&#x64;&#x65;&#114;&#x2d;&#x72;&#97;&#105;&#x6d;&#97;&#x6e;&#110;&#x2e;&#99;&#x68;">&#110;&#109;&#64;&#x73;&#116;&#117;&#x64;&#x65;&#114;&#x2d;&#x72;&#97;&#105;&#x6d;&#97;&#x6e;&#110;&#x2e;&#99;&#x68;</a></p>
+						<dd><p>Nicolas Märchy <a href="mailto:&#x6e;&#x6d;&#64;&#x73;&#116;&#x75;&#x64;&#x65;&#x72;&#45;&#114;&#x61;&#105;&#x6d;&#x61;&#x6e;&#x6e;&#x2e;&#x63;&#x68;">&#x6e;&#x6d;&#64;&#x73;&#116;&#x75;&#x64;&#x65;&#x72;&#45;&#114;&#x61;&#105;&#x6d;&#x61;&#x6e;&#x6e;&#x2e;&#x63;&#x68;</a></p>
 						</dd>
 						<dt>since</dt>
 						<dd><p>0.0.1</p>
@@ -105,17 +105,31 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_document_model_.documentmodel.html#_onpagevisibilitychange" class="tsd-kind-icon">_on<wbr>Page<wbr>Visibility<wbr>Change</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_document_model_.documentmodel.html#currentpagenumber" class="tsd-kind-icon">current<wbr>Page<wbr>Number</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_document_model_.documentmodel.html#elementpagemap" class="tsd-kind-icon">element<wbr>Page<wbr>Map</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_document_model_.documentmodel.html#intersections" class="tsd-kind-icon">intersections</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_document_model_.documentmodel.html#log" class="tsd-kind-icon">log</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_pdfjs_document_model_.documentmodel.html#onpagevisibilitychange" class="tsd-kind-icon">on<wbr>Page<wbr>Visibility<wbr>Change</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_document_model_.documentmodel.html#pagevisibilitymap" class="tsd-kind-icon">page<wbr>Visibility<wbr>Map</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_document_model_.documentmodel.html#pages" class="tsd-kind-icon">pages</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_pdfjs_document_model_.documentmodel.html#viewer" class="tsd-kind-icon">viewer</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Accessors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_pdfjs_document_model_.documentmodel.html#visiblepages" class="tsd-kind-icon">visible<wbr>Pages</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_pdfjs_document_model_.documentmodel.html#addpage" class="tsd-kind-icon">add<wbr>Page</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_pdfjs_document_model_.documentmodel.html#dispose" class="tsd-kind-icon">dispose</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_pdfjs_document_model_.documentmodel.html#getpage" class="tsd-kind-icon">get<wbr>Page</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_pdfjs_document_model_.documentmodel.html#haspage" class="tsd-kind-icon">has<wbr>Page</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_pdfjs_document_model_.documentmodel.html#pageintersectioneventhandler" class="tsd-kind-icon">page<wbr>Intersection<wbr>Event<wbr>Handler</a></li>
 							</ul>
 						</section>
 					</div>
@@ -127,19 +141,22 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Document<wbr>Model<span class="tsd-signature-symbol">(</span>viewer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_pdfjs_document_model_.documentmodel.html" class="tsd-signature-type">DocumentModel</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Document<wbr>Model<span class="tsd-signature-symbol">(</span>viewer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLElement</span>, currentPage$<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_pdfjs_document_model_.documentmodel.html" class="tsd-signature-type">DocumentModel</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/document.model.ts:17</li>
+									<li>Defined in pdfjs/document.model.ts:37</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>viewer: <span class="tsd-signature-type">HTMLElement</span></h5>
+								</li>
+								<li>
+									<h5>currentPage$: <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_pdfjs_document_model_.documentmodel.html" class="tsd-signature-type">DocumentModel</a></h4>
@@ -150,12 +167,72 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_onpagevisibilitychange" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _on<wbr>Page<wbr>Visibility<wbr>Change</h3>
+					<div class="tsd-signature tsd-kind-icon">_on<wbr>Page<wbr>Visibility<wbr>Change<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><a href="_pdfjs_document_model_.pagevisibilitychangeevent.html" class="tsd-signature-type">PageVisibilityChangeEvent</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Subject()</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in pdfjs/document.model.ts:32</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="currentpagenumber" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> current<wbr>Page<wbr>Number</h3>
+					<div class="tsd-signature tsd-kind-icon">current<wbr>Page<wbr>Number<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in pdfjs/document.model.ts:37</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="elementpagemap" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> element<wbr>Page<wbr>Map</h3>
+					<div class="tsd-signature tsd-kind-icon">element<wbr>Page<wbr>Map<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Element</span><span class="tsd-signature-symbol">, </span><a href="_pdfjs_document_model_.page.html" class="tsd-signature-type">Page</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map()</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in pdfjs/document.model.ts:27</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="intersections" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> intersections</h3>
+					<div class="tsd-signature tsd-kind-icon">intersections<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">IntersectionObserver</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in pdfjs/document.model.ts:31</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="log" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> log</h3>
 					<div class="tsd-signature tsd-kind-icon">log<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Logger</span><span class="tsd-signature-symbol"> =&nbsp;LoggerFactory.getLogger(&quot;ch/studerraimann/pdfwrap/pdfjs/document.model:DocumentModel&quot;)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in pdfjs/document.model.ts:17</li>
+							<li>Defined in pdfjs/document.model.ts:30</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="onpagevisibilitychange" class="tsd-anchor"></a>
+					<h3>on<wbr>Page<wbr>Visibility<wbr>Change</h3>
+					<div class="tsd-signature tsd-kind-icon">on<wbr>Page<wbr>Visibility<wbr>Change<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="_pdfjs_document_model_.pagevisibilitychangeevent.html" class="tsd-signature-type">PageVisibilityChangeEvent</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;this._onPageVisibilityChange.asObservable()</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in pdfjs/document.model.ts:35</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="pagevisibilitymap" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> page<wbr>Visibility<wbr>Map</h3>
+					<div class="tsd-signature tsd-kind-icon">page<wbr>Visibility<wbr>Map<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="_pdfjs_document_model_.page.html" class="tsd-signature-type">Page</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map()</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in pdfjs/document.model.ts:28</li>
 						</ul>
 					</aside>
 				</section>
@@ -165,7 +242,7 @@
 					<div class="tsd-signature tsd-kind-icon">pages<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><a href="_pdfjs_document_model_.page.html" class="tsd-signature-type">Page</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;new Map()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in pdfjs/document.model.ts:15</li>
+							<li>Defined in pdfjs/document.model.ts:26</li>
 						</ul>
 					</aside>
 				</section>
@@ -175,9 +252,42 @@
 					<div class="tsd-signature tsd-kind-icon">viewer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">HTMLElement</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in pdfjs/document.model.ts:20</li>
+							<li>Defined in pdfjs/document.model.ts:40</li>
 						</ul>
 					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="visiblepages" class="tsd-anchor"></a>
+					<h3>visible<wbr>Pages</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> visiblePages<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ReadonlyArray</span><span class="tsd-signature-symbol">&lt;</span><a href="_pdfjs_document_model_.page.html" class="tsd-signature-type">Page</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in pdfjs/document.model.ts:57</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns all currently visible pages.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>author</dt>
+									<dd><p>Nicolas Schaefli <a href="mailto:&#110;&#x73;&#64;&#x73;&#116;&#x75;&#100;&#x65;&#114;&#x2d;&#114;&#97;&#x69;&#109;&#97;&#110;&#110;&#x2e;&#99;&#104;">&#110;&#x73;&#64;&#x73;&#116;&#x75;&#100;&#x65;&#114;&#x2d;&#114;&#97;&#x69;&#109;&#97;&#110;&#110;&#x2e;&#99;&#104;</a></p>
+									</dd>
+									<dt>since</dt>
+									<dd><p>0.3.0</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ReadonlyArray</span><span class="tsd-signature-symbol">&lt;</span><a href="_pdfjs_document_model_.page.html" class="tsd-signature-type">Page</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -192,7 +302,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/document.model.ts:31</li>
+									<li>Defined in pdfjs/document.model.ts:76</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -216,31 +326,63 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="getpage" class="tsd-anchor"></a>
-					<h3>get<wbr>Page</h3>
+					<a name="dispose" class="tsd-anchor"></a>
+					<h3>dispose</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Page<span class="tsd-signature-symbol">(</span>pageNumber<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_pdfjs_document_model_.page.html" class="tsd-signature-type">Page</a></li>
+						<li class="tsd-signature tsd-kind-icon">dispose<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/document.model.ts:48</li>
+									<li>Defined in pdfjs/document.model.ts:133</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Releases all resources.
+									The object must not be used after this method is called.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>author</dt>
+									<dd><p>Nicolas Schaefli <a href="mailto:&#x6e;&#115;&#x40;&#115;&#116;&#117;&#100;&#101;&#x72;&#45;&#114;&#x61;&#105;&#109;&#97;&#x6e;&#x6e;&#46;&#99;&#104;">&#x6e;&#115;&#x40;&#115;&#116;&#117;&#100;&#101;&#x72;&#45;&#114;&#x61;&#105;&#109;&#97;&#x6e;&#x6e;&#46;&#99;&#104;</a></p>
+									</dd>
+									<dt>since</dt>
+									<dd><p>0.3.0</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getpage" class="tsd-anchor"></a>
+					<h3>get<wbr>Page</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Page<span class="tsd-signature-symbol">(</span>pageNumber<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_pdfjs_document_model_.page.html" class="tsd-signature-type">Page</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in pdfjs/document.model.ts:115</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<dl class="tsd-comment-tags">
 									<dt>throws</dt>
-									<dd><p>{Error} if no page matching the given {@code pageNumber} could be found</p>
+									<dd><p>{Error} if no page is matching the given {@code pageNumber}.</p>
 									</dd>
 								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>pageNumber: <span class="tsd-signature-type">number</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> pageNumber: <span class="tsd-signature-type">number</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>the page number of the wanted page</p>
+										<p>the page number of the wanted page
+										if no page number is given the current page will be returned.</p>
 									</div>
 								</li>
 							</ul>
@@ -259,7 +401,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in pdfjs/document.model.ts:38</li>
+									<li>Defined in pdfjs/document.model.ts:104</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -269,6 +411,29 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="pageintersectioneventhandler" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> page<wbr>Intersection<wbr>Event<wbr>Handler</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">page<wbr>Intersection<wbr>Event<wbr>Handler<span class="tsd-signature-symbol">(</span>changes<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">IntersectionObserverEntry</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in pdfjs/document.model.ts:139</li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>changes: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">IntersectionObserverEntry</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -296,7 +461,25 @@
 								<a href="_pdfjs_document_model_.documentmodel.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_pdfjs_document_model_.documentmodel.html#_onpagevisibilitychange" class="tsd-kind-icon">_on<wbr>Page<wbr>Visibility<wbr>Change</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_pdfjs_document_model_.documentmodel.html#currentpagenumber" class="tsd-kind-icon">current<wbr>Page<wbr>Number</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_pdfjs_document_model_.documentmodel.html#elementpagemap" class="tsd-kind-icon">element<wbr>Page<wbr>Map</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_pdfjs_document_model_.documentmodel.html#intersections" class="tsd-kind-icon">intersections</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_pdfjs_document_model_.documentmodel.html#log" class="tsd-kind-icon">log</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_pdfjs_document_model_.documentmodel.html#onpagevisibilitychange" class="tsd-kind-icon">on<wbr>Page<wbr>Visibility<wbr>Change</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_pdfjs_document_model_.documentmodel.html#pagevisibilitymap" class="tsd-kind-icon">page<wbr>Visibility<wbr>Map</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_pdfjs_document_model_.documentmodel.html#pages" class="tsd-kind-icon">pages</a>
@@ -304,8 +487,14 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_pdfjs_document_model_.documentmodel.html#viewer" class="tsd-kind-icon">viewer</a>
 							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_pdfjs_document_model_.documentmodel.html#visiblepages" class="tsd-kind-icon">visible<wbr>Pages</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_pdfjs_document_model_.documentmodel.html#addpage" class="tsd-kind-icon">add<wbr>Page</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_pdfjs_document_model_.documentmodel.html#dispose" class="tsd-kind-icon">dispose</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_pdfjs_document_model_.documentmodel.html#getpage" class="tsd-kind-icon">get<wbr>Page</a>
@@ -313,12 +502,18 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_pdfjs_document_model_.documentmodel.html#haspage" class="tsd-kind-icon">has<wbr>Page</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="_pdfjs_document_model_.documentmodel.html#pageintersectioneventhandler" class="tsd-kind-icon">page<wbr>Intersection<wbr>Event<wbr>Handler</a>
+							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="_pdfjs_document_model_.page.html" class="tsd-kind-icon">Page</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_pdfjs_document_model_.pagevisibilitychangeevent.html" class="tsd-kind-icon">Page<wbr>Visibility<wbr>Change<wbr>Event</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
 						<a href="../modules/_pdfjs_document_model_.html#getpagenumberbyevent" class="tsd-kind-icon">get<wbr>Page<wbr>Number<wbr>ByEvent</a>

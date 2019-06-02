@@ -75,7 +75,7 @@
 					</div>
 					<dl class="tsd-comment-tags">
 						<dt>author</dt>
-						<dd><p>Nicolas Märchy <a href="mailto:&#110;&#x6d;&#64;&#x73;&#x74;&#117;&#100;&#101;&#x72;&#x2d;&#x72;&#97;&#x69;&#109;&#97;&#110;&#x6e;&#x2e;&#x63;&#x68;">&#110;&#x6d;&#64;&#x73;&#x74;&#117;&#100;&#101;&#x72;&#x2d;&#x72;&#97;&#x69;&#109;&#97;&#110;&#x6e;&#x2e;&#x63;&#x68;</a></p>
+						<dd><p>Nicolas Märchy <a href="mailto:&#x6e;&#109;&#x40;&#115;&#116;&#117;&#x64;&#x65;&#x72;&#x2d;&#x72;&#97;&#105;&#109;&#97;&#x6e;&#110;&#46;&#x63;&#104;">&#x6e;&#109;&#x40;&#115;&#116;&#117;&#x64;&#x65;&#x72;&#x2d;&#x72;&#97;&#105;&#109;&#97;&#x6e;&#110;&#46;&#x63;&#104;</a></p>
 						</dd>
 						<dt>since</dt>
 						<dd><p>0.0.1</p>
@@ -104,7 +104,11 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_api_storage_page_event_.pageeventcollection.html#aftercirclerendered" class="tsd-kind-icon">after<wbr>Circle<wbr>Rendered</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_api_storage_page_event_.pageeventcollection.html#afterelementremoved" class="tsd-kind-icon">after<wbr>Element<wbr>Removed</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_api_storage_page_event_.pageeventcollection.html#afterellipserendered" class="tsd-kind-icon">after<wbr>Ellipse<wbr>Rendered</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_api_storage_page_event_.pageeventcollection.html#afterhighlightrendered" class="tsd-kind-icon">after<wbr>Highlight<wbr>Rendered</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_api_storage_page_event_.pageeventcollection.html#afterlinerendered" class="tsd-kind-icon">after<wbr>Line<wbr>Rendered</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_api_storage_page_event_.pageeventcollection.html#afterpolylinerendered" class="tsd-kind-icon">after<wbr>Poly<wbr>Line<wbr>Rendered</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_api_storage_page_event_.pageeventcollection.html#afterrectanglerendered" class="tsd-kind-icon">after<wbr>Rectangle<wbr>Rendered</a></li>
 							</ul>
@@ -115,6 +119,30 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="aftercirclerendered" class="tsd-anchor"></a>
+					<h3>after<wbr>Circle<wbr>Rendered</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">after<wbr>Circle<wbr>Rendered<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/_api_storage_page_event_.drawevent.html" class="tsd-signature-type">DrawEvent</a><span class="tsd-signature-symbol">&lt;</span><a href="_api_draw_elements_.circle.html" class="tsd-signature-type">Circle</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in api/storage/page.event.ts:80</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns an observable of a {@link DrawEvent<Circle>} which
+									emits a draw event every time after a circle is rendered.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/_api_storage_page_event_.drawevent.html" class="tsd-signature-type">DrawEvent</a><span class="tsd-signature-symbol">&lt;</span><a href="_api_draw_elements_.circle.html" class="tsd-signature-type">Circle</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>a hot observable that emits draw events</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
 					<a name="afterelementremoved" class="tsd-anchor"></a>
 					<h3>after<wbr>Element<wbr>Removed</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -124,7 +152,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in api/storage/page.event.ts:61</li>
+									<li>Defined in api/storage/page.event.ts:96</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -134,6 +162,80 @@
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/_api_storage_page_event_.drawevent.html" class="tsd-signature-type">DrawEvent</a><span class="tsd-signature-symbol">&lt;</span><a href="_api_draw_elements_.drawelement.html" class="tsd-signature-type">DrawElement</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>a hot observable that emits draw events</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="afterellipserendered" class="tsd-anchor"></a>
+					<h3>after<wbr>Ellipse<wbr>Rendered</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">after<wbr>Ellipse<wbr>Rendered<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/_api_storage_page_event_.drawevent.html" class="tsd-signature-type">DrawEvent</a><span class="tsd-signature-symbol">&lt;</span><a href="_api_draw_elements_.ellipse.html" class="tsd-signature-type">Ellipse</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in api/storage/page.event.ts:72</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns an observable of a {@link DrawEvent<Ellipse>} which
+									emits a draw event every time after an ellipse is rendered.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/_api_storage_page_event_.drawevent.html" class="tsd-signature-type">DrawEvent</a><span class="tsd-signature-symbol">&lt;</span><a href="_api_draw_elements_.ellipse.html" class="tsd-signature-type">Ellipse</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>a hot observable that emits draw events</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="afterhighlightrendered" class="tsd-anchor"></a>
+					<h3>after<wbr>Highlight<wbr>Rendered</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">after<wbr>Highlight<wbr>Rendered<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/_api_storage_page_event_.drawevent.html" class="tsd-signature-type">DrawEvent</a><span class="tsd-signature-symbol">&lt;</span><a href="_api_draw_elements_.rectangle.html" class="tsd-signature-type">Rectangle</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in api/storage/page.event.ts:56</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns an observable of a {@link DrawEvent<Rectangle>} which
+									emits a draw event every time afte a highlight is rendered.</p>
+								</div>
+								<p>Highlights are rectangles which are placed on a different layer then
+								the forms and paintings.</p>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/_api_storage_page_event_.drawevent.html" class="tsd-signature-type">DrawEvent</a><span class="tsd-signature-symbol">&lt;</span><a href="_api_draw_elements_.rectangle.html" class="tsd-signature-type">Rectangle</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>a hot observable that emits draw events</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="afterlinerendered" class="tsd-anchor"></a>
+					<h3>after<wbr>Line<wbr>Rendered</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">after<wbr>Line<wbr>Rendered<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/_api_storage_page_event_.drawevent.html" class="tsd-signature-type">DrawEvent</a><span class="tsd-signature-symbol">&lt;</span><a href="_api_draw_elements_.line.html" class="tsd-signature-type">Line</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in api/storage/page.event.ts:88</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns an observable of a {@link DrawEvent<Line>} which
+									emits a draw event every time after a line is rendered.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/_api_storage_page_event_.drawevent.html" class="tsd-signature-type">DrawEvent</a><span class="tsd-signature-symbol">&lt;</span><a href="_api_draw_elements_.line.html" class="tsd-signature-type">Line</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 							<p>a hot observable that emits draw events</p>
 						</li>
 					</ul>
@@ -172,13 +274,13 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in api/storage/page.event.ts:53</li>
+									<li>Defined in api/storage/page.event.ts:64</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Returns an observable of a {@link DrawEvent<Rectangle>} which
-									emits a draw event every time afte a rectangle is rendered.</p>
+									emits a draw event every time after a rectangle is rendered.</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Observable</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/_api_storage_page_event_.drawevent.html" class="tsd-signature-type">DrawEvent</a><span class="tsd-signature-symbol">&lt;</span><a href="_api_draw_elements_.rectangle.html" class="tsd-signature-type">Rectangle</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -213,7 +315,19 @@
 						<a href="_api_storage_page_event_.pageeventcollection.html" class="tsd-kind-icon">Page<wbr>Event<wbr>Collection</a>
 						<ul>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="_api_storage_page_event_.pageeventcollection.html#aftercirclerendered" class="tsd-kind-icon">after<wbr>Circle<wbr>Rendered</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_api_storage_page_event_.pageeventcollection.html#afterelementremoved" class="tsd-kind-icon">after<wbr>Element<wbr>Removed</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="_api_storage_page_event_.pageeventcollection.html#afterellipserendered" class="tsd-kind-icon">after<wbr>Ellipse<wbr>Rendered</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="_api_storage_page_event_.pageeventcollection.html#afterhighlightrendered" class="tsd-kind-icon">after<wbr>Highlight<wbr>Rendered</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="_api_storage_page_event_.pageeventcollection.html#afterlinerendered" class="tsd-kind-icon">after<wbr>Line<wbr>Rendered</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="_api_storage_page_event_.pageeventcollection.html#afterpolylinerendered" class="tsd-kind-icon">after<wbr>Poly<wbr>Line<wbr>Rendered</a>

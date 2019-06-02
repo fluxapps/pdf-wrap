@@ -76,20 +76,29 @@
 				</ul>
 				<h3 id="installing">Installing</h3>
 				<p>Install dependencies</p>
-				<pre><code>yarn <span class="hljs-keyword">install</span>
-</code></pre><h2 id="tasks">Tasks</h2>
+				<pre><code>yarn <span class="hljs-keyword">install</span></code></pre><h2 id="tasks">Tasks</h2>
 				<p>We use <a href="https://gulpjs.com/">gulp</a> for all tasks used. We recommend
 				to not install gulp globally and use the local gulp version.</p>
 				<blockquote>
 					<p>local gulp can be accessed with <code>yarn gulp</code></p>
 				</blockquote>
-				<h2 id="running-the-tests">Running the tests</h2>
-				<p>Run unit tests</p>
-				<pre><code>yarn gulp <span class="hljs-built_in">test</span>
-</code></pre><h3 id="coding-style-tests">Coding style tests</h3>
+				<blockquote>
+					<p>Run <code>yarn gulp --tasks</code> to obtain a list of all defined tasks.</p>
+				</blockquote>
+				<h2 id="build">Build</h2>
+				<h3 id="library">Library</h3>
+				<p>To build and package the library run the following command.</p>
+				<pre><code><span class="hljs-attribute">yarn gulp repackage</span></code></pre><p>The packed library will be located at <code>build/distributions/npm</code>.</p>
+				<h3 id="documentation">Documentation</h3>
+				<p>The documentation is located at <code>./docs</code>.
+				In order to build the documentation run the following command.</p>
+				<pre><code><span class="hljs-attribute">yarn gulp mkdocs</span> </code></pre><p>The html documentation will be located at <code>./build/docs</code>. </p>
+				<h2 id="tests">Tests</h2>
+				<h3 id="unit-tests">Unit tests</h3>
+				<p>All unit test can be run with the following command.</p>
+				<pre><code>yarn gulp <span class="hljs-built_in">test</span></code></pre><h3 id="coding-style-tests">Coding style tests</h3>
 				<p>We use <a href="https://palantir.github.io/tslint/">TSLint</a> to analysis our code.</p>
-				<pre><code><span class="hljs-attribute">yarn gulp lint</span>
-</code></pre><h2 id="built-with">Built With</h2>
+				<pre><code><span class="hljs-attribute">yarn gulp lint</span></code></pre><h2 id="built-with">Built With</h2>
 				<ul>
 					<li><a href="https://www.typescriptlang.org/">Typescript</a> - Javascript transpiler used</li>
 					<li><a href="https://yarnpkg.com/en/">Yarn</a> - Package manager used</li>
@@ -101,6 +110,7 @@
 				<h2 id="authors">Authors</h2>
 				<ul>
 					<li><strong>Nicolas Märchy</strong> - <em>Initial work</em> - <a href="https://github.com/BilledTrain380">BilledTrain380</a></li>
+					<li><strong>Nicolas Schäfli</strong> - <a href="https://github.com/d3r1w">d3r1w</a></li>
 				</ul>
 				<p>See also the list of <a href="https://github.com/studer-raimann/pdf-wrap/graphs/contributors">contributors</a> who participated in this project.</p>
 				<h2 id="license">License</h2>
@@ -148,6 +158,9 @@
 						<a href="modules/_api_search_search_api_.html">"api/search/search.api"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
+						<a href="modules/_api_selection_selection_api_.html">"api/selection/selection.api"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="modules/_api_storage_adapter_.html">"api/storage/adapter"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -155,6 +168,9 @@
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_api_storage_page_event_.html">"api/storage/page.event"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_api_tool_forms_.html">"api/tool/forms"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_api_tool_toolbox_.html">"api/tool/toolbox"</a>
@@ -173,6 +189,9 @@
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_paint_elements_impl_.html">"paint/elements.impl"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_paint_events_.html">"paint/events"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_paint_painters_.html">"paint/painters"</a>
@@ -202,10 +221,22 @@
 						<a href="modules/_pdfjs_pdfjs_document_service_.html">"pdfjs/pdfjs.document.service"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
+						<a href="modules/_pdfjs_polyfill_.html">"pdfjs/polyfill"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="modules/_pdfjs_rescale_manager_.html">"pdfjs/rescale-<wbr>manager"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
+						<a href="modules/_pdfjs_selection_.html">"pdfjs/selection"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="modules/_pdfjs_storage_adapter_wrapper_.html">"pdfjs/storage-<wbr>adapter-<wbr>wrapper"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_pdfjs_tool_form_basic_.html">"pdfjs/tool/form.basic"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_pdfjs_tool_forms_.html">"pdfjs/tool/forms"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_pdfjs_tool_tool_basic_.html">"pdfjs/tool/tool.basic"</a>

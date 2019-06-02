@@ -74,7 +74,7 @@
 					</div>
 					<dl class="tsd-comment-tags">
 						<dt>author</dt>
-						<dd><p>Nicolas Märchy <a href="mailto:&#110;&#109;&#x40;&#115;&#116;&#x75;&#x64;&#x65;&#x72;&#x2d;&#114;&#x61;&#x69;&#109;&#x61;&#110;&#x6e;&#46;&#x63;&#x68;">&#110;&#109;&#x40;&#115;&#116;&#x75;&#x64;&#x65;&#x72;&#x2d;&#114;&#x61;&#x69;&#109;&#x61;&#110;&#x6e;&#46;&#x63;&#x68;</a></p>
+						<dd><p>Nicolas Märchy <a href="mailto:&#110;&#109;&#x40;&#115;&#x74;&#117;&#x64;&#101;&#x72;&#x2d;&#114;&#x61;&#x69;&#x6d;&#97;&#110;&#x6e;&#x2e;&#99;&#104;">&#110;&#109;&#x40;&#115;&#x74;&#117;&#x64;&#101;&#x72;&#x2d;&#114;&#x61;&#x69;&#x6d;&#97;&#110;&#x6e;&#x2e;&#99;&#104;</a></p>
 						</dd>
 						<dt>since</dt>
 						<dd><p>0.0.1</p>
@@ -103,9 +103,13 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_storage_adapter_.pageoverlay.html#circles" class="tsd-kind-icon">circles</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_storage_adapter_.pageoverlay.html#drawings" class="tsd-kind-icon">drawings</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_storage_adapter_.pageoverlay.html#ellipses" class="tsd-kind-icon">ellipses</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_storage_adapter_.pageoverlay.html#highlightings" class="tsd-kind-icon">highlightings</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_storage_adapter_.pageoverlay.html#lines" class="tsd-kind-icon">lines</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_storage_adapter_.pageoverlay.html#pagenumber" class="tsd-kind-icon">page<wbr>Number</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_api_storage_adapter_.pageoverlay.html#rectangles" class="tsd-kind-icon">rectangles</a></li>
 							</ul>
 						</section>
 					</div>
@@ -117,7 +121,7 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Page<wbr>Overlay<span class="tsd-signature-symbol">(</span>pageNumber<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, highlightings<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.rectangle.html" class="tsd-signature-type">Rectangle</a><span class="tsd-signature-symbol">&gt;</span>, drawings<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.polyline.html" class="tsd-signature-type">PolyLine</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_storage_adapter_.pageoverlay.html" class="tsd-signature-type">PageOverlay</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Page<wbr>Overlay<span class="tsd-signature-symbol">(</span>pageNumber<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, highlightings<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.rectangle.html" class="tsd-signature-type">Rectangle</a><span class="tsd-signature-symbol">&gt;</span>, drawings<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.polyline.html" class="tsd-signature-type">PolyLine</a><span class="tsd-signature-symbol">&gt;</span>, rectangles<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.rectangle.html" class="tsd-signature-type">Rectangle</a><span class="tsd-signature-symbol">&gt;</span>, circles<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.circle.html" class="tsd-signature-type">Circle</a><span class="tsd-signature-symbol">&gt;</span>, ellipses<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.ellipse.html" class="tsd-signature-type">Ellipse</a><span class="tsd-signature-symbol">&gt;</span>, lines<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.line.html" class="tsd-signature-type">Line</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_api_storage_adapter_.pageoverlay.html" class="tsd-signature-type">PageOverlay</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -137,6 +141,18 @@
 								<li>
 									<h5>drawings: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.polyline.html" class="tsd-signature-type">PolyLine</a><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
+								<li>
+									<h5>rectangles: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.rectangle.html" class="tsd-signature-type">Rectangle</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>circles: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.circle.html" class="tsd-signature-type">Circle</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>ellipses: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.ellipse.html" class="tsd-signature-type">Ellipse</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>lines: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.line.html" class="tsd-signature-type">Line</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_api_storage_adapter_.pageoverlay.html" class="tsd-signature-type">PageOverlay</a></h4>
 						</li>
@@ -146,12 +162,32 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="circles" class="tsd-anchor"></a>
+					<h3>circles</h3>
+					<div class="tsd-signature tsd-kind-icon">circles<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.circle.html" class="tsd-signature-type">Circle</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in api/storage/adapter.ts:91</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="drawings" class="tsd-anchor"></a>
 					<h3>drawings</h3>
 					<div class="tsd-signature tsd-kind-icon">drawings<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.polyline.html" class="tsd-signature-type">PolyLine</a><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
 							<li>Defined in api/storage/adapter.ts:89</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="ellipses" class="tsd-anchor"></a>
+					<h3>ellipses</h3>
+					<div class="tsd-signature tsd-kind-icon">ellipses<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.ellipse.html" class="tsd-signature-type">Ellipse</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in api/storage/adapter.ts:92</li>
 						</ul>
 					</aside>
 				</section>
@@ -166,12 +202,32 @@
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="lines" class="tsd-anchor"></a>
+					<h3>lines</h3>
+					<div class="tsd-signature tsd-kind-icon">lines<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.line.html" class="tsd-signature-type">Line</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in api/storage/adapter.ts:93</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="pagenumber" class="tsd-anchor"></a>
 					<h3>page<wbr>Number</h3>
 					<div class="tsd-signature tsd-kind-icon">page<wbr>Number<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
 							<li>Defined in api/storage/adapter.ts:87</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="rectangles" class="tsd-anchor"></a>
+					<h3>rectangles</h3>
+					<div class="tsd-signature tsd-kind-icon">rectangles<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_api_draw_elements_.rectangle.html" class="tsd-signature-type">Rectangle</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in api/storage/adapter.ts:90</li>
 						</ul>
 					</aside>
 				</section>
@@ -202,13 +258,25 @@
 								<a href="_api_storage_adapter_.pageoverlay.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_api_storage_adapter_.pageoverlay.html#circles" class="tsd-kind-icon">circles</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_api_storage_adapter_.pageoverlay.html#drawings" class="tsd-kind-icon">drawings</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_api_storage_adapter_.pageoverlay.html#ellipses" class="tsd-kind-icon">ellipses</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_api_storage_adapter_.pageoverlay.html#highlightings" class="tsd-kind-icon">highlightings</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_api_storage_adapter_.pageoverlay.html#lines" class="tsd-kind-icon">lines</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="_api_storage_adapter_.pageoverlay.html#pagenumber" class="tsd-kind-icon">page<wbr>Number</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_api_storage_adapter_.pageoverlay.html#rectangles" class="tsd-kind-icon">rectangles</a>
 							</li>
 						</ul>
 					</li>
