@@ -32,7 +32,15 @@ describe('a storage adapter wrapper', () => {
             it('should return the result of the  first one', async () => {
 
                 const mockStorageAdapter1: StorageAdapter = mock(MockStorageAdapter);
-                when(mockStorageAdapter1.loadPage(anything(), anyNumber())).thenResolve(new PageOverlay(1, [], []));
+                when(mockStorageAdapter1.loadPage(anything(), anyNumber())).thenResolve(new PageOverlay(
+                    1,
+                    [],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                ));
 
                 const mockStorageAdapter2: StorageAdapter = mock(MockStorageAdapter);
 
@@ -63,7 +71,15 @@ describe('a storage adapter wrapper', () => {
                 when(mockStorageAdapter2.loadPage(anything(), anyNumber())).thenReject(new UnfinishedExecutionError("Skip adapter 2"));
 
                 const mockStorageAdapter3: StorageAdapter = mock(MockStorageAdapter);
-                when(mockStorageAdapter3.loadPage(anything(), anyNumber())).thenResolve(new PageOverlay(1, [], []));
+                when(mockStorageAdapter3.loadPage(anything(), anyNumber())).thenResolve(new PageOverlay(
+                    1,
+                    [],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                ));
 
                 const mockStorageRegistry: StorageRegistry = mock(StorageRegistry);
                 when(mockStorageRegistry.get(anything())).thenReturn([

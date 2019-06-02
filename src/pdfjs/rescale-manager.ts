@@ -1,4 +1,4 @@
-import {PolyLine, Rectangle} from "../api/draw/elements";
+import { Circle, Ellipse, Line, PolyLine, Rectangle } from "../api/draw/elements";
 import {Dimension, Point} from "../api/draw/draw.basic";
 import {PDFViewer} from "pdfjs-dist/web/pdf_viewer";
 import {ElementBuilderFactoryImpl} from "../paint/element.builders.impl";
@@ -36,7 +36,7 @@ export class RescaleManager {
         return new ElementBuilderFactoryImpl().polyLine()
             .id(polyLine.id)
             .borderColor(polyLine.borderColor)
-            .borderWidth(this.normalizeBorderWidth(polyLine.borderWidth))
+            .borderWidth(this.normalizePixel(polyLine.borderWidth))
             .coordinates(polyLine.coordinates.map(this.normalizePosition.bind(this)))
             .build();
     }
@@ -56,7 +56,7 @@ export class RescaleManager {
         return new ElementBuilderFactoryImpl().polyLine()
             .id(polyLine.id)
             .borderColor(polyLine.borderColor)
-            .borderWidth(this.rescaleBorderWidth(polyLine.borderWidth))
+            .borderWidth(this.rescalePixel(polyLine.borderWidth))
             .coordinates(polyLine.coordinates.map(this.rescalePosition.bind(this)))
             .build();
     }
@@ -77,7 +77,7 @@ export class RescaleManager {
             .id(rectangle.id)
             .fillColor(rectangle.fillColor)
             .borderColor(rectangle.borderColor)
-            .borderWidth(this.normalizeBorderWidth(rectangle.borderWidth))
+            .borderWidth(this.normalizePixel(rectangle.borderWidth))
             .dimension(this.normalizeDimension(rectangle.dimension))
             .position(this.normalizePosition(rectangle.position))
             .build();
@@ -99,9 +99,139 @@ export class RescaleManager {
             .id(rectangle.id)
             .fillColor(rectangle.fillColor)
             .borderColor(rectangle.borderColor)
-            .borderWidth(this.rescaleBorderWidth(rectangle.borderWidth))
+            .borderWidth(this.rescalePixel(rectangle.borderWidth))
             .dimension(this.rescaleDimension(rectangle.dimension))
             .position(this.rescalePosition(rectangle.position))
+            .build();
+    }
+
+    /**
+     * Normalized the given {@code ellipse} to the scale of 1.
+     *
+     * @param {Ellipse} ellipse - the ellipse to normalize in scale
+     *
+     * @returns {Ellipse} the normalized ellipse
+     */
+    normalizeEllipse(ellipse: Ellipse): Ellipse {
+
+        this.log.trace(() => `Normalize ellipse element: ellipseId=${ellipse.id}`);
+        this.log.debug(() => `Normalize with current scale: scale=${this.viewer.currentScale}, ellipse=${JSON.stringify(ellipse)}`);
+
+        return new ElementBuilderFactoryImpl().ellipse()
+            .id(ellipse.id)
+            .fillColor(ellipse.fillColor)
+            .borderColor(ellipse.borderColor)
+            .borderWidth(this.normalizePixel(ellipse.borderWidth))
+            .dimension(this.normalizeDimension(ellipse.dimension))
+            .position(this.normalizePosition(ellipse.position))
+            .build();
+    }
+
+    /**
+     * Rescales the given {@code ellipse} to the current scale of the viewer.
+     *
+     * @param {Ellipse} ellipse - the ellipse to rescale
+     *
+     * @returns {Ellipse} the rescaled ellipse
+     */
+    rescaleEllipse(ellipse: Rectangle): Ellipse {
+
+        this.log.trace(() => `Rescale ellipse element: ellipseId=${ellipse.id}`);
+        this.log.debug(() => `Rescale with current scale: scale=${this.viewer.currentScale}, ellipse=${JSON.stringify(ellipse)}`);
+
+        return new ElementBuilderFactoryImpl().rectangle()
+            .id(ellipse.id)
+            .fillColor(ellipse.fillColor)
+            .borderColor(ellipse.borderColor)
+            .borderWidth(this.rescalePixel(ellipse.borderWidth))
+            .dimension(this.rescaleDimension(ellipse.dimension))
+            .position(this.rescalePosition(ellipse.position))
+            .build();
+    }
+
+    /**
+     * Normalized the given {@code circle} to the scale of 1.
+     *
+     * @param {Circle} circle - the circle to normalize in scale
+     *
+     * @returns {Circle} the normalized circle
+     */
+    normalizeCircle(circle: Circle): Circle {
+
+        this.log.trace(() => `Normalize circle element: circleId=${circle.id}`);
+        this.log.debug(() => `Normalize with current scale: scale=${this.viewer.currentScale}, circle=${JSON.stringify(circle)}`);
+
+        return new ElementBuilderFactoryImpl().circle()
+            .id(circle.id)
+            .fillColor(circle.fillColor)
+            .borderColor(circle.borderColor)
+            .borderWidth(this.normalizePixel(circle.borderWidth))
+            .diameter(this.normalizePixel(circle.diameter))
+            .position(this.normalizePosition(circle.position))
+            .build();
+    }
+
+    /**
+     * Rescales the given {@code circle} to the current scale of the viewer.
+     *
+     * @param {Circle} circle - the circle to rescale
+     *
+     * @returns {Circle} the rescaled circle
+     */
+    rescaleCircle(circle: Circle): Circle {
+
+        this.log.trace(() => `Rescale circle element: circleId=${circle.id}`);
+        this.log.debug(() => `Rescale with current scale: scale=${this.viewer.currentScale}, circle=${JSON.stringify(circle)}`);
+
+        return new ElementBuilderFactoryImpl().circle()
+            .id(circle.id)
+            .fillColor(circle.fillColor)
+            .borderColor(circle.borderColor)
+            .borderWidth(this.rescalePixel(circle.borderWidth))
+            .diameter(this.rescalePixel(circle.diameter))
+            .position(this.rescalePosition(circle.position))
+            .build();
+    }
+
+    /**
+     * Normalized the given {@code line} to the scale of 1.
+     *
+     * @param {Line} line - the line to normalize in scale
+     *
+     * @returns {Line} the normalized line
+     */
+    normalizeLine(line: Line): Line {
+
+        this.log.trace(() => `Normalize line element: lineId=${line.id}`);
+        this.log.debug(() => `Normalize with current scale: scale=${this.viewer.currentScale}, line=${JSON.stringify(line)}`);
+
+        return new ElementBuilderFactoryImpl().line()
+            .id(line.id)
+            .borderColor(line.borderColor)
+            .borderWidth(this.normalizePixel(line.borderWidth))
+            .start(this.normalizePosition(line.start))
+            .end(this.normalizePosition(line.end))
+            .build();
+    }
+
+    /**
+     * Rescales the given {@code line} to the current scale of the viewer.
+     *
+     * @param {Line} line - the line to rescale
+     *
+     * @returns {Line} the rescaled line
+     */
+    rescaleLine(line: Line): Line {
+
+        this.log.trace(() => `Rescale line element: lineId=${line.id}`);
+        this.log.debug(() => `Rescale with current scale: scale=${this.viewer.currentScale}, line=${JSON.stringify(line)}`);
+
+        return new ElementBuilderFactoryImpl().line()
+            .id(line.id)
+            .borderColor(line.borderColor)
+            .borderWidth(this.rescalePixel(line.borderWidth))
+            .start(this.rescalePosition(line.start))
+            .end(this.rescalePosition(line.end))
             .build();
     }
 
@@ -116,7 +246,7 @@ export class RescaleManager {
      *
      * @return {number} The normalized value at a scale of one.
      */
-    normalizeBorderWidth(px: number): number {
+    normalizePixel(px: number): number {
         return px / this.viewer.currentScale;
     }
 
@@ -131,35 +261,37 @@ export class RescaleManager {
      *
      * @return {number}     The rescaled value according to the document scale.
      */
-    rescaleBorderWidth(px: number): number {
+    rescalePixel(px: number): number {
         return px * this.viewer.currentScale;
     }
 
     private normalizeDimension(dimension: Dimension): Dimension {
         return {
-            height: dimension.height / this.viewer.currentScale,
-            width: dimension.width / this.viewer.currentScale
+            height: this.normalizePixel(dimension.height),
+            width:  this.normalizePixel(dimension.width)
         };
     }
 
     private rescaleDimension(dimension: Dimension): Dimension {
         return {
-            height: dimension.height * this.viewer.currentScale,
-            width: dimension.width * this.viewer.currentScale
+            height: this.rescalePixel(dimension.height),
+            width: this.rescalePixel(dimension.width)
         };
     }
 
     private normalizePosition(position: Point): Point {
         return {
-            x: position.x / this.viewer.currentScale,
-            y: position.y / this.viewer.currentScale
+            x: this.normalizePixel(position.x),
+            y: this.normalizePixel(position.y),
+            z: position.z
         };
     }
 
     private rescalePosition(position: Point): Point {
         return {
-            x: position.x * this.viewer.currentScale,
-            y: position.y * this.viewer.currentScale
+            x: this.rescalePixel(position.x),
+            y: this.rescalePixel(position.y),
+            z: position.z
         };
     }
 }

@@ -255,25 +255,28 @@ export abstract class DrawingTool extends BaseTool {
         if (evt instanceof TouchEvent) {
             const touch: TouchEvent = evt as TouchEvent;
             if (touch.touches.length === 0 && touch.changedTouches.length === 0) {
-                return { x: 0, y: 0};
+                return { x: 0, y: 0, z: 0};
             }
 
             if (touch.changedTouches.length === 0) {
                 return {
                     x: touch.touches[0].clientX - this.page.pagePosition.x,
-                    y: touch.touches[0].clientY - this.page.pagePosition.y
+                    y: touch.touches[0].clientY - this.page.pagePosition.y,
+                    z: this.page.pagePosition.z
                 };
             }
 
             return {
                 x: touch.changedTouches[0].clientX - this.page.pagePosition.x,
-                y: touch.changedTouches[0].clientY - this.page.pagePosition.y
+                y: touch.changedTouches[0].clientY - this.page.pagePosition.y,
+                z: this.page.pagePosition.z
             };
         }
 
         return {
             x: evt.clientX - this.page.pagePosition.x,
-            y: evt.clientY - this.page.pagePosition.y
+            y: evt.clientY - this.page.pagePosition.y,
+            z: this.page.pagePosition.z
         };
     }
 

@@ -33,9 +33,28 @@ to not install gulp globally and use the local gulp version.
 
 > local gulp can be accessed with `yarn gulp`
 
-## Running the tests
+> Run `yarn gulp --tasks` to obtain a list of all defined tasks.
 
-Run unit tests
+## Build
+### Library
+To build and package the library run the following command.
+```
+yarn gulp repackage
+```
+The packed library will be located at `build/distributions/npm`.
+
+### Documentation
+The documentation is located at `./docs`.
+In order to build the documentation run the following command.
+```
+yarn gulp mkdocs 
+```
+The html documentation will be located at `./build/docs`. 
+
+## Tests
+### Unit tests
+
+All unit test can be run with the following command.
 
 ```
 yarn gulp test
@@ -63,6 +82,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 ## Authors
 
 * **Nicolas Märchy** - *Initial work* - [BilledTrain380](https://github.com/BilledTrain380)
+* **Nicolas Schäfli** - [d3r1w](https://github.com/d3r1w)
 
 See also the list of [contributors](https://github.com/studer-raimann/pdf-wrap/graphs/contributors) who participated in this project.
 

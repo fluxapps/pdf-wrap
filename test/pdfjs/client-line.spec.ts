@@ -10,8 +10,8 @@ describe('a client line', () => {
 
             it('should return true', () => {
 
-                const a: ClientLine = new ClientLine({x: 2, y: 2}, {x: 4, y: 4});
-                const b: ClientLine = new ClientLine({x: 2, y: 4}, {x: 4, y: 2});
+                const a: ClientLine = new ClientLine({x: 2, y: 2, z: 0}, {x: 4, y: 4, z: 0});
+                const b: ClientLine = new ClientLine({x: 2, y: 4, z: 0}, {x: 4, y: 2, z: 0});
 
 
                 const result: boolean = a.intersectsWith(b);
@@ -22,10 +22,8 @@ describe('a client line', () => {
 
             it('with one parallel line to Y axis should return false', () => {
 
-                const a: ClientLine = new ClientLine({x: 5, y: 2}, {x: 5, y: 6});
-                const b: ClientLine = new ClientLine({x: 3, y: 3}, {x: 6, y: 6});
-
-
+                const a: ClientLine = new ClientLine({x: 5, y: 2, z: 0}, {x: 5, y: 6, z: 0});
+                const b: ClientLine = new ClientLine({x: 3, y: 3, z: 0}, {x: 6, y: 6, z: 0});
 
                 const result: boolean = a.intersectsWith(b);
 
@@ -38,8 +36,8 @@ describe('a client line', () => {
 
             it('without parallel lines to Y axis should return false', () => {
 
-                const a: ClientLine = new ClientLine({x: 2, y: 2}, {x: 4, y: 4});
-                const b: ClientLine = new ClientLine({x: 5, y: 5}, {x: 6, y: 6});
+                const a: ClientLine = new ClientLine({x: 2, y: 2, z: 0}, {x: 4, y: 4, z: 0});
+                const b: ClientLine = new ClientLine({x: 5, y: 5, z: 0}, {x: 6, y: 6, z: 0});
 
 
                 const result: boolean = a.intersectsWith(b);
@@ -50,8 +48,8 @@ describe('a client line', () => {
 
             it('with one parallel line to Y axis should return false', () => {
 
-                const a: ClientLine = new ClientLine({x: 5, y: 4}, {x: 5, y: 5});
-                const b: ClientLine = new ClientLine({x: 5, y: 5}, {x: 6, y: 6});
+                const a: ClientLine = new ClientLine({x: 5, y: 4, z: 0}, {x: 5, y: 5, z: 0});
+                const b: ClientLine = new ClientLine({x: 5, y: 5, z: 0}, {x: 6, y: 6, z: 0});
 
 
                 const result: boolean = a.intersectsWith(b);
@@ -62,8 +60,8 @@ describe('a client line', () => {
 
             it('with two parallel lines to Y axis should return false', () => {
 
-                const a: ClientLine = new ClientLine({x: 2, y: 2}, {x: 2, y: 4});
-                const b: ClientLine = new ClientLine({x: 3, y: 3}, {x: 3, y: 6});
+                const a: ClientLine = new ClientLine({x: 2, y: 2, z: 0}, {x: 2, y: 4, z: 0});
+                const b: ClientLine = new ClientLine({x: 3, y: 3, z: 0}, {x: 3, y: 6, z: 0});
 
 
                 const result: boolean = a.intersectsWith(b);
@@ -77,8 +75,8 @@ describe('a client line', () => {
 
             it('should return false', () => {
 
-                const a: ClientLine = new ClientLine({x: 2, y: 2}, {x: 4, y: 4});
-                const b: ClientLine = new ClientLine({x: 2, y: 2}, {x: 6, y: 6});
+                const a: ClientLine = new ClientLine({x: 2, y: 2, z: 0}, {x: 4, y: 4, z: 0});
+                const b: ClientLine = new ClientLine({x: 2, y: 2, z: 0}, {x: 6, y: 6, z: 0});
 
 
                 const result: boolean = a.intersectsWith(b);
@@ -92,8 +90,8 @@ describe('a client line', () => {
 
             it('should return false', () => {
 
-                const a: ClientLine = new ClientLine({x: 2, y: 2}, {x: 6, y: 6});
-                const b: ClientLine = new ClientLine({x: 4, y: 4}, {x: 6, y: 6});
+                const a: ClientLine = new ClientLine({x: 2, y: 2, z: 0}, {x: 6, y: 6, z: 0});
+                const b: ClientLine = new ClientLine({x: 4, y: 4, z: 0}, {x: 6, y: 6, z: 0});
 
 
                 const result: boolean = a.intersectsWith(b);
@@ -107,8 +105,8 @@ describe('a client line', () => {
 
             it('of b with a should return false', () => {
 
-                const a: ClientLine = new ClientLine({x: 2, y: 2}, {x: 6, y: 6});
-                const b: ClientLine = new ClientLine({x: 1, y: 6}, {x: 3, y: 5});
+                const a: ClientLine = new ClientLine({x: 2, y: 2, z: 0}, {x: 6, y: 6, z: 0});
+                const b: ClientLine = new ClientLine({x: 1, y: 6, z: 0}, {x: 3, y: 5, z: 0});
 
 
                 const result: boolean = a.intersectsWith(b);
@@ -119,8 +117,8 @@ describe('a client line', () => {
 
             it('of a with b should return false', () => {
 
-                const a: ClientLine = new ClientLine({x: 2, y: 2}, {x: 6, y: 6});
-                const b: ClientLine = new ClientLine({x: 1, y: 6}, {x: 3, y: 5});
+                const a: ClientLine = new ClientLine({x: 2, y: 2, z: 0}, {x: 6, y: 6, z: 0});
+                const b: ClientLine = new ClientLine({x: 1, y: 6, z: 0}, {x: 3, y: 5, z: 0});
 
 
                 const result: boolean = b.intersectsWith(a);

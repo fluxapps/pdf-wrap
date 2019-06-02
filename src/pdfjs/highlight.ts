@@ -1,3 +1,4 @@
+import { StateChangeEvent } from "../api/event/event.api";
 import {Highlighting, Target, TextSelection} from "../api/highlight/highlight.api";
 import {Observable} from "rxjs/internal/Observable";
 import {Color} from "../api/draw/color";
@@ -32,9 +33,18 @@ export class TextHighlighting implements Highlighting {
      */
     readonly onTextUnselection: Observable<void>;
 
+    /**
+     * Emits the new state of the text highlight mode.
+     *
+     * @since 0.3.0
+     */
+    readonly stateChange: Observable<StateChangeEvent>;
+
     private enabled: boolean = false;
 
     private readonly dispose$: Subject<void> = new Subject<void>();
+
+    private readonly _stateChange: Subject<StateChangeEvent> = new Subject();
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/highlight:TextHighlighting");
 
@@ -45,6 +55,8 @@ export class TextHighlighting implements Highlighting {
     constructor(
         private readonly document: DocumentModel
     ) {
+
+        this.stateChange = this._stateChange.asObservable();
 
         // get the page where the mouse down event was
         const page: Observable<Page> = merge(
@@ -61,6 +73,7 @@ export class TextHighlighting implements Highlighting {
         // transformed selection on mouse up only inside the viewer
         const selections: Observable<Array<Target>> = fromEvent(window.document, "selectionchange", { passive: true })
             .pipe(map((_) => window.getSelection()))
+            .pipe(filter((it): it is Selection => it !== null))
             .pipe(map(transformSelection))
             .pipe(filter((it) => it.length > 0))
             .pipe(tap((it) => this.log.debug(() => `targets: ${JSON.stringify(it)}`)))
@@ -89,7 +102,7 @@ export class TextHighlighting implements Highlighting {
             fromEvent(document.viewer, "mouseup", { passive: true }),
             fromEvent<TouchEvent>(document.viewer, "touchend", { passive: true })
         )
-            .pipe(map((_) => window.getSelection().rangeCount))
+            .pipe(map((_) => window.getSelection()!.rangeCount))
             // .pipe(map(transformSelection))
             .pipe(filter((it) => it < 1))
             .pipe(map((_) => {/* return void */}))
@@ -105,6 +118,7 @@ export class TextHighlighting implements Highlighting {
     disable(): void {
         this.log.info(() => "Disable text highlighting");
         this.enabled = false;
+        this._stateChange.next(new StateChangeEvent(this.enabled));
     }
 
     /**
@@ -113,6 +127,20 @@ export class TextHighlighting implements Highlighting {
     enable(): void {
         this.log.info(() => "Enable text highlighting");
         this.enabled = true;
+        this._stateChange.next(new StateChangeEvent(this.enabled));
+    }
+
+    /**
+     * Toggles the text selection for a user.
+     *
+     * @since 0.3.0
+     */
+    toggle(): void {
+        if (this.enabled) {
+            this.disable();
+        } else {
+            this.enable();
+        }
     }
 
     dispose(): void {
@@ -137,7 +165,7 @@ export class TextSelectionImpl implements TextSelection {
     readonly onRemoveHighlighting: Observable<DrawEvent<DrawElement>>;
 
     get targets(): Array<Target> {
-        return transformSelection(window.getSelection());
+        return transformSelection(window.getSelection()!);
     }
 
     private readonly _onHighlighting: Subject<Rectangle> = new Subject();
@@ -371,7 +399,7 @@ export class HighlightManager {
         const newHighlight: CanvasRectangle = this.canvas.rectangle()
             .fillColor(this.highlightColor!)
             .dimension({height: rect.height, width: rect.width})
-            .position({x: rect.left, y: rect.top})
+            .position({x: rect.left, y: rect.top, z: 0})
             .paint();
 
         this._onAdd.next(newHighlight.transform());
@@ -405,7 +433,7 @@ export class HighlightManager {
                 const newRect: CanvasRectangle = this.canvas.rectangle()
                     .borderColor(data.rectangle.borderColor)
                     .fillColor(data.rectangle.fillColor)
-                    .position({x: result.left, y: result.top})
+                    .position({x: result.left, y: result.top, z: 0})
                     .dimension({height: result.height, width: result.width})
                     .paint();
 

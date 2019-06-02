@@ -1,3 +1,4 @@
+import "./polyfill";
 import {
     getDocument,
     GlobalWorkerOptions,
@@ -22,22 +23,24 @@ import {
 import { Subject } from "rxjs";
 import { fromPromise, Subscriber } from "rxjs/internal-compatibility";
 import { Observable } from "rxjs/internal/Observable";
+import { fromArray } from "rxjs/internal/observable/fromArray";
 import { fromEvent } from "rxjs/internal/observable/fromEvent";
 import { merge } from "rxjs/internal/observable/merge";
 import { of } from "rxjs/internal/observable/of";
 import { TeardownLogic } from "rxjs/internal/types";
-import { first, map, mergeMap, takeUntil, tap } from "rxjs/operators";
+import { filter, first, flatMap, map, mergeMap, takeUntil, tap } from "rxjs/operators";
 import { Logger } from "typescript-logging";
 import { LoadingOptions, PDFDocumentService } from "../api/document.service";
 import { Outline, PageThumbnail, TreeOutlineEntry } from "../api/document/document.info";
 import { PDFDocument, ScalePreset } from "../api/document/pdf.document";
 import { Point } from "../api/draw/draw.basic";
-import { PolyLine, Rectangle } from "../api/draw/elements";
+import { Circle, Ellipse, Line, PolyLine, Rectangle } from "../api/draw/elements";
 import { PageChangeEvent, StateChangeEvent } from "../api/event/event.api";
 import { Highlighting } from "../api/highlight/highlight.api";
 import { DocumentSearch } from "../api/search/search.api";
 import { StorageRegistry } from "../api/storage/adapter.registry";
 import { PageEventCollection } from "../api/storage/page.event";
+import { Forms } from "../api/tool/forms";
 import { Toolbox } from "../api/tool/toolbox";
 import { LoggerFactory } from "../log-config";
 import { Canvas } from "../paint/painters";
@@ -48,7 +51,8 @@ import { LayerManager } from "./layer-manager";
 import { PDFjsPageEvenCollection } from "./page-event-collection";
 import { RescaleManager } from "./rescale-manager";
 import { StorageAdapterWrapper } from "./storage-adapter-wrapper";
-import { EraserTool, FreehandTool } from "./tool/tools";
+import { FormFactory } from "./tool/forms";
+import { EraserTool, FreehandTool, SelectionTool } from "./tool/tools";
 
 // PDF.js defaults
 GlobalWorkerOptions.workerSrc = "assets/pdf.worker.js";
@@ -122,9 +126,9 @@ export class PDFjsDocumentService implements PDFDocumentService {
             .pipe(map(() => new PDFjsDocument(
                 viewer,
                 highlighting,
-                {freehand, eraser},
+                {freehand, eraser, forms, selection: selectionTool},
                 searchController,
-                (): void => { dispose$.next(); dispose$.complete(); }
+                (): void => { dispose$.next(); dispose$.complete(); documentModel.dispose(); }
             )))
             .toPromise();
 
@@ -180,7 +184,16 @@ export class PDFjsDocumentService implements PDFDocumentService {
         linkService.setDocument(pdf);
         viewer.setDocument(pdf);
 
-        const documentModel: DocumentModel = new DocumentModel(options.container);
+        const documentModel: DocumentModel = new DocumentModel(options.container,
+
+            merge(fromArray([1]), fromPromise(fullyLoadPdf)
+                .pipe(
+                    first<PDFDocument>(),
+                    flatMap((it) => it.pageChange),
+                    map((it) => it.pageNumber)
+                )
+            )
+        );
 
         const rescaleManager: RescaleManager = new RescaleManager(viewer);
 
@@ -188,11 +201,70 @@ export class PDFjsDocumentService implements PDFDocumentService {
         const highlighting: TextHighlighting = new TextHighlighting(documentModel);
         const freehand: FreehandTool = new FreehandTool(documentModel, rescaleManager);
         const eraser: EraserTool = new EraserTool(documentModel);
+        const forms: Forms = new FormFactory(documentModel, rescaleManager);
+        const selectionTool: SelectionTool = new SelectionTool(documentModel, forms);
+
+        freehand.stateChange
+            .pipe(
+                filter((it) => it.isActive),
+                takeUntil(dispose$)
+            )
+            .subscribe(() => {
+                eraser.deactivate();
+                selectionTool.deactivate();
+                highlighting.disable();
+            });
+
+        eraser.stateChange
+            .pipe(
+                filter((it) => it.isActive),
+                takeUntil(dispose$)
+            )
+            .subscribe(() => {
+                freehand.deactivate();
+                selectionTool.deactivate();
+                highlighting.disable();
+            });
+
+        selectionTool.stateChange
+            .pipe(
+                filter((it) => it.isActive),
+                takeUntil(dispose$)
+            )
+            .subscribe(() => {
+                freehand.deactivate();
+                eraser.deactivate();
+                highlighting.disable();
+            });
+
+        highlighting.stateChange
+            .pipe(
+                filter((it) => it.isActive),
+                takeUntil(dispose$)
+            )
+            .subscribe(() => {
+                freehand.deactivate();
+                eraser.deactivate();
+                selectionTool.deactivate();
+            });
+
+        // Default to highlighting if no tool is active.
+        merge(highlighting.stateChange, freehand.stateChange, eraser.stateChange, selectionTool.stateChange)
+            .pipe(takeUntil(dispose$))
+            .subscribe(() => {
+                if (!(highlighting.isEnabled || freehand.isActive || eraser.isActive || selectionTool.isActive)) {
+                    highlighting.enable();
+                }
+            });
 
         const pageEventCollection: PageEventCollection = new PDFjsPageEvenCollection(
-            freehand.afterLineRendered.pipe(takeUntil(dispose$)),
-            eraser.afterElementRemoved.pipe(takeUntil(dispose$)),
+            merge(freehand.afterLineRendered, selectionTool.afterPolyLineModified).pipe(takeUntil(dispose$)),
+            merge(eraser.afterElementRemoved, selectionTool.onElementRemoved).pipe(takeUntil(dispose$)),
             highlighting.onTextSelection.pipe(takeUntil(dispose$)),
+            merge(forms.rectangle.afterPaintCompleted, selectionTool.afterRectangleModified).pipe(takeUntil(dispose$)),
+            merge(forms.ellipse.afterPaintCompleted, selectionTool.afterEllipseModified).pipe(takeUntil(dispose$)),
+            merge(forms.circle.afterPaintCompleted, selectionTool.afterCircleModified).pipe(takeUntil(dispose$)),
+            merge(forms.line.afterPaintCompleted, selectionTool.afterLineModified).pipe(takeUntil(dispose$)),
             rescaleManager
         );
         const storageAdapter: StorageAdapterWrapper = new StorageAdapterWrapper(StorageRegistry.instance);
@@ -200,7 +272,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
         storageAdapter.start(options.layerStorage, pageEventCollection);
 
         // move draw layers to front in order to make the mouse listeners work
-        merge(freehand.stateChange, eraser.stateChange)
+        merge(freehand.stateChange, eraser.stateChange, selectionTool.stateChange)
             .pipe(takeUntil(dispose$))
             .subscribe(moveDrawLayerToFront);
 
@@ -221,17 +293,55 @@ export class PDFjsDocumentService implements PDFDocumentService {
                 const highlightTransparencyLayer: Canvas = it.createHighlightTransparencyLayer();
                 const drawLayer: Canvas = it.createDrawingLayer();
 
+                // Restore draw-layer position after page repainting. (for example after Zoom-In / Zoom-Out
+                if (freehand.isActive || eraser.isActive || selectionTool.isActive) {
+                    moveDrawLayerToFront(new StateChangeEvent(true));
+                }
+
                 // this can easily made async without awaiting it
                 this.log.trace(() => `Load page data: pageNumber=${it.pageNumber}`);
                 storageAdapter.loadPage(options.layerStorage, it.pageNumber).then((pageData) => {
 
                     pageData.highlightings
                         .forEach((highlight) => {
-                            drawHighlight(highlightTransparencyLayer, rescaleManager.rescaleRectangle(highlight));
+                            drawRectangle(highlightTransparencyLayer, rescaleManager.rescaleRectangle(highlight));
                         });
 
+                    const drawQueue: Map<number, () => void> = new Map();
+
                     pageData.drawings
-                        .forEach((drawing) => draw(drawLayer, rescaleManager.rescalePolyLine(drawing)));
+                        .forEach((drawing) => drawQueue.set(
+                            drawing.coordinates[0].z,
+                            () => drawPolyline(drawLayer, rescaleManager.rescalePolyLine(drawing)))
+                        );
+
+                    pageData.rectangles
+                        .forEach((rectangles) => drawQueue.set(
+                            rectangles.position.z,
+                            () => drawRectangle(drawLayer, rescaleManager.rescaleRectangle(rectangles))
+                        ));
+
+                    pageData.ellipses
+                        .forEach((ellipses) => drawQueue.set(
+                            ellipses.position.z,
+                            () => drawEllipse(drawLayer, rescaleManager.rescaleEllipse(ellipses)))
+                        );
+
+                    pageData.circles
+                        .forEach((circles) => drawQueue.set(
+                            circles.position.z,
+                            () => drawCircle(drawLayer, rescaleManager.rescaleCircle(circles)))
+                        );
+
+                    pageData.lines
+                        .forEach((lines) => drawQueue.set(
+                            lines.start.z,
+                            () => drawLine(drawLayer, rescaleManager.rescaleLine(lines)))
+                        );
+
+                    for (const item of drawQueue.values()) {
+                        item();
+                    }
                 });
 
                 const page: Page = new Page(
@@ -248,7 +358,8 @@ export class PDFjsDocumentService implements PDFDocumentService {
                         const pageRects: ClientRect = pageView.canvas.getClientRects()[0];
                         return {
                             x: pageRects.left,
-                            y: pageRects.top
+                            y: pageRects.top,
+                            z: 0
                         };
                     }
                 );
@@ -474,7 +585,7 @@ export class PDFjsDocument implements PDFDocument {
  * @param {Canvas} on - the canvas to draw on
  * @param {PolyLine} drawing - the drawing to draw
  */
-function draw(on: Canvas, drawing: PolyLine): void {
+function drawPolyline(on: Canvas, drawing: PolyLine): void {
     on.polyLine()
     .id(drawing.id)
     .borderColor(drawing.borderColor)
@@ -484,20 +595,70 @@ function draw(on: Canvas, drawing: PolyLine): void {
 }
 
 /**
- * Draws the given {@code highlight} on the given {@code on} {@link Canvas}.
+ * Draws the given {@code ellipse} on the given {@code on} {@link Canvas}.
  *
  * @param {Canvas} on - the canvas to draw on
- * @param {Rectangle} highlight - the highlight to draw
+ * @param {Ellipse} ellipse - the ellipse to draw
  */
-function drawHighlight(on: Canvas, highlight: Rectangle): void {
+function drawEllipse(on: Canvas, ellipse: Ellipse): void {
+    on.ellipse()
+        .id(ellipse.id)
+        .dimension(ellipse.dimension)
+        .position(ellipse.position)
+        .fillColor(ellipse.fillColor)
+        .borderColor(ellipse.borderColor)
+        .borderWidth(ellipse.borderWidth)
+        .paint();
+}
+
+/**
+ * Draws the given {@code circle} on the given {@code on} {@link Canvas}.
+ *
+ * @param {Canvas} on - the canvas to draw on
+ * @param {Ellipse} circle - the circle to draw
+ */
+function drawCircle(on: Canvas, circle: Circle): void {
+    on.circle()
+        .id(circle.id)
+        .diameter(circle.diameter)
+        .position(circle.position)
+        .fillColor(circle.fillColor)
+        .borderColor(circle.borderColor)
+        .borderWidth(circle.borderWidth)
+        .paint();
+}
+
+/**
+ * Draws the given {@code line} on the given {@code on} {@link Canvas}.
+ *
+ * @param {Canvas} on - the canvas to draw on
+ * @param {Line} line - the line to draw
+ */
+function drawLine(on: Canvas, line: Line): void {
+    on.line()
+        .id(line.id)
+        .start(line.start)
+        .end(line.end)
+        .borderColor(line.borderColor)
+        .borderWidth(line.borderWidth)
+        .paint();
+}
+
+/**
+ * Draws the given {@code rectangle} on the given {@code on} {@link Canvas}.
+ *
+ * @param {Canvas} on - the canvas to draw on
+ * @param {Rectangle} rectangle - the rectangle to draw
+ */
+function drawRectangle(on: Canvas, rectangle: Rectangle): void {
 
     on.rectangle()
-    .id(highlight.id)
-    .dimension(highlight.dimension)
-    .position(highlight.position)
-    .fillColor(highlight.fillColor)
-    .borderColor(highlight.borderColor)
-    .borderWidth(highlight.borderWidth)
+    .id(rectangle.id)
+    .dimension(rectangle.dimension)
+    .position(rectangle.position)
+    .fillColor(rectangle.fillColor)
+    .borderColor(rectangle.borderColor)
+    .borderWidth(rectangle.borderWidth)
     .paint();
 }
 

@@ -1,5 +1,5 @@
 import {URI} from "../document.service";
-import {PolyLine, Rectangle} from "../draw/elements";
+import { Circle, Ellipse, Line, PolyLine, Rectangle } from "../draw/elements";
 import {PageEventCollection} from "./page.event";
 import {Logger} from "typescript-logging";
 import {LoggerFactory} from "../../log-config";
@@ -86,7 +86,11 @@ export class PageOverlay {
     constructor(
         readonly pageNumber: number,
         readonly highlightings: Array<Rectangle>,
-        readonly drawings: Array<PolyLine>
+        readonly drawings: Array<PolyLine>,
+        readonly rectangles: Array<Rectangle>,
+        readonly circles: Array<Circle>,
+        readonly ellipses: Array<Ellipse>,
+        readonly lines: Array<Line>
     ) {}
 }
 
@@ -117,7 +121,7 @@ export class EmptyStorageAdapter implements StorageAdapter {
     }
 
     async loadPage(_: URI, pageNumber: number): Promise<PageOverlay> {
-        return new PageOverlay(pageNumber, [], []);
+        return new PageOverlay(pageNumber, [], [], [], [], [], []);
     }
 
     register(): URI {
@@ -128,6 +132,10 @@ export class EmptyStorageAdapter implements StorageAdapter {
         // we have to subscribe on these events otherwise, the tools will never emit anything and as a result will not draw anything
         events.afterPolyLineRendered().subscribe((__) => {/* empty implementation */});
         events.afterElementRemoved().subscribe((__) => {/* empty implementation */});
+        events.afterHighlightRendered().subscribe((__) => {/* empty implementation */});
         events.afterRectangleRendered().subscribe((__) => {/* empty implementation */});
+        events.afterEllipseRendered().subscribe((__) => {/* empty implementation */});
+        events.afterCircleRendered().subscribe((__) => {/* empty implementation */});
+        events.afterLineRendered().subscribe((__) => {/* empty implementation */});
     }
 }

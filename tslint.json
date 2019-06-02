@@ -1,9 +1,6 @@
 {
     "rules": {
         "no-duplicate-variable": true,
-        "no-unused-variable": [
-            true
-        ],
         "strict-type-predicates": true,
         "member-access": false,
         "no-implicit-dependencies": [true, "dev"],

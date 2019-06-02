@@ -1,11 +1,35 @@
-import {Color, colorFrom, Colors} from "../api/draw/color";
-import {Dimension, Point} from "../api/draw/draw.basic";
+import * as svgjs from "svg.js";
+import { Logger } from "typescript-logging";
 import uuid from "uuid-js";
-import {CanvasElement, CanvasPolyLine, CanvasRectangle} from "./canvas.elements";
-import * as svgjs from "svgjs";
-import {DrawElement} from "../api/draw/elements";
-import {Logger} from "typescript-logging";
-import {LoggerFactory} from "../log-config";
+import { Color, colorFrom, Colors } from "../api/draw/color";
+import { Dimension, Point } from "../api/draw/draw.basic";
+import { DrawElement } from "../api/draw/elements";
+import { LoggerFactory } from "../log-config";
+import {
+    CanvasCircle,
+    CanvasElement,
+    CanvasEllipse,
+    CanvasLine,
+    CanvasPolyLine,
+    CanvasRectangle
+} from "./canvas.elements";
+
+function moveToZPosition(element: svgjs.Element, position: Point): void {
+
+    // Only position elements which have a valid z axis.
+    if (position.z <= 0) {
+        return;
+    }
+
+    // Move the element because we have no position setter ...
+    for (let i: number = element.position(); i < position.z; i++) {
+        element.forward();
+    }
+
+    for (let i: number = element.position(); i > position.z; i--) {
+        element.backward();
+    }
+}
 
 /**
  * Describes a canvas which can be used to draw elements on.
@@ -17,6 +41,9 @@ import {LoggerFactory} from "../log-config";
 export interface Canvas {
     rectangle(): RectanglePainter;
     polyLine(): PolyLinePainter;
+    ellipse(): EllipsePainter;
+    circle(): CirclePainter;
+    line(): LinePainter;
 
     /**
      * Returns all elements on this canvas matching
@@ -60,6 +87,18 @@ export class SVGCanvas implements Canvas {
         return new SVGRectanglePainter(this.svg);
     }
 
+    ellipse(): EllipsePainter {
+        return new SVGEllipsePainter(this.svg);
+    }
+
+    circle(): CirclePainter {
+        return new SVGCirclePainter(this.svg);
+    }
+
+    line(): LinePainter {
+        return new SVGLinePainter(this.svg);
+    }
+
     /**
      * Removes all elements matching the given {@code selector}.
      *
@@ -78,6 +117,9 @@ export class SVGCanvas implements Canvas {
      * Currently supported types:
      * - {@link CanvasRectangle}
      * - {@link CanvasPolyLine}
+     * - {@link CanvasEllipse}
+     * - {@link CanvasCircle}
+     * - {@link CanvasLine}
      *
      * @param {string} selector - a html selector
      *
@@ -101,6 +143,15 @@ export class SVGCanvas implements Canvas {
                     break;
                 case "polyline":
                     canvasElements.push(new CanvasPolyLine(element as svgjs.PolyLine));
+                    break;
+                case "ellipse":
+                    canvasElements.push(new CanvasEllipse(element as svgjs.Ellipse));
+                    break;
+                case "circle":
+                    canvasElements.push(new CanvasCircle(element as svgjs.Circle));
+                    break;
+                case "line":
+                    canvasElements.push(new CanvasLine(element as svgjs.Line));
                     break;
             }
         }
@@ -207,6 +258,72 @@ export interface FormPainter<T, R extends CanvasElement<DrawElement>> extends Bo
 export interface RectanglePainter extends FormPainter<RectanglePainter, CanvasRectangle> {
     dimension(value: Dimension): RectanglePainter;
 }
+
+/**
+ * Describes the painting interface of a line painter
+ * which is responsible of drawing simple lines without a fill color.
+ *
+ * The color of lines are defined by its border color.
+ *
+ * @author Nicolas Schaefli <ns@studer-raimann.ch>
+ * @since 0.3.0
+ * @internal
+ */
+export interface LinePainter extends BorderPainter<LinePainter, CanvasLine> {
+
+    /**
+     * The start point of the line.
+     *
+     * @param {Point} value The start point.
+     */
+    start(value: Point): LinePainter;
+
+    /**
+     * The end point of the line.
+     *
+     * @param {Point} value The end point.
+     */
+    end(value: Point): LinePainter;
+}
+
+/**
+ * Describes the painting interface of a circle painter
+ * which may have a border and fill color.
+ *
+ * @author Nicolas Schaefli <ns@studer-raimann.ch>
+ * @since 0.3.0
+ * @internal
+ */
+export interface CirclePainter extends FormPainter<CirclePainter, CanvasCircle> {
+    /**
+     * The diameter of the circle (r*2).
+     *
+     * @param {number} value The diameter of the circle.
+     */
+    diameter(value: number): CirclePainter;
+}
+
+/**
+ * Describes the painting interface of a ellipse painter
+ * which may have a border and fill color.
+ *
+ * The ellipse size my be circular if the width and height of the
+ * dimension is equal.
+ *
+ * @author Nicolas Schaefli <ns@studer-raimann.ch>
+ * @since 0.3.0
+ * @internal
+ */
+export interface EllipsePainter extends FormPainter<EllipsePainter, CanvasEllipse> {
+
+    /**
+     * The dimension of the ellipse.
+     *
+     * @param {Dimension} value The dimension of the ellipse.
+     */
+    dimension(value: Dimension): EllipsePainter;
+}
+
 
 /**
  * Indicates an error during a panting process of a {@link Painter}.
@@ -332,11 +449,14 @@ class SVGPolyLinePainter implements PolyLinePainter {
 
         this.log.trace(() => `Paint poly line on svg: polyLineId=${this._id}`);
 
-        return this.svg.polyline(this.flatCoordinates)
+        const polyline: svgjs.PolyLine = this.svg.polyline(this.flatCoordinates)
             .fill("none")
             .attr("id", this._id)
             .addClass("drawing")
-            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`});
+            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha});
+
+        moveToZPosition(polyline, this._coordinates[0]);
+        return polyline;
     }
 }
 
@@ -354,7 +474,7 @@ class SVGRectanglePainter implements RectanglePainter {
     private _borderColor: Color = colorFrom(Colors.NONE);
     private _borderWidth: number = 0;
     private _fillColor: Color = colorFrom(Colors.BLACK);
-    private _position: Point = {x: 0, y: 0};
+    private _position: Point = {x: 0, y: 0, z: 0};
     private _dimension: Dimension = {height: 0, width: 0};
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/SVGRectanglePainter");
@@ -398,12 +518,191 @@ class SVGRectanglePainter implements RectanglePainter {
         this.log.trace(() => `Paint rectangle on svg: rectangleId=${this._id}`);
 
         const rect: svgjs.Rect = this.svg.rect(this._dimension.width, this._dimension.height)
-            .fill(`${this._fillColor.hex("#XXXXXX")}`)
+            .fill({color: `${this._fillColor.hex("#XXXXXX")}`, opacity: this._fillColor.alpha})
             .attr("id", this._id)
             .addClass("drawing")
-            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`})
+            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha})
             .move(this._position.x, this._position.y);
 
+        moveToZPosition(rect, this._position);
+
         return new CanvasRectangle(rect);
+    }
+}
+
+class SVGLinePainter implements LinePainter {
+
+    private _id: string = `svg${uuid.create(4).toString()}`;
+    private _borderColor: Color = colorFrom(Colors.NONE);
+    private _borderWidth: number = 0;
+    private _start: Point = { x: 0, y: 0, z: 0};
+    private _end: Point = { x: 0, y: 0, z: 0};
+
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/SVGLinePainter");
+
+    constructor(
+        private readonly svg: svgjs.Doc
+    ) {}
+
+    borderColor(value: Color): LinePainter {
+        this._borderColor = value;
+        return this;
+    }
+
+    borderWidth(value: number): LinePainter {
+        this._borderWidth = value;
+        return this;
+    }
+
+    start(value: Point): LinePainter {
+        this._start = value;
+        return this;
+    }
+
+    end(value: Point): LinePainter {
+        this._end = value;
+        return this;
+    }
+
+    id(value: string): LinePainter {
+        this._id = value;
+        return this;
+    }
+
+    paint(): CanvasLine {
+        this.log.trace(() => `Paint line on svg: lineId=${this._id}`);
+
+        const line: svgjs.Line = this.svg.line(this._start.x, this._start.y, this._end.x, this._end.y)
+            .attr("id", this._id)
+            .addClass("drawing")
+            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha});
+
+        moveToZPosition(line, this._start);
+
+        return new CanvasLine(line);
+    }
+}
+
+class SVGCirclePainter implements CirclePainter {
+
+    private _id: string = `svg${uuid.create(4).toString()}`;
+    private _borderColor: Color = colorFrom(Colors.NONE);
+    private _borderWidth: number = 0;
+    private _fillColor: Color = colorFrom(Colors.BLACK);
+    private _position: Point = {x: 0, y: 0, z: 0};
+    private _diameter: number = 0;
+
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/SVGCirclePainter");
+
+    constructor(
+        private readonly svg: svgjs.Doc
+    ) {}
+
+    borderColor(value: Color): CirclePainter {
+        this._borderColor = value;
+        return this;
+    }
+
+    borderWidth(value: number): CirclePainter {
+        this._borderWidth = value;
+        return this;
+    }
+
+    diameter(value: number): CirclePainter {
+        this._diameter = value;
+        return this;
+    }
+
+    fillColor(value: Color): CirclePainter {
+        this._fillColor = value;
+        return this;
+    }
+
+    id(value: string): CirclePainter {
+        this._id = value;
+        return this;
+    }
+
+    position(value: Point): CirclePainter {
+        this._position = value;
+        return this;
+    }
+
+    paint(): CanvasCircle {
+
+        this.log.trace(() => `Paint circle on svg: circleId=${this._id}`);
+
+        const circle: svgjs.Circle = this.svg.circle(this._diameter)
+            .fill({color: `${this._fillColor.hex("#XXXXXX")}`, opacity: this._fillColor.alpha})
+            .attr("id", this._id)
+            .addClass("drawing")
+            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha})
+            .move(this._position.x, this._position.y);
+
+        moveToZPosition(circle, this._position);
+
+        return new CanvasCircle(circle);
+    }
+}
+
+class SVGEllipsePainter implements EllipsePainter {
+
+    private _id: string = `svg${uuid.create(4).toString()}`;
+    private _borderColor: Color = colorFrom(Colors.NONE);
+    private _borderWidth: number = 0;
+    private _fillColor: Color = colorFrom(Colors.BLACK);
+    private _position: Point = {x: 0, y: 0, z: 0};
+    private _dimension: Dimension = {height: 0, width: 0};
+
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/SVGEllipsePainter");
+
+    constructor(
+        private readonly svg: svgjs.Doc
+    ) {}
+
+    borderColor(value: Color): EllipsePainter {
+        this._borderColor = value;
+        return this;
+    }
+
+    borderWidth(value: number): EllipsePainter {
+        this._borderWidth = value;
+        return this;
+    }
+
+    dimension(value: Dimension): EllipsePainter {
+        this._dimension = value;
+        return this;
+    }
+
+    fillColor(value: Color): EllipsePainter {
+        this._fillColor = value;
+        return this;
+    }
+
+    id(value: string): EllipsePainter {
+        this._id = value;
+        return this;
+    }
+
+    position(value: Point): EllipsePainter {
+        this._position = value;
+        return this;
+    }
+
+    paint(): CanvasEllipse {
+
+        this.log.trace(() => `Paint ellipse on svg: ellipseId=${this._id}`);
+
+        const ellipse: svgjs.Ellipse = this.svg.ellipse(this._dimension.width, this._dimension.height)
+            .fill({color: `${this._fillColor.hex("#XXXXXX")}`, opacity: this._fillColor.alpha})
+            .attr("id", this._id)
+            .addClass("drawing")
+            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha})
+            .move(this._position.x, this._position.y);
+
+        moveToZPosition(ellipse, this._position);
+
+        return new CanvasEllipse(ellipse);
     }
 }

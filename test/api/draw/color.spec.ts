@@ -15,7 +15,7 @@ describe("a color class", () => {
                 const color: Color = colorFromRgba(red, green, blue, alpha);
 
 
-                chai.expect(color.hex()).to.equal("#FFFF0000");
+                chai.expect(color.hex()).to.equal("#FF0000FF");
             });
         });
 
@@ -85,7 +85,7 @@ describe("a color class", () => {
 
             it('should create a new color instance', () => {
 
-                const hex: string = "80ff0000";
+                const hex: string = "ff000080";
 
 
                 const color: Color = colorFromHex(hex);
@@ -102,7 +102,7 @@ describe("a color class", () => {
 
             it('should create a new color instance', () => {
 
-                const hex: string = "9f00";
+                const hex: string = "f009";
 
 
                 const color: Color = colorFromHex(hex);
@@ -119,7 +119,7 @@ describe("a color class", () => {
 
             it('should create a new color instance', () => {
 
-                const hex: string = "#9f00";
+                const hex: string = "#f009";
 
 
                 const color: Color = colorFromHex(hex);
@@ -148,7 +148,7 @@ describe("a color class", () => {
 
     describe('formatted hex value', () => {
 
-        const color: Color = colorFromHex("80fc8ac3");
+        const color: Color = colorFromHex("fc8ac380");
 
         describe('on #XXXXXX format', () => {
 
@@ -166,7 +166,7 @@ describe("a color class", () => {
 
                 const hex: string = color.hex();
 
-                chai.expect(hex).to.equal("#80FC8AC3");
+                chai.expect(hex).to.equal("#FC8AC380");
             });
         });
 
@@ -186,7 +186,7 @@ describe("a color class", () => {
 
                 const hex: string = color.hex("XXXXXXXX");
 
-                chai.expect(hex).to.equal("80FC8AC3");
+                chai.expect(hex).to.equal("FC8AC380");
             });
         });
     });

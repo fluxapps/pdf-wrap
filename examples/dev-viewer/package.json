@@ -6,17 +6,25 @@
   "author": "studer + raimann ag",
   "license": "GPL-3.0",
   "scripts": {
-    "copyCSS": "cp -r src/css build/www",
-    "copyPDFjs": "mkdir -p build/www/assets/libs/pdf-wrap && cp -r node_modules/@srag/pdf-wrap/assets/* build/www/assets/libs/pdf-wrap",
-    "copyResources": "cp src/index.html build/www && cp -r src/assets/* build/www/assets",
-    "build": "yarn webpack && yarn run copyResources && yarn run copyPDFjs && yarn run copyCSS",
+    "build": "yarn webpack -c webpack.config.js",
     "clean": "rm -r build",
-    "start": "yarn run build && yarn light-server -s build/www"
+    "start": "yarn webpack-dev-server -c webpack.config.js"
   },
   "devDependencies": {
-    "light-server": "^2.5.1",
+    "copy-webpack-plugin": "^5.0.3",
+    "css-loader": "^2.1.1",
+    "file-loader": "^3.0.1",
+    "html-webpack-plugin": "^3.2.0",
+    "raw-loader": "^2.0.0",
+    "style-loader": "^0.23.1",
     "webpack": "^4.12.0",
-    "webpack-cli": "^3.0.3"
+    "webpack-cli": "^3.0.3",
+    "webpack-dev-server": "^3.4.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "bootstrap": "^4.3.1",
+    "bootstrap-colorpicker": "^3.1.2",
+    "jquery": "^3.4.1",
+    "popper.js": "^1.14.7"
+  }
 }
