@@ -63,6 +63,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 ## Authors
 
 * **Nicolas Märchy** - *Initial work* - [BilledTrain380](https://github.com/BilledTrain380)
+* **Nicolas Schäfli** - [d3r1w](https://github.com/d3r1w)
 
 See also the list of [contributors](https://github.com/studer-raimann/pdf-wrap/graphs/contributors) who participated in this project.
 
