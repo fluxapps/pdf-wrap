@@ -279,7 +279,7 @@ abstract class AbstractCanvasFormElement<T extends DrawElement> extends Abstract
  */
 export class CanvasPolyLine extends AbstractCanvasBorderElement<PolyLine> {
 
-    private static readonly POINT_FORMAT_AFTER_TRANSFORMATION: RegExp = /^(?:(\d+(:?\.\d+)?),(\d+(:?\.\d+)?)\s?)+$/.compile();
+    private static readonly POINT_FORMAT_AFTER_TRANSFORMATION: RegExp = /^(?:(\d+(:?\.\d+)?),(\d+(:?\.\d+)?)\s?)+$/;
 
     private get coordinates(): Array<Point> {
 
