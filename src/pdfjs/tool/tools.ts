@@ -146,7 +146,7 @@ export class EraserTool extends DrawingTool implements Eraser {
 
             const touchTransform: Observable<Array<[string, ClientPolyline]>> = merge(this.touchStart, this.mouseDown)
                 .pipe(map((_) => (
-                    this.page.drawLayer.select(".drawing")
+                    this.page.drawLayer.select("polyline.drawing")
                         .map((it) => it.transform() as PolyLine)
                         .map((it): [string, ClientPolyline] =>
                             [
@@ -156,7 +156,8 @@ export class EraserTool extends DrawingTool implements Eraser {
                                 )
                             ]
                         )
-                    ))
+                    )),
+                    takeUntil(merge(this.mouseUp, this.touchEnd))
                 )
                 .pipe(share());
 
