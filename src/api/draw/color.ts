@@ -10,16 +10,16 @@ export type HexPattern = "#XXXXXX" | "#XXXXXXXX" | "XXXXXX" | "XXXXXXXX";
  * @since 0.0.1
  */
 export enum Colors {
-    BLACK = "FF000000",
+    BLACK = "000000FF",
     WHITE = "FFFFFFFF",
-    CYAN = "FF00FFFF",
-    MAGENTA = "FFFF00FF",
-    YELLOW = "FFFFFF00",
-    RED = "FFFF0000",
-    GREEN = "FF00FF00",
-    BLUE = "FF0000FF",
-    GREY = "FF808080",
-    NONE = "00FFFFFF"
+    CYAN = "00FFFFFF",
+    MAGENTA = "FF00FFFF",
+    YELLOW = "FFFF00FF",
+    RED = "FF0000FF",
+    GREEN = "00FF00FF",
+    BLUE = "0000FFFF",
+    GREY = "808080FF",
+    NONE = "FFFFFF00"
 }
 
 /**
@@ -103,6 +103,7 @@ export function colorFromRgba(red: number, green: number, blue: number, alpha: n
 /**
  * Creates a {@link Color} instance from the given hex color value.
  *
+ *
  * Valid hex values are:
  * - FFFFFF (normal)
  * - FFF (short)
@@ -110,8 +111,9 @@ export function colorFromRgba(red: number, green: number, blue: number, alpha: n
  * - FFFF (short with alpha value)
  *
  * The value is case insensitive (FFFFFF = ffffff).
+ * {@See https://drafts.csswg.org/css-color/#hex-notation} for more information.
  *
- * @since 0.0.1
+ * @since 0.3.0
  *
  * @param {string} value - a valid hex color value
  *
@@ -137,10 +139,10 @@ export function colorFromHex(value: string): Color {
 
         const groups: RegExpMatchArray = hex.match(HEX_COLOR_SHORT_ALPHA_REGX) as RegExpMatchArray;
 
-        const alpha: number = Math.floor(hexToDec(`${groups[1]}${groups[1]}`) / 2.55) / 100;
-        const redHex: string = `${groups[2]}${groups[2]}`;
-        const greenHex: string = `${groups[3]}${groups[3]}`;
-        const blueHex: string = `${groups[4]}${groups[4]}`;
+        const redHex: string = `${groups[1]}${groups[1]}`;
+        const greenHex: string = `${groups[2]}${groups[2]}`;
+        const blueHex: string = `${groups[3]}${groups[3]}`;
+        const alpha: number = Math.floor(hexToDec(`${groups[4]}${groups[4]}`) / 2.55) / 100;
 
         return colorFromRgba(parseInt(redHex, 16), parseInt(greenHex, 16), parseInt(blueHex, 16), alpha);
     }
@@ -149,10 +151,10 @@ export function colorFromHex(value: string): Color {
 
         const groups: RegExpMatchArray = hex.match(HEX_COLOR_ALPHA_REGX) as RegExpMatchArray;
 
-        const alpha: number = Math.floor(hexToDec(groups[1]) / 2.55) / 100;
-        const redHex: string = `${groups[2]}`;
-        const greenHex: string = `${groups[3]}`;
-        const blueHex: string = `${groups[4]}`;
+        const redHex: string = `${groups[1]}`;
+        const greenHex: string = `${groups[2]}`;
+        const blueHex: string = `${groups[3]}`;
+        const alpha: number = Math.floor(hexToDec(groups[4]) / 2.55) / 100;
 
         return colorFromRgba(parseInt(redHex, 16), parseInt(greenHex, 16), parseInt(blueHex, 16), alpha);
     }
@@ -241,10 +243,10 @@ class SimpleColor implements Color {
                 return `${this.hexRed}${this.hexGreen}${this.hexBlue}`;
 
             case "XXXXXXXX":
-                return `${this.hexAlpha}${this.hexRed}${this.hexGreen}${this.hexBlue}`;
+                return `${this.hexRed}${this.hexGreen}${this.hexBlue}${this.hexAlpha}`;
 
             default:
-                return `#${this.hexAlpha}${this.hexRed}${this.hexGreen}${this.hexBlue}`;
+                return `#${this.hexRed}${this.hexGreen}${this.hexBlue}${this.hexAlpha}`;
         }
     }
 }
