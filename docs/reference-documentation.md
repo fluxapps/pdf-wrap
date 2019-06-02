@@ -306,6 +306,38 @@ The Eraser can only remove strokes made with the Freehand tool.
 In order to remove a stroke, the eraser tool needs to be activated
 and the stroke needs to be crossed with the mouse while the mouse is pressed.
 
+### Selection
+
+**Limitations:**
+* The selected element can not be moved from one page to another.
+* Multiselection is currently not supported.
+
+The selection can be used to select forms or drawings.
+
+An element selection supports the following operations:
+* Resizing
+* Repositioning
+* Color change of the element (Fill & Border)
+* Change of the drawing sequence (z axis) 
+
+### Forms
+The forms tool places form elements onto the document which may be transformed with the selection tool.
+
+Currently there are four types of forms supported:
+* Rectangles
+* Ellipse
+* Circles
+* Lines
+
+Forms can be placed with the forms tool located in the *toolbox*.
+
+```typescript
+pdf.toolbox.forms.circle.fillColor = colorFromHex("#F006");
+pdf.toolbox.forms.circle.borderColor = colorFromHex("#0F06");
+pdf.toolbox.forms.circle.create();
+pdf.toolbox.forms.circle.create(); // Will have the same colors then the first circle.
+```
+
 ## Using the highlighting
 
 **Limitations:**
