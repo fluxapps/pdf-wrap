@@ -33,9 +33,28 @@ to not install gulp globally and use the local gulp version.
 
 > local gulp can be accessed with `yarn gulp`
 
-## Running the tests
+> Run `yarn gulp --tasks` to obtain a list of all defined tasks.
 
-Run unit tests
+## Build
+### Library
+To build and package the library run the following command.
+```
+yarn gulp repackage
+```
+The packed library will be located at `build/distributions/npm`.
+
+### Documentation
+The documentation is located at `./docs`.
+In order to build the documentation run the following command.
+```
+yarn gulp mkdocs 
+```
+The html documentation will be located at `./build/docs`. 
+
+## Tests
+### Unit tests
+
+All unit test can be run with the following command.
 
 ```
 yarn gulp test
