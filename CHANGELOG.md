@@ -4,18 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## 0.3.0 - 2019-06-02
 ### Added
 * Forms api which can be used to place rectangles, lines, circles and ellipses
 in a document.
+* Selection tool which allows to transform existing forms and drawings.
 ### Changed
 * Upgrade to typescript version ^3.4.0
 * Engines version constraint (node 10.9 < 13.0, yarn 1.13 < 2.0)
 * Migrate to Gulp 4.
-### Deprecated
-### Removed
-### Fixed
-### Security
+* Updated dev example
+* Migrate from uglify-js to terser in order to target es2015.
+* Only one tool can be active at once.
+* Default to highlighting mode if no tool is active.
+* **BREAKING CHANGES**
+    * The event PageEventCollection#afterRectangleRendered() has
+    been renamed to PageEventCollection#afterHighlightRendered().
+    * The Points of all elements now expect to have a x,y and z field.
+    * Target es2015.
 
 ## 0.2.0 - 2019-01-18
 
