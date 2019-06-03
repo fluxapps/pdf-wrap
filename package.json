@@ -6,7 +6,8 @@
   "homepage": "https://studer-raimann.github.io/pdf-wrap/",
   "keywords": [
     "pdf",
-    "library"
+    "library",
+    "pdf.js"
   ],
   "author": "studer + raimann ag",
   "license": "GPL-3.0",
