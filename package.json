@@ -48,12 +48,14 @@
     "intersection-observer": "^0.7.0",
     "pdfjs-dist": "2.0.943",
     "requestidlecallback-polyfill": "^1.0.2",
-    "rxjs": "^6.1.0",
     "svg.draggable.js": "2.2.2",
     "svg.js": "^2.7.1",
     "svg.resize.js": "^1.4.3",
     "svg.select.js": "^3.0.1",
     "typescript-logging": "^0.6.2",
     "uuid-js": "^0.7.5"
+  },
+  "peerDependencies": {
+    "rxjs": "^6.5.2"
   }
 }
