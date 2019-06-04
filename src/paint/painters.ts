@@ -14,23 +14,6 @@ import {
     CanvasRectangle
 } from "./canvas.elements";
 
-function moveToZPosition(element: svgjs.Element, position: Point): void {
-
-    // Only position elements which have a valid z axis.
-    if (position.z <= 0) {
-        return;
-    }
-
-    // Move the element because we have no position setter ...
-    for (let i: number = element.position(); i < position.z; i++) {
-        element.forward();
-    }
-
-    for (let i: number = element.position(); i > position.z; i--) {
-        element.backward();
-    }
-}
-
 /**
  * Describes a canvas which can be used to draw elements on.
  *
@@ -455,7 +438,6 @@ class SVGPolyLinePainter implements PolyLinePainter {
             .addClass("drawing")
             .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha});
 
-        moveToZPosition(polyline, this._coordinates[0]);
         return polyline;
     }
 }
@@ -524,8 +506,6 @@ class SVGRectanglePainter implements RectanglePainter {
             .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha})
             .move(this._position.x, this._position.y);
 
-        moveToZPosition(rect, this._position);
-
         return new CanvasRectangle(rect);
     }
 }
@@ -576,8 +556,6 @@ class SVGLinePainter implements LinePainter {
             .attr("id", this._id)
             .addClass("drawing")
             .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha});
-
-        moveToZPosition(line, this._start);
 
         return new CanvasLine(line);
     }
@@ -639,8 +617,6 @@ class SVGCirclePainter implements CirclePainter {
             .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha})
             .move(this._position.x, this._position.y);
 
-        moveToZPosition(circle, this._position);
-
         return new CanvasCircle(circle);
     }
 }
@@ -700,8 +676,6 @@ class SVGEllipsePainter implements EllipsePainter {
             .addClass("drawing")
             .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha})
             .move(this._position.x, this._position.y);
-
-        moveToZPosition(ellipse, this._position);
 
         return new CanvasEllipse(ellipse);
     }
