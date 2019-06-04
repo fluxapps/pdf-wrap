@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.3.1 - 2019-06-04
+### Added
+* Library entry point defined in package.json
+### Changed
+* Rxjs@^6 is now a peer dependency.
+* Module `pdfjs.document.service` does no longer export internal class `PDFjsDocument`
+* typedoc library updated (^0.14.2)
+* The typetoc is now only generated for the public parts of the Library.  
+### Fixed
+* Forms and drawings are now painted in the correct order, 
+after document resize events.
+
 ## 0.3.0 - 2019-06-02
 ### Added
 * Forms api which can be used to place rectangles, lines, circles and ellipses

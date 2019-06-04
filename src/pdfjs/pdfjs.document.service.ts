@@ -302,45 +302,54 @@ export class PDFjsDocumentService implements PDFDocumentService {
                 this.log.trace(() => `Load page data: pageNumber=${it.pageNumber}`);
                 storageAdapter.loadPage(options.layerStorage, it.pageNumber).then((pageData) => {
 
+                    const drawQueueLength: number =
+                        pageData.drawings.length +
+                        pageData.rectangles.length +
+                        pageData.ellipses.length +
+                        pageData.circles.length +
+                        pageData.lines.length +
+                        1;  // SVG.js Element.back() method destroys the 1 based index of Element.position()
+                            // therefore add one additional entry to support 0 or 1 based indexes.
+
                     pageData.highlightings
                         .forEach((highlight) => {
                             drawRectangle(highlightTransparencyLayer, rescaleManager.rescaleRectangle(highlight));
                         });
 
-                    const drawQueue: Map<number, () => void> = new Map();
+                    this.log.trace(() => `Allocate draw queue: size=${drawQueueLength}`);
+                    const drawQueue: Array<(() => void) | null> = new Array(drawQueueLength);
+                    drawQueue.fill(null);
+                    Object.seal(drawQueue);
 
                     pageData.drawings
-                        .forEach((drawing) => drawQueue.set(
-                            drawing.coordinates[0].z,
-                            () => drawPolyline(drawLayer, rescaleManager.rescalePolyLine(drawing)))
+                        .forEach((drawing) => drawQueue[drawing.coordinates[0].z] =
+                            (): void => drawPolyline(drawLayer, rescaleManager.rescalePolyLine(drawing))
                         );
 
                     pageData.rectangles
-                        .forEach((rectangles) => drawQueue.set(
-                            rectangles.position.z,
-                            () => drawRectangle(drawLayer, rescaleManager.rescaleRectangle(rectangles))
+                        .forEach((rectangles) => drawQueue[rectangles.position.z] =
+                            (): void => drawRectangle(drawLayer, rescaleManager.rescaleRectangle(rectangles)
                         ));
 
                     pageData.ellipses
-                        .forEach((ellipses) => drawQueue.set(
-                            ellipses.position.z,
-                            () => drawEllipse(drawLayer, rescaleManager.rescaleEllipse(ellipses)))
+                        .forEach((ellipses) => drawQueue[ellipses.position.z] =
+                            (): void => drawEllipse(drawLayer, rescaleManager.rescaleEllipse(ellipses))
                         );
 
                     pageData.circles
-                        .forEach((circles) => drawQueue.set(
-                            circles.position.z,
-                            () => drawCircle(drawLayer, rescaleManager.rescaleCircle(circles)))
+                        .forEach((circles) => drawQueue[circles.position.z] =
+                            (): void => drawCircle(drawLayer, rescaleManager.rescaleCircle(circles))
                         );
 
                     pageData.lines
-                        .forEach((lines) => drawQueue.set(
-                            lines.start.z,
-                            () => drawLine(drawLayer, rescaleManager.rescaleLine(lines)))
+                        .forEach((lines) => drawQueue[lines.start.z] =
+                            (): void => drawLine(drawLayer, rescaleManager.rescaleLine(lines))
                         );
 
-                    for (const item of drawQueue.values()) {
-                        item();
+                    for (const item of drawQueue) {
+                        if (typeof item === "function") {
+                            item();
+                        }
                     }
                 });
 
@@ -397,7 +406,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
  */
-export class PDFjsDocument implements PDFDocument {
+class PDFjsDocument implements PDFDocument {
 
     get currentPageNumber(): number {
         return this.viewer.currentPageNumber;

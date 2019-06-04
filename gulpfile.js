@@ -33,15 +33,26 @@ gulp.task("clean", function () {
  * Generates the typescript api documentation
  */
 gulp.task("typedoc", () => {
-    return gulp.src(`${appProperties.root}/src/**/*.ts`)
+    return gulp.src([
+        `${appProperties.root}/src/api/**/*.ts`,
+        `${appProperties.root}/src/pdfjs/pdfjs.document.service.ts`,
+        `${appProperties.root}/src/log-config.ts`,
+    ])
         .pipe(typedoc({
             module: "commonjs",
-            target: "es2015",
+            target: "ES6",
             out: `${appProperties.build.dirs.docs}/typedoc`,
             name: "PDF Wrap",
             externalPattern: `${appProperties.root}/node_modules/**`,
             excludeExternals: true,
-            ignoreCompilerErrors: true
+            ignoreCompilerErrors: true,
+            includeDeclarations: true,
+            excludePrivate: true,
+            excludeProtected: true,
+            excludeNotExported: true,
+            readme: `${appProperties.root}/README.md`,
+            tsconfig: `${appProperties.root}/tsconfig.json`
+
         }));
 });
 
