@@ -406,7 +406,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
  */
-export class PDFjsDocument implements PDFDocument {
+class PDFjsDocument implements PDFDocument {
 
     get currentPageNumber(): number {
         return this.viewer.currentPageNumber;
