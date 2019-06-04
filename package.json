@@ -11,6 +11,7 @@
   ],
   "author": "studer + raimann ag",
   "license": "GPL-3.0",
+  "main": "pdfjs/pdfjs.document.service.js",
   "engines": {
     "node": ">=10.9.0 <13.0.0",
     "yarn": ">=1.13.0 <2.0.0"
