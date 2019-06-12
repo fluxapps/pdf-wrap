@@ -169,6 +169,19 @@ gulp.task("transformPackageJSON", function () {
         .pipe(gulp.dest(`${appProperties.build.dirs.dist}/npm`));
 });
 
+// --- transformPackageJSON
+/*
+ * Declares every dependency used in package.json as bundledDependencies.
+ * In addition devDependencies are cleared.
+ */
+gulp.task("copyNpmRc", function () {
+
+    return gulp.src([
+        `${appProperties.root}/.npmrc`
+    ])
+        .pipe(gulp.dest(`${appProperties.build.dirs.dist}/npm`))
+});
+
 
 // --- transpileTypescript
 /*
@@ -257,7 +270,7 @@ gulp.task("lib", gulp.series("minify", () => {
 /*
  * Copies javascript files, README.md, LICENSE.md and package.json to the libs directory.
  */
-gulp.task("package", gulp.series(gulp.parallel("lib", "copyDependencies", "copyPDFJS", "copyCSS", "transformPackageJSON"), function () {
+gulp.task("package", gulp.series(gulp.parallel("lib", "copyDependencies", "copyPDFJS", "copyCSS", "transformPackageJSON", "copyNpmRc"), function () {
 
     return gulp
         .src([
