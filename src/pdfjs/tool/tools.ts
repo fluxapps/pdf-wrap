@@ -8,7 +8,6 @@ import { Color, colorFrom, Colors } from "../../api/draw/color";
 import { Point } from "../../api/draw/draw.basic";
 import { BorderElement, Circle, DrawElement, Ellipse, Form, Line, PolyLine, Rectangle } from "../../api/draw/elements";
 import { SelectionChangeEvent, StateChangeEvent } from "../../api/event/event.api";
-import { ElementSelection } from "../../api/selection/selection.api";
 import { DrawEvent, PageLayer } from "../../api/storage/page.event";
 import { Forms } from "../../api/tool/forms";
 import { Eraser, Freehand, Selection } from "../../api/tool/toolbox";
@@ -27,7 +26,7 @@ import { PolyLinePainter } from "../../paint/painters";
 import { ClientLine, ClientPolyline } from "../client-line";
 import { DocumentModel, Page, PageVisibilityChangeEvent } from "../document.model";
 import { RescaleManager } from "../rescale-manager";
-import { BorderElementSelection, Disposable, FormElementSelection } from "../selection";
+import { BorderElementSelection, Disposable, FormElementSelection, ToolElementSelection } from "../selection";
 import { BaseTool, DrawingTool } from "./tool.basic";
 
 /**
@@ -237,7 +236,7 @@ export class SelectionTool extends BaseTool implements Selection {
     readonly afterLineModified: Observable<DrawEvent<Line>>;
     readonly afterPolyLineModified: Observable<DrawEvent<PolyLine>>;
 
-    private selection: ElementSelection & Disposable | null = null;
+    private selection: ToolElementSelection | null = null;
     private readonly _onElementSelection: Subject<SelectionChangeEvent> = new Subject();
     private readonly _onElementRemoved: Subject<DrawEvent<DrawElement>> = new Subject();
     private readonly _afterRectangleModified: Subject<DrawEvent<Rectangle>> = new Subject();
@@ -313,9 +312,11 @@ export class SelectionTool extends BaseTool implements Selection {
         // Listen to interactions with the page to deselect forms.
         merge(
             fromEvent(page.container, "mousedown"),
-            fromEvent(page.container, "touchstart")
+            fromEvent(page.container, "touchstart"),
+            fromEvent(page.container, "pointerdown"),
         )
             .pipe(
+                filter((it) => !this.isFormInteraction(it)),
                 takeUntil(this.pageNoLongerVisibleListener(page)),
                 takeUntil(this.toolNoLongerActive())
             )
@@ -368,12 +369,15 @@ export class SelectionTool extends BaseTool implements Selection {
         const pointerEvents: Observable<PointerEvent> = element.on("pointerdown");
         const touchEvents: Observable<TouchEvent> = element.on("touchstart");
 
+        const elementId: string = element.transform().id;
+
         return merge(
             clickEvents.pipe(map(() => element as T)),
             touchEvents.pipe(map(() => element as T)),
             pointerEvents.pipe(map(() => element as T))
         )
             .pipe(
+                filter((_) => !this.selection || this.selection.selectionId !== elementId),
                 throttleTime(100),
                 tap(this.clearSelection.bind(this)),
                 tap((it) => {it.selected = true; it.draggable = true; it.resizable = true; }),
@@ -390,12 +394,15 @@ export class SelectionTool extends BaseTool implements Selection {
         const pointerEvents: Observable<PointerEvent> = element.on("pointerdown");
         const touchEvents: Observable<TouchEvent> = element.on("touchstart");
 
+        const elementId: string = element.transform().id;
+
         return merge(
             clickEvents.pipe(map(() => element as T)),
             touchEvents.pipe(map(() => element as T)),
             pointerEvents.pipe(map(() => element as T))
         )
             .pipe(
+                filter((_) => !this.selection || this.selection.selectionId !== elementId),
                 throttleTime(100),
                 tap(this.clearSelection.bind(this)),
                 tap((it) => {it.selected = true; it.draggable = true; it.resizable = true; }),
@@ -409,9 +416,10 @@ export class SelectionTool extends BaseTool implements Selection {
     private attachListenerToLine(page: Page, element: CanvasLine): void {
         this.attachListenerToBorderElement<Line, CanvasLine>(page, element)
             .pipe(
-                tap((it) => it.afterElementRemoved.subscribe(
-                    (rEvent) => this._onElementRemoved.next(new DrawEvent(rEvent, page.pageNumber, PageLayer.DRAWING)))
-                ),
+                tap((it) => it.afterElementRemoved.subscribe({
+                    complete: (): void => this.clearSelection(),
+                    next: (rEvent: DrawElement): void => this._onElementRemoved.next(new DrawEvent(rEvent, page.pageNumber, PageLayer.DRAWING))
+                })),
                 tap((it) => it.afterElementModified.subscribe(
                     (mEvent) => this._afterLineModified.next(new DrawEvent(mEvent, page.pageNumber, PageLayer.DRAWING)))
                 ),
@@ -426,9 +434,10 @@ export class SelectionTool extends BaseTool implements Selection {
     private attachListenerToPolyLine(page: Page, element: CanvasPolyLine): void {
         this.attachListenerToBorderElement<PolyLine, CanvasPolyLine>(page, element)
             .pipe(
-                tap((it) => it.afterElementRemoved.subscribe(
-                    (rEvent) => this._onElementRemoved.next(new DrawEvent(rEvent, page.pageNumber, PageLayer.DRAWING)))
-                ),
+                tap((it) => it.afterElementRemoved.subscribe({
+                    complete: (): void => this.clearSelection(),
+                    next: (rEvent): void => this._onElementRemoved.next(new DrawEvent(rEvent, page.pageNumber, PageLayer.DRAWING))
+                })),
                 tap((it) => it.afterElementModified.subscribe(
                     (mEvent) => this._afterPolyLineModified.next(new DrawEvent(mEvent, page.pageNumber, PageLayer.DRAWING)))
                 ),
@@ -443,9 +452,10 @@ export class SelectionTool extends BaseTool implements Selection {
     private attachListenerToRectangle(page: Page, element: CanvasRectangle): void {
         this.attachListenerToFormElement<Rectangle, CanvasRectangle>(page, element)
             .pipe(
-                tap((it) => it.afterElementRemoved.subscribe(
-                    (rEvent) => this._onElementRemoved.next(new DrawEvent(rEvent, page.pageNumber, PageLayer.DRAWING)))
-                ),
+                tap((it) => it.afterElementRemoved.subscribe({
+                    complete: (): void => this.clearSelection(),
+                    next: (rEvent: DrawElement): void => this._onElementRemoved.next(new DrawEvent(rEvent, page.pageNumber, PageLayer.DRAWING))
+                })),
                 tap((it) => it.afterElementModified.subscribe(
                     (mEvent) => this._afterRectangleModified.next(new DrawEvent(mEvent, page.pageNumber, PageLayer.DRAWING)))
                 ),
@@ -460,9 +470,10 @@ export class SelectionTool extends BaseTool implements Selection {
     private attachListenerToEllipse(page: Page, element: CanvasEllipse): void {
         this.attachListenerToFormElement<Ellipse, CanvasEllipse>(page, element)
             .pipe(
-                tap((it) => it.afterElementRemoved.subscribe(
-                    (rEvent) => this._onElementRemoved.next(new DrawEvent(rEvent, page.pageNumber, PageLayer.DRAWING)))
-                ),
+                tap((it) => it.afterElementRemoved.subscribe({
+                    complete: (): void => this.clearSelection(),
+                    next: (rEvent: DrawElement): void => this._onElementRemoved.next(new DrawEvent(rEvent, page.pageNumber, PageLayer.DRAWING))
+                })),
                 tap((it) => it.afterElementModified.subscribe(
                     (mEvent) => this._afterEllipseModified.next(new DrawEvent(mEvent, page.pageNumber, PageLayer.DRAWING)))
                 ),
@@ -477,9 +488,10 @@ export class SelectionTool extends BaseTool implements Selection {
     private attachListenerToCircle(page: Page, element: CanvasCircle): void {
         this.attachListenerToFormElement<Circle, CanvasCircle>(page, element)
             .pipe(
-                tap((it) => it.afterElementRemoved.subscribe(
-                    (rEvent) => this._onElementRemoved.next(new DrawEvent(rEvent, page.pageNumber, PageLayer.DRAWING)))
-                ),
+                tap((it) => it.afterElementRemoved.subscribe({
+                    complete: (): void => this.clearSelection(),
+                    next: (rEvent: DrawElement): void => this._onElementRemoved.next(new DrawEvent(rEvent, page.pageNumber, PageLayer.DRAWING)),
+                })),
                 tap((it) => it.afterElementModified.subscribe(
                     (mEvent) => this._afterCircleModified.next(new DrawEvent(mEvent, page.pageNumber, PageLayer.DRAWING)))
                 ),
@@ -530,10 +542,27 @@ export class SelectionTool extends BaseTool implements Selection {
 
     private clearSelection(): void {
         if (this.selection !== null) {
-            this.selection.dispose();
+            const selection: Disposable = this.selection;
             this.selection = null;
+
             this.selectionLog.trace("Dispose current selection.");
             this._onElementSelection.next(new SelectionChangeEvent(false));
+            if (!selection.isDisposed) {
+                selection.dispose();
+            }
         }
+    }
+
+    private isFormInteraction(event: Event): boolean {
+        if (!event.target) {
+            return false;
+        }
+
+        const element: Element = event.target as Element;
+        if (!element.parentElement) {
+            return false;
+        }
+
+        return (element.parentElement.localName === "svg");
     }
 }
