@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 0.3.2 - 2019-06-12
 ### Fixed
+* Fix form resize bug introduced in 0.3.2.
+
+## 0.3.2 - 2019-06-12
+### Fixed
 * Selection change events are now correctly emitted on selection change instead of onclick.
 * Selection changes are now correctly emitted after element removal.
 

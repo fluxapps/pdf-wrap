@@ -563,6 +563,17 @@ export class SelectionTool extends BaseTool implements Selection {
             return false;
         }
 
-        return (element.parentElement.localName === "svg");
+        return this.isSVGChild(element);
+    }
+
+    private isSVGChild(node: Node): boolean {
+        if (node.parentElement === null) {
+            return false;
+        }
+        if (node.parentElement.localName !== "svg") {
+            return this.isSVGChild(node.parentElement);
+        }
+
+        return true;
     }
 }
