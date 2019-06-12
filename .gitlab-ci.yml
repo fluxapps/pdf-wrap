@@ -1,16 +1,53 @@
-cache:
-  key: node
-  paths:
-    - node_modules
-
-before_script:
-  - yarn install --frozen-lockfile --non-interactive --link-duplicates
-
 stages:
   - test
+  - build
+  - deploy
 
 test:
+  cache:
+    key: "node-$CI_COMMIT_REF_SLUG"
+    paths:
+      - node_modules
   stage: test
+  before_script:
+    - yarn install --frozen-lockfile --non-interactive --link-duplicates
   script: yarn gulp test
   tags:
     - node
+
+build:
+  cache:
+    key: "node-$CI_COMMIT_REF_SLUG"
+    paths:
+      - node_modules
+    policy: pull
+  stage: build
+  before_script:
+    - yarn install --frozen-lockfile --non-interactive --link-duplicates
+  script: yarn run gulp repackage
+  tags:
+    - node
+  only:
+    refs:
+      - master
+  artifacts:
+    name: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
+    paths:
+    - build/
+    expire_in: 30 days
+
+deploy:
+  stage: deploy
+  only:
+    refs:
+      - master
+  before_script:
+    - "cd build/distributions/npm"
+  script: npm publish --access public
+  tags:
+    - node
+  when: manual
+  dependencies:
+    - build
+  allow_failure: false
+

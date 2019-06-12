@@ -8,13 +8,17 @@ import { BoxDragData, PaintEvent } from "../paint/events";
 import { Page } from "./document.model";
 
 export interface Disposable {
+    readonly isDisposed: boolean;
     dispose(): void;
 }
 
-export class BorderElementSelection<R extends BorderElement, T extends CanvasBorderElement<R>> implements ElementSelection, Disposable {
+export interface ToolElementSelection extends ElementSelection, Disposable {
+    readonly selectionId: string;
+}
+
+export class BorderElementSelection<R extends BorderElement, T extends CanvasBorderElement<R>> implements ToolElementSelection {
 
     get fillColor(): Color {
-        this.validateState();
         return colorFrom(Colors.BLACK);
     }
 
@@ -29,7 +33,7 @@ export class BorderElementSelection<R extends BorderElement, T extends CanvasBor
      */
     readonly afterPositionChange: Observable<boolean>;
     protected transformedElement: R;
-    protected disposed: boolean = false;
+    protected _disposed: boolean = false;
     protected readonly _afterElementModified: Subject<R> = new Subject();
     protected readonly _afterElementRemoved: Subject<DrawElement> = new Subject();
     private readonly _afterPositionChange: Subject<boolean> = new Subject();
@@ -37,7 +41,6 @@ export class BorderElementSelection<R extends BorderElement, T extends CanvasBor
     private readonly disposed$: Subject<boolean> = new Subject();
 
     get borderColor(): Color {
-        this.validateState();
         return this.transformedElement.borderColor;
     }
 
@@ -51,7 +54,6 @@ export class BorderElementSelection<R extends BorderElement, T extends CanvasBor
     }
 
     get borderWidth(): number {
-        this.validateState();
         return this.transformedElement.borderWidth;
     }
 
@@ -61,6 +63,14 @@ export class BorderElementSelection<R extends BorderElement, T extends CanvasBor
         this.selection.borderWidth = value;
         this.transformedElement = this.selection.transform();
         this._afterElementModified.next(this.transformedElement);
+    }
+
+    get isDisposed(): boolean {
+        return this._disposed;
+    }
+
+    get selectionId(): string {
+        return this.transformedElement.id;
     }
 
     constructor(protected readonly page: Page, protected readonly selection: T) {
@@ -84,38 +94,46 @@ export class BorderElementSelection<R extends BorderElement, T extends CanvasBor
     }
 
     backwards(): void {
+        this.validateState();
         this.selection.backwards();
         this.transformedElement = this.selection.transform();
         this._afterPositionChange.next(true);
     }
 
     forwards(): void {
+        this.validateState();
         this.selection.forwards();
         this.transformedElement = this.selection.transform();
         this._afterPositionChange.next(true);
     }
 
     toBack(): void {
+        this.validateState();
         this.selection.toBack();
         this.transformedElement = this.selection.transform();
         this._afterPositionChange.next(true);
     }
 
     toFront(): void {
+        this.validateState();
         this.selection.toFront();
         this.transformedElement = this.selection.transform();
         this._afterPositionChange.next(true);
     }
 
     delete(): void {
+        this.validateState();
         const element: DrawElement = this.selection.transform();
         this.selection.remove();
         this._afterElementRemoved.next(element);
         this.dispose();
-
     }
 
     dispose(): void {
+        if (this._disposed) {
+            return;
+        }
+
         if (!this._afterElementRemoved.closed) {
             this._afterElementModified.complete();
         }
@@ -132,11 +150,11 @@ export class BorderElementSelection<R extends BorderElement, T extends CanvasBor
         this.selection.draggable = false;
         this.selection.selected = false;
 
-        this.disposed = true;
+        this._disposed = true;
     }
 
     protected validateState(): void {
-        if (this.disposed) { throw new Error("Selection does no longer exist!"); }
+        if (this._disposed) { throw new Error("Selection does no longer exist and can not be modified anymore!"); }
     }
 }
 
@@ -147,7 +165,6 @@ export class FormElementSelection<R extends Form, T extends CanvasFormElement<R>
     }
 
     get fillColor(): Color {
-        this.validateState();
         return this.transformedElement.fillColor;
     }
 
