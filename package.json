@@ -44,7 +44,7 @@
     "tslint": "^5.16.0",
     "tslint-eslint-rules": "^5.3.1",
     "typedoc": "^0.14.2",
-    "typescript": "^3.4.5"
+    "typescript": "^3.5.3"
   },
   "dependencies": {
     "intersection-observer": "^0.7.0",
