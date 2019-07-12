@@ -31,7 +31,8 @@ export class DrawablePolyLine implements PolyLine, DrawableElement {
         readonly borderColor: Color,
         readonly borderWidth: number,
         readonly coordinates: Array<Point>,
-        readonly id: string
+        readonly id: string,
+        readonly rotation: number
     ) {}
 
     draw(canvas: Canvas): void {
@@ -41,6 +42,7 @@ export class DrawablePolyLine implements PolyLine, DrawableElement {
             .borderColor(this.borderColor)
             .borderWidth(this.borderWidth)
             .coordinates(this.coordinates)
+            .rotation(this.rotation)
             .paint();
     }
 }
@@ -59,7 +61,8 @@ export class DrawableRectangle implements Rectangle, DrawableElement {
         readonly dimension: Dimension,
         readonly fillColor: Color,
         readonly id: string,
-        readonly position: Point
+        readonly position: Point,
+        readonly rotation: number
     ) {}
 
     draw(canvas: Canvas): void {
@@ -71,6 +74,7 @@ export class DrawableRectangle implements Rectangle, DrawableElement {
             .fillColor(this.fillColor)
             .position(this.position)
             .dimension(this.dimension)
+            .rotation(this.rotation)
             .paint();
     }
 }
@@ -82,6 +86,7 @@ export class DrawableLine implements Line, DrawableElement {
         readonly id: string,
         readonly start: Point,
         readonly end: Point,
+        readonly rotation: number
     ) {}
 
     draw(canvas: Canvas): void {
@@ -91,6 +96,7 @@ export class DrawableLine implements Line, DrawableElement {
             .borderWidth(this.borderWidth)
             .start(this.start)
             .end(this.end)
+            .rotation(this.rotation)
             .paint();
     }
 }
@@ -102,7 +108,8 @@ export class DrawableCircle implements Circle, DrawableElement {
         readonly diameter: number,
         readonly fillColor: Color,
         readonly id: string,
-        readonly position: Point
+        readonly position: Point,
+        readonly rotation: number
     ) {}
 
     draw(canvas: Canvas): void {
@@ -113,6 +120,7 @@ export class DrawableCircle implements Circle, DrawableElement {
             .fillColor(this.fillColor)
             .position(this.position)
             .diameter(this.diameter)
+            .rotation(this.rotation)
             .paint();
     }
 }
@@ -124,7 +132,8 @@ export class DrawableEllipse implements Ellipse, DrawableElement {
         readonly dimension: Dimension,
         readonly fillColor: Color,
         readonly id: string,
-        readonly position: Point
+        readonly position: Point,
+        readonly rotation: number
     ) {}
 
     draw(canvas: Canvas): void {
@@ -135,6 +144,7 @@ export class DrawableEllipse implements Ellipse, DrawableElement {
             .fillColor(this.fillColor)
             .position(this.position)
             .dimension(this.dimension)
+            .rotation(this.rotation)
             .paint();
     }
 }

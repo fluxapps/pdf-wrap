@@ -20,6 +20,11 @@ export interface DrawElement {
 export interface BorderElement extends DrawElement {
     readonly borderColor: Color;
     readonly borderWidth: number;
+    /**
+     * Describes to rotation of the element.
+     * @since 0.3.4
+     */
+    readonly rotation: number;
 }
 
 /**

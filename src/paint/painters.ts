@@ -175,6 +175,7 @@ export interface Painter<R extends CanvasElement<DrawElement>> {
 export interface BorderPainter<T, R extends CanvasElement<DrawElement>> extends Painter<R> {
     borderColor(value: Color): T;
     borderWidth(value: number): T;
+    rotation(value: number): T;
     id(value: string): T;
 }
 
@@ -330,6 +331,7 @@ class SVGPolyLinePainter implements PolyLinePainter {
     private _borderColor: Color = colorFrom(Colors.BLACK);
     private _borderWidth: number = 1;
     private _coordinates: Array<Point> = [];
+    private _rotation: number = 0;
 
     private line?: svgjs.PolyLine;
 
@@ -360,6 +362,11 @@ class SVGPolyLinePainter implements PolyLinePainter {
 
     coordinates(value: Array<Point>): PolyLinePainter {
         this._coordinates = value;
+        return this;
+    }
+
+    rotation(value: number): PolyLinePainter {
+        this._rotation = value;
         return this;
     }
 
@@ -436,7 +443,8 @@ class SVGPolyLinePainter implements PolyLinePainter {
             .fill("none")
             .attr("id", this._id)
             .addClass("drawing")
-            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha});
+            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha})
+            .rotate(this._rotation);
 
         return polyline;
     }
@@ -458,6 +466,7 @@ class SVGRectanglePainter implements RectanglePainter {
     private _fillColor: Color = colorFrom(Colors.BLACK);
     private _position: Point = {x: 0, y: 0, z: 0};
     private _dimension: Dimension = {height: 0, width: 0};
+    private _rotation: number = 0;
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/SVGRectanglePainter");
 
@@ -495,6 +504,11 @@ class SVGRectanglePainter implements RectanglePainter {
         return this;
     }
 
+    rotation(value: number): RectanglePainter {
+        this._rotation = value;
+        return this;
+    }
+
     paint(): CanvasRectangle {
 
         this.log.trace(() => `Paint rectangle on svg: rectangleId=${this._id}`);
@@ -504,7 +518,8 @@ class SVGRectanglePainter implements RectanglePainter {
             .attr("id", this._id)
             .addClass("drawing")
             .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha})
-            .move(this._position.x, this._position.y);
+            .move(this._position.x, this._position.y)
+            .rotate(this._rotation);
 
         return new CanvasRectangle(rect);
     }
@@ -517,6 +532,7 @@ class SVGLinePainter implements LinePainter {
     private _borderWidth: number = 0;
     private _start: Point = { x: 0, y: 0, z: 0};
     private _end: Point = { x: 0, y: 0, z: 0};
+    private _rotation: number = 0;
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/SVGLinePainter");
 
@@ -549,13 +565,19 @@ class SVGLinePainter implements LinePainter {
         return this;
     }
 
+    rotation(value: number): LinePainter {
+        this._rotation = value;
+        return this;
+    }
+
     paint(): CanvasLine {
         this.log.trace(() => `Paint line on svg: lineId=${this._id}`);
 
         const line: svgjs.Line = this.svg.line(this._start.x, this._start.y, this._end.x, this._end.y)
             .attr("id", this._id)
             .addClass("drawing")
-            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha});
+            .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha})
+            .rotate(this._rotation);
 
         return new CanvasLine(line);
     }
@@ -569,6 +591,7 @@ class SVGCirclePainter implements CirclePainter {
     private _fillColor: Color = colorFrom(Colors.BLACK);
     private _position: Point = {x: 0, y: 0, z: 0};
     private _diameter: number = 0;
+    private _rotation: number = 0;
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/SVGCirclePainter");
 
@@ -606,6 +629,11 @@ class SVGCirclePainter implements CirclePainter {
         return this;
     }
 
+    rotation(value: number): CirclePainter {
+        this._rotation = value;
+        return this;
+    }
+
     paint(): CanvasCircle {
 
         this.log.trace(() => `Paint circle on svg: circleId=${this._id}`);
@@ -615,7 +643,8 @@ class SVGCirclePainter implements CirclePainter {
             .attr("id", this._id)
             .addClass("drawing")
             .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha})
-            .move(this._position.x, this._position.y);
+            .move(this._position.x, this._position.y)
+            .rotate(this._rotation);
 
         return new CanvasCircle(circle);
     }
@@ -629,6 +658,7 @@ class SVGEllipsePainter implements EllipsePainter {
     private _fillColor: Color = colorFrom(Colors.BLACK);
     private _position: Point = {x: 0, y: 0, z: 0};
     private _dimension: Dimension = {height: 0, width: 0};
+    private _rotation: number = 0;
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/paint/SVGEllipsePainter");
 
@@ -666,6 +696,11 @@ class SVGEllipsePainter implements EllipsePainter {
         return this;
     }
 
+    rotation(value: number): EllipsePainter {
+        this._rotation = value;
+        return this;
+    }
+
     paint(): CanvasEllipse {
 
         this.log.trace(() => `Paint ellipse on svg: ellipseId=${this._id}`);
@@ -675,7 +710,8 @@ class SVGEllipsePainter implements EllipsePainter {
             .attr("id", this._id)
             .addClass("drawing")
             .stroke({width: this._borderWidth, color: `${this._borderColor.hex("#XXXXXX")}`, opacity: this._borderColor.alpha})
-            .move(this._position.x, this._position.y);
+            .move(this._position.x, this._position.y)
+            .rotate(this._rotation);
 
         return new CanvasEllipse(ellipse);
     }

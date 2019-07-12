@@ -141,6 +141,7 @@ export interface CanvasElement<T extends DrawElement> extends Transformable <T>,
 export interface CanvasBorderElement<T extends DrawElement> extends CanvasElement<T> {
     borderWidth: number;
     borderColor: Color;
+    rotation: number;
 }
 
 /**
@@ -224,6 +225,11 @@ abstract class AbstractCanvasBorderElement<T extends DrawElement> implements Can
 
     set borderWidth(value: number) {
         this.borderElement.attr("stroke-width", value);
+    }
+
+    get rotation(): number {
+        const rotation: number | undefined = this.borderElement.transform().rotation;
+        return rotation !== undefined ? rotation : 0;
     }
 
     backwards(): void {
@@ -329,6 +335,7 @@ export class CanvasPolyLine extends AbstractCanvasBorderElement<PolyLine> {
             .borderColor(this.borderColor)
             .borderWidth(this.borderWidth)
             .coordinates(this.coordinates)
+            .rotation(this.rotation)
             .build();
     }
 }
@@ -371,6 +378,7 @@ export class CanvasRectangle extends AbstractCanvasFormElement<Rectangle> {
             .fillColor(this.fillColor)
             .position(this.position)
             .dimension(this.dimension)
+            .rotation(this.rotation)
             .build();
     }
 }
@@ -405,6 +413,7 @@ export class CanvasCircle extends AbstractCanvasFormElement<Circle> {
             .fillColor(this.fillColor)
             .position(this.position)
             .diameter(this.diameter)
+            .rotation(this.rotation)
             .build();
     }
 }
@@ -443,6 +452,7 @@ export class CanvasEllipse extends AbstractCanvasFormElement<Ellipse> {
             .fillColor(this.fillColor)
             .position(this.position)
             .dimension(this.dimension)
+            .rotation(this.rotation)
             .build();
     }
 }
@@ -483,6 +493,7 @@ export class CanvasLine extends AbstractCanvasBorderElement<Line> {
             .borderWidth(this.borderWidth)
             .start(this.start)
             .end(this.end)
+            .rotation(this.rotation)
             .build();
     }
 }

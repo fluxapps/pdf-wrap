@@ -23,7 +23,8 @@ function createMockRectangle(): Rectangle {
         dimension: {width: 2, height: 2},
         fillColor: colorFrom(Colors.YELLOW),
         id: "svg-mock",
-        position: {x: 0, y: 0, z: 0}
+        position: {x: 0, y: 0, z: 0},
+        rotation: 0
     };
 }
 
@@ -71,6 +72,9 @@ abstract class MockRectanglePainter implements RectanglePainter {
         throw new Error("Not implemented test stub");
     }
     position(): RectanglePainter {
+         throw new Error("Not implemented test stub");
+    }
+    rotation(): RectanglePainter {
         throw new Error("Not implemented test stub");
     }
 }
@@ -95,7 +99,8 @@ describe('a highlight manager', () => {
                     dimension: {width: 5, height: 2.04}, // 2% tolerance
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 2, y: 3, z: 0}
+                    position: {x: 2, y: 3, z: 0},
+                    rotation: 0
                 });
 
                 const newHighlight: CanvasRectangle = mock(CanvasRectangle);
@@ -139,7 +144,8 @@ describe('a highlight manager', () => {
                     dimension: {width: 5, height: 1.97}, // 2% tolerance
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 2, y: 3, z: 0}
+                    position: {x: 2, y: 3, z: 0},
+                    rotation: 0
                 });
 
                 const newHighlight: CanvasRectangle = mock(CanvasRectangle);
@@ -183,7 +189,8 @@ describe('a highlight manager', () => {
                     dimension: {width: 8, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 2, y: 3, z: 0}
+                    position: {x: 2, y: 3, z: 0},
+                    rotation: 0
                 });
 
                 const newHighlight: CanvasRectangle = mock(CanvasRectangle);
@@ -229,7 +236,8 @@ describe('a highlight manager', () => {
                     dimension: {width: 2, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 4, y: 3, z: 0}
+                    position: {x: 4, y: 3, z: 0},
+                    rotation: 0
                 });
 
 
@@ -258,7 +266,8 @@ describe('a highlight manager', () => {
                     dimension: {width: 2, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 4, y: 3, z: 0}
+                    position: {x: 4, y: 3, z: 0},
+                    rotation: 0
                 });
 
 
@@ -290,7 +299,8 @@ describe('a highlight manager', () => {
                     dimension: {width: 2, height: 1.97},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 4, y: 9, z: 0}
+                    position: {x: 4, y: 9, z: 0},
+                    rotation: 0
                 });
 
                 const newHighlight: CanvasRectangle = mock(CanvasRectangle);
@@ -334,7 +344,8 @@ describe('a highlight manager', () => {
                     dimension: {width: 2, height: 2.04}, // 2% tolerance
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 4, y: 3, z: 0}
+                    position: {x: 4, y: 3, z: 0},
+                    rotation: 0
                 });
 
                 const newHighlight: CanvasRectangle = mock(CanvasRectangle);
@@ -379,7 +390,8 @@ describe('a highlight manager', () => {
                     dimension: {width: 4, height: 1.97}, // 2% tolerance
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 2, y: 3, z: 0}
+                    position: {x: 2, y: 3, z: 0},
+                    rotation: 0
                 });
                 when(secondExistingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
@@ -387,7 +399,8 @@ describe('a highlight manager', () => {
                     dimension: {width: 4, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove-2",
-                    position: {x: 8, y: 3, z: 0}
+                    position: {x: 8, y: 3, z: 0},
+                    rotation: 0
                 });
 
                 const newHighlight: CanvasRectangle = mock(CanvasRectangle);
@@ -433,7 +446,8 @@ describe('a highlight manager', () => {
                     dimension: {width: 4, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 2, y: 3, z: 0}
+                    position: {x: 2, y: 3, z: 0},
+                    rotation: 0
                 });
                 when(secondExistingHighlight.transform()).thenReturn({
                     borderColor: colorFrom(Colors.NONE),
@@ -441,7 +455,8 @@ describe('a highlight manager', () => {
                     dimension: {width: 4, height: 2},
                     fillColor: colorFrom(Colors.GREEN),
                     id: "svg-to-remove-2",
-                    position: {x: 8, y: 3, z: 0}
+                    position: {x: 8, y: 3, z: 0},
+                    rotation: 0
                 });
 
                 const newHighlight: CanvasRectangle = mock(CanvasRectangle);
@@ -489,7 +504,8 @@ describe('a highlight manager', () => {
                     dimension: {width: 8, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 4, y: 3, z: 0}
+                    position: {x: 4, y: 3, z: 0},
+                    rotation: 0
                 });
 
 
@@ -518,7 +534,8 @@ describe('a highlight manager', () => {
                     dimension: {width: 8, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 2, y: 3, z: 0}
+                    position: {x: 2, y: 3, z: 0},
+                    rotation: 0
                 });
 
                 const newHighlight: CanvasRectangle = mock(CanvasRectangle);
@@ -566,7 +583,8 @@ describe('a highlight manager', () => {
                     dimension: {width: 3, height: 2},
                     fillColor: colorFrom(Colors.YELLOW),
                     id: "svg-to-remove",
-                    position: {x: 2, y: 3, z: 0}
+                    position: {x: 2, y: 3, z: 0},
+                    rotation: 0
                 });
 
                 const newHighlight: CanvasRectangle = mock(CanvasRectangle);
