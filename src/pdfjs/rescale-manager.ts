@@ -38,6 +38,7 @@ export class RescaleManager {
             .borderColor(polyLine.borderColor)
             .borderWidth(this.normalizePixel(polyLine.borderWidth))
             .coordinates(polyLine.coordinates.map(this.normalizePosition.bind(this)))
+            .rotation(polyLine.rotation)
             .build();
     }
 
@@ -58,6 +59,7 @@ export class RescaleManager {
             .borderColor(polyLine.borderColor)
             .borderWidth(this.rescalePixel(polyLine.borderWidth))
             .coordinates(polyLine.coordinates.map(this.rescalePosition.bind(this)))
+            .rotation(polyLine.rotation)
             .build();
     }
 
@@ -80,6 +82,7 @@ export class RescaleManager {
             .borderWidth(this.normalizePixel(rectangle.borderWidth))
             .dimension(this.normalizeDimension(rectangle.dimension))
             .position(this.normalizePosition(rectangle.position))
+            .rotation(rectangle.rotation)
             .build();
     }
 
@@ -102,6 +105,7 @@ export class RescaleManager {
             .borderWidth(this.rescalePixel(rectangle.borderWidth))
             .dimension(this.rescaleDimension(rectangle.dimension))
             .position(this.rescalePosition(rectangle.position))
+            .rotation(rectangle.rotation)
             .build();
     }
 
@@ -124,6 +128,7 @@ export class RescaleManager {
             .borderWidth(this.normalizePixel(ellipse.borderWidth))
             .dimension(this.normalizeDimension(ellipse.dimension))
             .position(this.normalizePosition(ellipse.position))
+            .rotation(ellipse.rotation)
             .build();
     }
 
@@ -146,6 +151,7 @@ export class RescaleManager {
             .borderWidth(this.rescalePixel(ellipse.borderWidth))
             .dimension(this.rescaleDimension(ellipse.dimension))
             .position(this.rescalePosition(ellipse.position))
+            .rotation(ellipse.rotation)
             .build();
     }
 
@@ -168,6 +174,7 @@ export class RescaleManager {
             .borderWidth(this.normalizePixel(circle.borderWidth))
             .diameter(this.normalizePixel(circle.diameter))
             .position(this.normalizePosition(circle.position))
+            .rotation(circle.rotation)
             .build();
     }
 
@@ -190,6 +197,7 @@ export class RescaleManager {
             .borderWidth(this.rescalePixel(circle.borderWidth))
             .diameter(this.rescalePixel(circle.diameter))
             .position(this.rescalePosition(circle.position))
+            .rotation(circle.rotation)
             .build();
     }
 
@@ -211,6 +219,7 @@ export class RescaleManager {
             .borderWidth(this.normalizePixel(line.borderWidth))
             .start(this.normalizePosition(line.start))
             .end(this.normalizePosition(line.end))
+            .rotation(line.rotation)
             .build();
     }
 
@@ -232,6 +241,7 @@ export class RescaleManager {
             .borderWidth(this.rescalePixel(line.borderWidth))
             .start(this.rescalePosition(line.start))
             .end(this.rescalePosition(line.end))
+            .rotation(line.rotation)
             .build();
     }
 

@@ -600,6 +600,7 @@ function drawPolyline(on: Canvas, drawing: PolyLine): void {
     .borderColor(drawing.borderColor)
     .borderWidth(drawing.borderWidth)
     .coordinates(drawing.coordinates)
+    .rotation(drawing.rotation)
     .paint();
 }
 
@@ -617,6 +618,7 @@ function drawEllipse(on: Canvas, ellipse: Ellipse): void {
         .fillColor(ellipse.fillColor)
         .borderColor(ellipse.borderColor)
         .borderWidth(ellipse.borderWidth)
+        .rotation(ellipse.rotation)
         .paint();
 }
 
@@ -634,6 +636,7 @@ function drawCircle(on: Canvas, circle: Circle): void {
         .fillColor(circle.fillColor)
         .borderColor(circle.borderColor)
         .borderWidth(circle.borderWidth)
+        .rotation(circle.rotation)
         .paint();
 }
 
@@ -650,6 +653,7 @@ function drawLine(on: Canvas, line: Line): void {
         .end(line.end)
         .borderColor(line.borderColor)
         .borderWidth(line.borderWidth)
+        .rotation(line.rotation)
         .paint();
 }
 
@@ -668,6 +672,7 @@ function drawRectangle(on: Canvas, rectangle: Rectangle): void {
     .fillColor(rectangle.fillColor)
     .borderColor(rectangle.borderColor)
     .borderWidth(rectangle.borderWidth)
+    .rotation(rectangle.rotation)
     .paint();
 }
 

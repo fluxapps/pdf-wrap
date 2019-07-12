@@ -52,6 +52,7 @@ abstract class AbstractBorderElementBuilder<T, R> implements BorderElementBuilde
     protected _id: string = `$svg${uuid.create(4).toString()}`;
     protected _borderColor: Color = colorFrom(Colors.BLACK);
     protected _borderWidth: number = 1;
+    protected _rotation: number = 0;
 
     id(value: string): T {
         this._id = value;
@@ -67,6 +68,13 @@ abstract class AbstractBorderElementBuilder<T, R> implements BorderElementBuilde
         this._borderWidth = px;
         return (this as unknown) as T;
     }
+
+
+    rotation(value: number): T {
+        this._rotation = value;
+        return (this as unknown) as T;
+    }
+
 
     abstract build(): R;
 }
@@ -118,7 +126,8 @@ export class PolyLineBuilderImpl extends AbstractBorderElementBuilder<PolyLineBu
             this._borderColor,
             this._borderWidth,
             this._coordinates,
-            this._id
+            this._id,
+            this._rotation
         );
     }
 }
@@ -150,7 +159,8 @@ export class RectangleBuilderImpl extends AbstractFormBuilder<RectangleBuilder, 
             this._dimension,
             this._fillColor,
             this._id,
-            this._position
+            this._position,
+            this._rotation
         );
     }
 }
@@ -185,7 +195,8 @@ export class LineBuilderImpl extends AbstractBorderElementBuilder<LineBuilder, L
            this._borderWidth,
            this._id,
            this._start,
-           this._end
+           this._end,
+           this._rotation
         );
     }
 }
@@ -212,7 +223,8 @@ export class CircleBuilderImpl extends AbstractFormBuilder<CircleBuilder, Circle
             this._diameter,
             this._fillColor,
             this._id,
-            this._position
+            this._position,
+            this._rotation
         );
     }
 
@@ -244,7 +256,8 @@ export class EllipseBuilderImpl extends AbstractFormBuilder<EllipseBuilder, Elli
             this._dimension,
             this._fillColor,
             this._id,
-            this._position
+            this._position,
+            this._rotation
         );
     }
 
