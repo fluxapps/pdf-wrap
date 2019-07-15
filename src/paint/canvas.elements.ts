@@ -5,7 +5,6 @@ import { Logger } from "typescript-logging";
 import { Color, colorFromHex, colorFromRgba } from "../api/draw/color";
 import { Dimension, Point } from "../api/draw/draw.basic";
 import { Circle, DrawElement, Ellipse, Line, PolyLine, Rectangle } from "../api/draw/elements";
-import { pairwise } from "../arrays";
 import { LoggerFactory } from "../log-config";
 import { ElementBuilderFactoryImpl } from "./element.builders.impl";
 import { ElementDragEventMap, ElementResizeEventMap } from "./events";
@@ -163,6 +162,24 @@ export interface CanvasFormElement<T extends DrawElement> extends CanvasBorderEl
 }
 
 /**
+ * Describes all four coordinates of a rbox rectangle.
+ *
+ * @author Nicolas Schaefli <ns@studer-raimann.ch>
+ * @since 0.3.6
+ * @internal
+ */
+interface ClientRBoxCoordinate {
+    readonly x1: number;
+    readonly y1: number;
+    readonly x2: number;
+    readonly y2: number;
+    readonly x3: number;
+    readonly y3: number;
+    readonly x4: number;
+    readonly y4: number;
+}
+
+/**
  * Abstract base implementation of all border elements.
  *
  * @author Nicolas Schaefli <ns@studer-raimann.ch>
@@ -266,6 +283,26 @@ abstract class AbstractCanvasBorderElement<T extends DrawElement> implements Can
     }
 
     abstract transform(): T;
+
+    protected getUnrotatedStartCoordinate(element: svgjs.Element): ClientRBoxCoordinate {
+        const doc: svgjs.Parent = element.parent(svgjs.Doc) as svgjs.Parent;
+        const box: svgjs.RBox = element.rbox(doc);
+        const bbox: svgjs.BBox = element.bbox();
+        // const rotationInRad: number = this.rotation * (Math.PI / 180);
+        const cartX: number = -(bbox.w / 2);
+        const cartY: number = (bbox.h / 2);
+
+        return {
+            x1: box.cx + cartX,
+            x2: box.cx - cartX,
+            x3: box.cx + cartX,
+            x4: box.cx - cartX,
+            y1: box.cy - cartY,
+            y2: box.cy - cartY,
+            y3: box.cy + cartY,
+            y4: box.cy + cartY
+        };
+    }
 }
 
 /**
@@ -301,28 +338,34 @@ abstract class AbstractCanvasFormElement<T extends DrawElement> extends Abstract
  */
 export class CanvasPolyLine extends AbstractCanvasBorderElement<PolyLine> {
 
-    private static readonly POINT_FORMAT_AFTER_TRANSFORMATION: RegExp = /^(?:(\d+(:?\.\d+)?),(\d+(:?\.\d+)?)\s?)+$/;
-
     private get coordinates(): Array<Point> {
 
-        // We have a different point format after the polyline transformation ...
-        const points: string = this.element.attr("points") as string;
-        if (CanvasPolyLine.POINT_FORMAT_AFTER_TRANSFORMATION.test(points)) {
-            return points.split(" ")
-                .map<Array<string>>((it) => it.split(","))
-                .map<Point>((it) => {
-                    const [x, y, z]: [number, number, number] = [parseFloat(it[0]), parseFloat(it[1]), this.element.position()];
+        const element: svgjs.PolyLine = (this.element as unknown) as svgjs.PolyLine;
+        const matrix: SVGMatrix = element.ctm().native();
 
-                    return {x, y, z};
-                });
-        }
+        // Type definintion is wrong the type is in fact Array<Array<number>>
+        const elementPoints: Array<Array<number>> = (element.array().value as unknown) as Array<Array<number>>;
 
-        return pairwise((this.element.attr("points") as string).split(","))
+        // @ts-ignore (type definition is no accurate because the type misses the function "createSVGPoint")
+        const point: SVGPoint = element.doc().node.createSVGPoint();
+
+        return elementPoints
             .map<Point>((it) => {
-                const [x, y, z]: [number, number, number] = [parseFloat(it[0]), parseFloat(it[1]), this.element.position()];
+
+                // Transform the coordinates, this is necessary to preserve the rotation.
+                point.x = it[0];
+                point.y = it[1];
+                const transP: SVGPoint = point.matrixTransform(matrix);
+
+                const [x, y, z]: [number, number, number] = [transP.x, transP.y, this.element.position()];
 
                 return {x, y, z};
             });
+    }
+
+    // No rotation needed, because we store the transformed coordinates.
+    get rotation(): number {
+        return 0;
     }
 
     constructor(private readonly element: svgjs.PolyLine) {
@@ -350,9 +393,10 @@ export class CanvasPolyLine extends AbstractCanvasBorderElement<PolyLine> {
 export class CanvasRectangle extends AbstractCanvasFormElement<Rectangle> {
 
     private get position(): Point {
+        const coords: ClientRBoxCoordinate = this.getUnrotatedStartCoordinate(this.element);
         const [x, y, z]: [number, number, number] = [
-            parseFloat(this.element.attr("x")),
-            parseFloat(this.element.attr("y")),
+            coords.x1,
+            coords.y1,
             this.element.position()
         ];
         return {x, y, z};
@@ -393,7 +437,8 @@ export class CanvasRectangle extends AbstractCanvasFormElement<Rectangle> {
 export class CanvasCircle extends AbstractCanvasFormElement<Circle> {
 
     private get position(): Point {
-        const [x, y, z]: [number, number, number] = [this.element.x(), this.element.y(), this.element.position()];
+        const coords: ClientRBoxCoordinate = this.getUnrotatedStartCoordinate(this.element);
+        const [x, y, z]: [number, number, number] = [coords.x1, coords.y1, this.element.position()];
         return {x, y, z};
     }
 
@@ -428,7 +473,8 @@ export class CanvasCircle extends AbstractCanvasFormElement<Circle> {
 export class CanvasEllipse extends AbstractCanvasFormElement<Ellipse> {
 
     private get position(): Point {
-        const [x, y, z]: [number, number, number] = [this.element.x(), this.element.y(), this.element.position()];
+        const coords: ClientRBoxCoordinate = this.getUnrotatedStartCoordinate(this.element);
+        const [x, y, z]: [number, number, number] = [coords.x1, coords.y1, this.element.position()];
         return {x, y, z};
     }
 
@@ -467,17 +513,19 @@ export class CanvasEllipse extends AbstractCanvasFormElement<Ellipse> {
 export class CanvasLine extends AbstractCanvasBorderElement<Line> {
 
     private get start(): Point {
+        const coords: ClientRBoxCoordinate = this.getUnrotatedStartCoordinate(this.element);
         return {
-            x: parseFloat(this.element.attr("x1")),
-            y: parseFloat(this.element.attr("y1")),
+            x: coords.x1,
+            y: coords.y1,
             z: this.element.position()
         };
     }
 
     private get end(): Point {
+        const coords: ClientRBoxCoordinate = this.getUnrotatedStartCoordinate(this.element);
         return {
-            x: parseFloat(this.element.attr("x2")),
-            y: parseFloat(this.element.attr("y2")),
+            x: coords.x4,
+            y: coords.y4,
             z: this.element.position()
         };
     }
