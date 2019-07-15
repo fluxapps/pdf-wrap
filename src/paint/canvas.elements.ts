@@ -31,7 +31,6 @@ if (typeof window === "undefined") {
 import "svg.select.js";
 import "svg.draggable.js";
 import "svg.resize.js";
-import "svg.screenbbox.js";
 
 type ElementEventMap = (HTMLElementEventMap & ElementDragEventMap & ElementResizeEventMap);
 
