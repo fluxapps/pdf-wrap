@@ -302,51 +302,68 @@ export class PDFjsDocumentService implements PDFDocumentService {
                 this.log.trace(() => `Load page data: pageNumber=${it.pageNumber}`);
                 storageAdapter.loadPage(options.layerStorage, it.pageNumber).then((pageData) => {
 
-                    const drawQueueLength: number =
-                        pageData.drawings.length +
-                        pageData.rectangles.length +
-                        pageData.ellipses.length +
-                        pageData.circles.length +
-                        pageData.lines.length +
-                        1;  // SVG.js Element.back() method destroys the 1 based index of Element.position()
-                            // therefore add one additional entry to support 0 or 1 based indexes.
-
                     pageData.highlightings
                         .forEach((highlight) => {
                             drawRectangle(highlightTransparencyLayer, rescaleManager.rescaleRectangle(highlight));
                         });
 
-                    this.log.trace(() => `Allocate draw queue: size=${drawQueueLength}`);
-                    const drawQueue: Array<(() => void) | null> = new Array(drawQueueLength);
-                    drawQueue.fill(null);
-                    Object.seal(drawQueue);
+                    this.log.trace(() => `Allocate draw queue.`);
+                    const drawQueue: Map<number, (() => void) | null> = new Map();
 
                     pageData.drawings
-                        .forEach((drawing) => drawQueue[drawing.coordinates[0].z] =
-                            (): void => drawPolyline(drawLayer, rescaleManager.rescalePolyLine(drawing))
-                        );
+                        .forEach((drawing) => {
+
+                            // Ignore drawings without coordinates
+                            if (drawing.coordinates.length === 0) {
+                                return;
+                            }
+
+                            const z: number = drawing.coordinates[0].z;
+                            drawQueue
+                                .set(
+                                    this.findNextFreeIndex(drawQueue, z),
+                                    (): void => drawPolyline(drawLayer, rescaleManager.rescalePolyLine(drawing))
+                                );
+                        });
 
                     pageData.rectangles
-                        .forEach((rectangles) => drawQueue[rectangles.position.z] =
-                            (): void => drawRectangle(drawLayer, rescaleManager.rescaleRectangle(rectangles)
-                        ));
+                        .forEach((rectangles) => {
+                            drawQueue.set(
+                                this.findNextFreeIndex(drawQueue, rectangles.position.z),
+                                (): void => drawRectangle(drawLayer, rescaleManager.rescaleRectangle(rectangles))
+                            );
+                        });
 
                     pageData.ellipses
-                        .forEach((ellipses) => drawQueue[ellipses.position.z] =
-                            (): void => drawEllipse(drawLayer, rescaleManager.rescaleEllipse(ellipses))
-                        );
+                        .forEach((ellipses) => {
+                            drawQueue.set(
+                                this.findNextFreeIndex(drawQueue, ellipses.position.z),
+                                (): void => drawEllipse(drawLayer, rescaleManager.rescaleEllipse(ellipses))
+                            );
+                        });
 
                     pageData.circles
-                        .forEach((circles) => drawQueue[circles.position.z] =
-                            (): void => drawCircle(drawLayer, rescaleManager.rescaleCircle(circles))
-                        );
+                        .forEach((circles) => {
+                            drawQueue.set(
+                                this.findNextFreeIndex(drawQueue, circles.position.z),
+                                (): void => drawCircle(drawLayer, rescaleManager.rescaleCircle(circles))
+                            );
+                        });
 
                     pageData.lines
-                        .forEach((lines) => drawQueue[lines.start.z] =
-                            (): void => drawLine(drawLayer, rescaleManager.rescaleLine(lines))
-                        );
+                        .forEach((lines) => {
+                            drawQueue.set(
+                                this.findNextFreeIndex(drawQueue, lines.start.z),
+                                (): void => drawLine(drawLayer, rescaleManager.rescaleLine(lines))
+                            );
+                        });
 
-                    for (const item of drawQueue) {
+                    const drawSequence: Array<number> = Array
+                        .from(drawQueue.keys())
+                        .sort((a: number, b: number) => a - b);
+
+                    for (const index of drawSequence) {
+                        const item: (() => void) | null | undefined = drawQueue.get(index);
                         if (typeof item === "function") {
                             item();
                         }
@@ -394,6 +411,15 @@ export class PDFjsDocumentService implements PDFDocumentService {
         fileReader.readAsArrayBuffer(data);
 
         return fileLoadend;
+    }
+
+    private findNextFreeIndex(drawQueue: Map<number, unknown>, minIndex: number): number {
+        let index: number | undefined = minIndex;
+        while (drawQueue.has(index)) {
+            index++;
+        }
+
+        return index;
     }
 }
 

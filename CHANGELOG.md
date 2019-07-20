@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.3.7 - 2019-07-20
+### Changed
+* Form z axis handling improved.
+
 ## 0.3.6 - 2019-07-15
 ### Fixed
 * Forms and drawings which have been dragged + rotated are no correctly drawn
