@@ -36,7 +36,7 @@ export class PDFjsDocumentSearch implements DocumentSearch {
         this.log.info(() => `Search document for query: query=${query}`);
 
         this.findController.executeCommand("find", {
-            caseSensitive: this.options.fuzzy,
+            caseSensitive: !this.options.fuzzy,
             findPrevious: false,
             highlightAll: this.options.highlightAll,
             phraseSearch: this.options.searchPhrase,
@@ -57,7 +57,7 @@ export class PDFjsDocumentSearch implements DocumentSearch {
         this.log.trace(() => `Search next result: query=${this.lastQuery}`);
 
         this.findController.executeCommand("findagain", {
-            caseSensitive: this.options.fuzzy,
+            caseSensitive: !this.options.fuzzy,
             findPrevious: false,
             highlightAll: this.options.highlightAll,
             phraseSearch: this.options.searchPhrase,
@@ -78,7 +78,7 @@ export class PDFjsDocumentSearch implements DocumentSearch {
         this.log.trace(() => `Search previous result: query=${this.lastQuery}`);
 
         this.findController.executeCommand("findagain", {
-            caseSensitive: this.options.fuzzy,
+            caseSensitive: !this.options.fuzzy,
             findPrevious: true,
             highlightAll: this.options.highlightAll,
             phraseSearch: this.options.searchPhrase,
