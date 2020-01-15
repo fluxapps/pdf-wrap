@@ -1,6 +1,6 @@
 import { StateChangeEvent } from "../api/event/event.api";
 import {Highlighting, Target, TextSelection} from "../api/highlight/highlight.api";
-import {Observable} from "rxjs/internal/Observable";
+import {Observable, fromEvent, merge, Subject} from "rxjs";
 import {Color} from "../api/draw/color";
 import {DocumentModel, getPageNumberByEvent, Page} from "./document.model";
 import {Canvas} from "../paint/painters";
@@ -9,9 +9,6 @@ import {DrawElement, Rectangle} from "../api/draw/elements";
 import {DrawEvent, PageLayer} from "../api/storage/page.event";
 import {CanvasRectangle} from "../paint/canvas.elements";
 import {ClientRectangle} from "./client-rectangle";
-import {Subject} from "rxjs/internal/Subject";
-import {fromEvent} from "rxjs/internal/observable/fromEvent";
-import {merge} from "rxjs/internal/observable/merge";
 import {Logger} from "typescript-logging";
 import {LoggerFactory} from "../log-config";
 

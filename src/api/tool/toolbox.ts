@@ -1,4 +1,4 @@
-import {Observable} from "rxjs/internal/Observable";
+import {Observable} from "rxjs";
 import { SelectionChangeEvent, StateChangeEvent } from "../event/event.api";
 import {Color} from "../draw/color";
 import { Forms } from "./forms";

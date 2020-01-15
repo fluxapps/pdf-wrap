@@ -2,7 +2,7 @@
 import {Point} from "../api/draw/draw.basic";
 import {LoggerFactory} from "../log-config";
 import {Logger} from "typescript-logging";
-import {fromArray} from "rxjs/internal/observable/fromArray";
+import { from } from "rxjs";
 import {bufferCount, filter, map} from "rxjs/operators";
 
 /**
@@ -90,7 +90,7 @@ export class ClientPolyline {
     constructor(points: Array<Point>) {
 
         // There are no async operations therefore no need to await the end of the operation.
-        fromArray(points)
+        from(points)
             .pipe(bufferCount(2, 1))
             .pipe(filter((it) => it.length === 2))          // Filter collections with less then two points
             .pipe(map((it) => new ClientLine(it[0], it[1])))

@@ -1,6 +1,4 @@
-import { Subscriber } from "rxjs/internal-compatibility";
-import { Observable } from "rxjs/internal/Observable";
-import { TeardownLogic } from "rxjs/internal/types";
+import { TeardownLogic, Observable, Subscriber } from "rxjs";
 import { Logger } from "typescript-logging";
 import { Color, colorFromHex, colorFromRgba } from "../api/draw/color";
 import { Dimension, Point } from "../api/draw/draw.basic";

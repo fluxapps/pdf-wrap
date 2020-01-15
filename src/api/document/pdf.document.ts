@@ -1,4 +1,4 @@
-import {Observable} from "rxjs/internal/Observable";
+import {Observable} from "rxjs";
 import {PageChangeEvent} from "../event/event.api";
 import {Outline, PageThumbnail} from "./document.info";
 import {Toolbox} from "../tool/toolbox";
