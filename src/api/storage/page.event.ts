@@ -1,4 +1,4 @@
-import {Observable} from "rxjs/internal/Observable";
+import {Observable} from "rxjs";
 import { PolyLine, Rectangle, DrawElement, Ellipse, Circle, Line } from "../draw/elements";
 
 /**

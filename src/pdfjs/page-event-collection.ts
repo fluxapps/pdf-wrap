@@ -1,9 +1,8 @@
 import {DrawEvent, PageEventCollection} from "../api/storage/page.event";
 import { Circle, DrawElement, Ellipse, Line, PolyLine, Rectangle } from "../api/draw/elements";
-import {Observable} from "rxjs/internal/Observable";
+import {Observable, merge} from "rxjs";
 import {TextSelection} from "../api/highlight/highlight.api";
 import {map, mergeMap} from "rxjs/operators";
-import {merge} from "rxjs/internal/observable/merge";
 import {RescaleManager} from "./rescale-manager";
 
 /**

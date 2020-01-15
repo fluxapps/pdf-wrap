@@ -1,7 +1,4 @@
-import { fromEvent, merge, Subject } from "rxjs";
-import { Subscriber } from "rxjs/internal-compatibility";
-import { Observable } from "rxjs/internal/Observable";
-import { TeardownLogic } from "rxjs/internal/types";
+import { fromEvent, merge, Subject, Observable, TeardownLogic, Subscriber } from "rxjs";
 import { bufferCount, filter, map, share, takeUntil, tap, throttleTime, withLatestFrom } from "rxjs/operators";
 import { Logger } from "typescript-logging";
 import { Color, colorFrom, Colors } from "../../api/draw/color";

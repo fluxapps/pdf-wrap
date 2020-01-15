@@ -20,14 +20,7 @@ import {
     RenderingType,
     TextLayerMode
 } from "pdfjs-dist/web/pdf_viewer";
-import { Subject } from "rxjs";
-import { fromPromise, Subscriber } from "rxjs/internal-compatibility";
-import { Observable } from "rxjs/internal/Observable";
-import { fromArray } from "rxjs/internal/observable/fromArray";
-import { fromEvent } from "rxjs/internal/observable/fromEvent";
-import { merge } from "rxjs/internal/observable/merge";
-import { of } from "rxjs/internal/observable/of";
-import { TeardownLogic } from "rxjs/internal/types";
+import { from, Subject, Observable, Subscriber, of, merge, fromEvent, TeardownLogic } from "rxjs";
 import { filter, first, flatMap, map, mergeMap, takeUntil, tap } from "rxjs/operators";
 import { Logger } from "typescript-logging";
 import { LoadingOptions, PDFDocumentService } from "../api/document.service";
@@ -186,7 +179,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
 
         const documentModel: DocumentModel = new DocumentModel(options.container,
 
-            merge(fromArray([1]), fromPromise(fullyLoadPdf)
+            merge(from([1]), from(fullyLoadPdf)
                 .pipe(
                     first<PDFDocument>(),
                     flatMap((it) => it.pageChange),
@@ -526,7 +519,7 @@ class PDFjsDocument implements PDFDocument {
     getThumbnails(maxSize: number, ...pageNumbers: Array<number>): Observable<PageThumbnail> {
 
         return of(...pageNumbers)
-            .pipe(mergeMap((it) => fromPromise(this.viewer.pdfDocument.getPage(it))))
+            .pipe(mergeMap((it) => from(this.viewer.pdfDocument.getPage(it))))
             .pipe(mergeMap((it) => {
 
                 const viewport: PageViewPort = it.getViewport(1);
@@ -541,7 +534,7 @@ class PDFjsDocument implements PDFDocument {
                 canvas.width = rescaledViewport.width;
 
                 // we have to wait for the render method, then the canvas is ready
-                return fromPromise(
+                return from(
                     it.render({
                         canvasContext: canvas.getContext("2d")!,
                         viewport: rescaledViewport

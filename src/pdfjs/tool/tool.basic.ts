@@ -1,7 +1,4 @@
-import { merge } from "rxjs";
-import { Observable } from "rxjs/internal/Observable";
-import { fromEvent } from "rxjs/internal/observable/fromEvent";
-import { Subject } from "rxjs/internal/Subject";
+import { fromEvent, merge, Observable, Subject } from "rxjs";
 import { delayWhen, filter, share, tap } from "rxjs/operators";
 import { Logger } from "typescript-logging";
 import { Point } from "../../api/draw/draw.basic";

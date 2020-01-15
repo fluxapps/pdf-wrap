@@ -1,5 +1,5 @@
 import {Color} from "../draw/color";
-import {Observable} from "rxjs/internal/Observable";
+import {Observable} from "rxjs";
 import { StateChangeEvent } from "../event/event.api";
 import {DrawEvent} from "../storage/page.event";
 import {DrawElement, Rectangle} from "../draw/elements";
