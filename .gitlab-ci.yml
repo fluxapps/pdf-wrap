@@ -43,8 +43,7 @@ deploy:
     refs:
       - master
   script: npm publish build/distributions/npm --access public
-  tags:
-    - node
+  image: node:lts-alpine
   when: manual
   dependencies:
     - build
