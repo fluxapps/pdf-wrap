@@ -19,7 +19,6 @@ lint:
   stage: lint
   timeout: "5m"
   script: yarn gulp lint
-  allow_failure: true
   image: node:lts-alpine
 
 test:
