@@ -2,36 +2,35 @@ variables:
   YARN_CACHE_FOLDER: &yarn_cache_path "$CI_PROJECT_DIR/.yarn_cache_pdf_wrap"
 
 cache:
-  key: "pdf_wrap_yarn_node_cache"
+  key: "pdf_wrap_yarn_node_cache-$CI_COMMIT_REF_SLUG"
   paths:
     - *yarn_cache_path
 
+before_script:
+  - yarn install --frozen-lockfile --non-interactive --link-duplicates
+
 stages:
+  - lint
   - test
   - build
   - deploy
 
+lint:
+  stage: lint
+  timeout: "5m"
+  script:
+    - yarn run lint
+  allow_failure: true
+  image: node:lts-alpine
+
 test:
-  cache:
-    key: "node-$CI_COMMIT_REF_SLUG"
-    paths:
-      - node_modules
   stage: test
-  before_script:
-    - yarn install --frozen-lockfile --non-interactive --link-duplicates
   script: yarn gulp test
   tags:
     - node
 
 build:
-  cache:
-    key: "node-$CI_COMMIT_REF_SLUG"
-    paths:
-      - node_modules
-    policy: pull
   stage: build
-  before_script:
-    - yarn install --frozen-lockfile --non-interactive --link-duplicates
   script: yarn run gulp repackage
   tags:
     - node
@@ -49,8 +48,6 @@ deploy:
   only:
     refs:
       - master
-  before_script:
-    - yarn install --frozen-lockfile --non-interactive --link-duplicates
   script: npm publish build/distributions/npm --access public
   tags:
     - node
