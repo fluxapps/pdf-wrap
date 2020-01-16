@@ -1,3 +1,11 @@
+variables:
+  YARN_CACHE_FOLDER: &yarn_cache_path "$CI_PROJECT_DIR/.yarn_cache_bin_elehrmittel"
+
+cache:
+  key: "bin_elehrmittel_yarn_node_cache"
+  paths:
+    - *yarn_cache_path
+
 stages:
   - test
   - build
@@ -41,6 +49,8 @@ deploy:
   only:
     refs:
       - master
+  before_script:
+    - yarn install --frozen-lockfile --non-interactive --link-duplicates
   script: npm publish build/distributions/npm --access public
   tags:
     - node
