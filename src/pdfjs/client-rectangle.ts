@@ -9,7 +9,7 @@ import {LoggerFactory} from "../log-config";
  * @since 0.0.1
  * @internal
  */
-export class ClientRectangle implements ClientRect {
+export class ClientRectangle implements DOMRect {
 
     /**
      * Creates a {@code ClientRectangle} based on the coordinates.
@@ -81,6 +81,9 @@ export class ClientRectangle implements ClientRect {
         return Number.parseFloat(unsafe.toFixed(7));
     }
 
+    readonly x: number;
+    readonly y: number;
+
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/client-rectangle:ClientRectangle");
 
     private constructor(
@@ -90,7 +93,10 @@ export class ClientRectangle implements ClientRect {
         readonly bottom: number,
         readonly height: number,
         readonly width: number
-    ) {}
+    ) {
+        this.x = width < 0 ? left + width : left;
+        this.y = height < 0 ? top + height : top;
+    }
 
     /**
      * Checks if this client rectangle has an intersection with the {@code other} client rect.
@@ -262,8 +268,12 @@ export class ClientRectangle implements ClientRect {
         return this.height * this.width;
     }
 
-    toString(): string {
-        return `{left: ${this.left}, top: ${this.top}, right: ${this.right}, bottom: ${this.bottom}, height: ${this.height}, width: ${this.width}`;
+    get [Symbol.toStringTag](): string {
+        return `left: ${this.left}, top: ${this.top}, right: ${this.right}, bottom: ${this.bottom}, height: ${this.height}, width: ${this.width}, x: ${this.x}, y: ${this.y}`;
+    }
+
+    toJSON(): string {
+        return `{"left": ${this.left}, "top": ${this.top}, "right": ${this.right}, "bottom": ${this.bottom}, "height": ${this.height}, "width": ${this.width}, "x": ${this.x}, "y": ${this.y}}`;
     }
 
     private overlapLeft(other: ClientRect): number {

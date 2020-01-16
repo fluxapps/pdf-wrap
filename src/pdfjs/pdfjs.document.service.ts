@@ -1,6 +1,6 @@
 import "./polyfill";
 import {
-    getDocument,
+    getDocument, GetViewPortOptions,
     GlobalWorkerOptions,
     OutlineDestination,
     PageRef,
@@ -522,10 +522,10 @@ class PDFjsDocument implements PDFDocument {
             .pipe(mergeMap((it) => from(this.viewer.pdfDocument.getPage(it))))
             .pipe(mergeMap((it) => {
 
-                const viewport: PageViewPort = it.getViewport(1);
+                const viewport: PageViewPort = it.getViewport({scale: 1});
 
                 // calculate the ratio of the maxSize to the original page width and than use the smallest to not be larger than maxSize
-                const scale: number = Math.min(maxSize / viewport.width, maxSize / viewport.height);
+                const scale: GetViewPortOptions = { scale: Math.min(maxSize / viewport.width, maxSize / viewport.height) };
 
                 const rescaledViewport: PageViewPort = it.getViewport(scale);
 
