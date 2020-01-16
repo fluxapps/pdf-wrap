@@ -163,6 +163,7 @@ gulp.task("transformPackageJSON", function () {
 
     const pkg = require(`${appProperties.root}/package.json`);
     pkg.devDependencies = {};
+    pkg.scripts = {};
     pkg["bundledDependencies"] = Object.keys(pkg.dependencies);
 
     return file("package.json", JSON.stringify(pkg), {src: true})
