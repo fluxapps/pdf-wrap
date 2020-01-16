@@ -18,25 +18,20 @@ stages:
 lint:
   stage: lint
   timeout: "5m"
-  script:
-    - yarn gulp lint
+  script: yarn gulp lint
   allow_failure: true
   image: node:lts-alpine
 
 test:
   stage: test
+  timeout: "5m"
   script: yarn gulp test
-  tags:
-    - node
+  image: node:lts-alpine
 
 build:
   stage: build
   script: yarn run gulp repackage
-  tags:
-    - node
-  only:
-    refs:
-      - master
+  image: node:lts-alpine
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
     paths:
