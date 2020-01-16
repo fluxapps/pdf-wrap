@@ -1,14 +1,14 @@
-export class MockClientRectList extends Array<ClientRect> implements ClientRectList {
+export class MockClientRectList extends Array<DOMRect> implements DOMRectList {
 
-    [index: number]: ClientRect;
+    [index: number]: DOMRect;
 
     constructor(
-        clientRects: Array<ClientRect>
+        clientRects: Array<DOMRect>
     ) {
         super(...clientRects);
     }
 
-    item(index: number): ClientRect {
+    item(index: number): DOMRect {
         return this[index];
     }
 }
@@ -67,11 +67,11 @@ export class MockRange implements Range {
         throw new Error("Not implemented test stub");
     }
 
-    getBoundingClientRect(): ClientRect | DOMRect {
+    getBoundingClientRect(): DOMRect {
         throw new Error("Not implemented test stub");
     }
 
-    getClientRects(): ClientRectList | DOMRectList {
+    getClientRects(): DOMRectList {
         throw new Error("Not implemented test stub");
     }
 

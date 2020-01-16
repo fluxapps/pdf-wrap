@@ -41,9 +41,7 @@ deploy:
   only:
     refs:
       - master
-  before_script:
-    - "cd build/distributions/npm"
-  script: npm publish --access public
+  script: npm publish build/distributions/npm --access public
   tags:
     - node
   when: manual

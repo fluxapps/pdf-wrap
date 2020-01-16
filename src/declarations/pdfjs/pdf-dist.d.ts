@@ -58,9 +58,13 @@ declare module "pdfjs-dist" {
 
         readonly pageNumber: number;
 
-        getViewport(scale: number): PageViewPort;
+        getViewport(options: GetViewPortOptions): PageViewPort;
 
         render(opt: PageRenderOptions): Promise<void>;
+    }
+
+    export interface GetViewPortOptions {
+        scale: number;
     }
 
     export class PDFDocumentProxy {

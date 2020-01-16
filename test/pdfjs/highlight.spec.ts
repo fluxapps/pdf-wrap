@@ -1,6 +1,9 @@
-import {HighlightManager, transformSelection} from "../../src/pdfjs/highlight";
 import * as chai from "chai";
-import {ClientRectangle} from "../../src/pdfjs/client-rectangle";
+import { anyNumber, anyString, anything, deepEqual, instance, mock, verify, when } from "ts-mockito";
+import { colorFrom, Colors } from "../../src/api/draw/color";
+import { DrawElement, Rectangle } from "../../src/api/draw/elements";
+import { Target } from "../../src/api/highlight/highlight.api";
+import { CanvasElement, CanvasRectangle } from "../../src/paint/canvas.elements";
 import {
     Canvas,
     CirclePainter,
@@ -9,12 +12,9 @@ import {
     PolyLinePainter,
     RectanglePainter
 } from "../../src/paint/painters";
-import {CanvasElement, CanvasRectangle} from "../../src/paint/canvas.elements";
-import {DrawElement, Rectangle} from "../../src/api/draw/elements";
-import {colorFrom, Colors} from "../../src/api/draw/color";
-import {Target} from "../../src/api/highlight/highlight.api";
-import {anyNumber, anyString, anything, deepEqual, instance, mock, verify, when} from "ts-mockito";
-import {MockClientRectList, MockRange, MockSelection} from "./selection.mocks";
+import { ClientRectangle } from "../../src/pdfjs/client-rectangle";
+import { HighlightManager, transformSelection } from "../../src/pdfjs/highlight";
+import { MockClientRectList, MockRange, MockSelection } from "./selection.mocks";
 
 function createMockRectangle(): Rectangle {
     return {
@@ -638,9 +638,9 @@ describe('to text selection mapping', () => {
             const a: ClientRectangle = ClientRectangle.fromSize(5, 6, 5, 9);
             const b: ClientRectangle = ClientRectangle.fromSize(5, 7, 6, 10);
 
-            const clientRectList: ClientRectList = new MockClientRectList([a, b]);
+            const clientRectList: DOMRectList = new MockClientRectList([a, b]);
 
-            const mockRange: Range = mock(MockRange);
+            const mockRange: Range = mock<Range>(MockRange);
             when(mockRange.getClientRects()).thenReturn(clientRectList);
 
             const mockSelection: Selection = mock(MockSelection);
@@ -669,9 +669,9 @@ describe('to text selection mapping', () => {
             const a: ClientRectangle = ClientRectangle.fromSize(5, 6, 5, 9);
             const b: ClientRectangle = ClientRectangle.fromSize(6, 7, 6, 10);
 
-            const clientRectList: ClientRectList = new MockClientRectList([a, b]);
+            const clientRectList: DOMRectList = new MockClientRectList([a, b]);
 
-            const mockRange: Range = mock(MockRange);
+            const mockRange: Range = mock<Range>(MockRange);
             when(mockRange.getClientRects()).thenReturn(clientRectList);
 
             const mockSelection: Selection = mock(MockSelection);
@@ -708,9 +708,9 @@ describe('to text selection mapping', () => {
             const a: ClientRectangle = ClientRectangle.fromSize(5, 6, 0, 9);
             const b: ClientRectangle = ClientRectangle.fromSize(10, 7, 6, 0);
 
-            const clientRectList: ClientRectList = new MockClientRectList([a, b]);
+            const clientRectList: DOMRectList = new MockClientRectList([a, b]);
 
-            const mockRange: Range = mock(MockRange);
+            const mockRange: Range = mock<Range>(MockRange);
             when(mockRange.getClientRects()).thenReturn(clientRectList);
 
             const mockSelection: Selection = mock(MockSelection);
