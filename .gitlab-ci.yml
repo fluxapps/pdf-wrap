@@ -1,8 +1,8 @@
 variables:
-  YARN_CACHE_FOLDER: &yarn_cache_path "$CI_PROJECT_DIR/.yarn_cache_bin_elehrmittel"
+  YARN_CACHE_FOLDER: &yarn_cache_path "$CI_PROJECT_DIR/.yarn_cache_pdf_wrap"
 
 cache:
-  key: "bin_elehrmittel_yarn_node_cache"
+  key: "pdf_wrap_yarn_node_cache"
   paths:
     - *yarn_cache_path
 
