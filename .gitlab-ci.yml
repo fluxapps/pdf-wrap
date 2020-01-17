@@ -1,59 +1,58 @@
+.node_docker:
+  timeout: "10m"
+  image: node:lts-alpine
+
 variables:
-  YARN_CACHE_FOLDER: &yarn_cache_path "$CI_PROJECT_DIR/.yarn_cache_bin_elehrmittel"
+  YARN_CACHE_FOLDER: &yarn_cache_path "$CI_PROJECT_DIR/.yarn_cache_pdf_wrap"
 
 cache:
-  key: "bin_elehrmittel_yarn_node_cache"
+  key: "pdf_wrap_yarn_node_cache-$CI_COMMIT_REF_SLUG"
   paths:
     - *yarn_cache_path
 
+before_script:
+  - yarn install --frozen-lockfile --non-interactive --link-duplicates
+
 stages:
-  - test
+  - lint
   - build
+  - test
   - deploy
 
-test:
-  cache:
-    key: "node-$CI_COMMIT_REF_SLUG"
-    paths:
-      - node_modules
-  stage: test
-  before_script:
-    - yarn install --frozen-lockfile --non-interactive --link-duplicates
-  script: yarn gulp test
-  tags:
-    - node
+lint:
+  stage: lint
+  extends: .node_docker
+  script: yarn gulp lint
 
 build:
-  cache:
-    key: "node-$CI_COMMIT_REF_SLUG"
-    paths:
-      - node_modules
-    policy: pull
   stage: build
-  before_script:
-    - yarn install --frozen-lockfile --non-interactive --link-duplicates
+  extends: .node_docker
   script: yarn run gulp repackage
-  tags:
-    - node
-  only:
-    refs:
-      - master
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
     paths:
-    - build/
+      - build/
     expire_in: 30 days
+
+test:code:
+  stage: test
+  extends: .node_docker
+  script: yarn gulp test
+test:deploy_dry_run:
+  stage: test
+  extends: .node_docker
+  script:
+    - npm publish build/distributions/npm --dry-run --access public
+  dependencies:
+    - build
 
 deploy:
   stage: deploy
+  extends: .node_docker
   only:
     refs:
       - master
-  before_script:
-    - yarn install --frozen-lockfile --non-interactive --link-duplicates
   script: npm publish build/distributions/npm --access public
-  tags:
-    - node
   when: manual
   dependencies:
     - build
