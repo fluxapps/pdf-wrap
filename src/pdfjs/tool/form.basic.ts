@@ -16,10 +16,24 @@ export abstract class AbstractBorderForm<T> implements BorderForm<T> {
     readonly afterPaintCompleted: Observable<DrawEvent<T>> = this._afterPaintCompleted.asObservable();
 
     protected get position(): Point {
+
+        // Get the first visible page
         const page: Page = this.document.getPage();
+        const container: DOMRect = page.container.getBoundingClientRect();
+        const viewer: DOMRect = this.document.viewer.getBoundingClientRect();
+
+        // Page is completely in viewport
+        if (viewer.y < container.y) {
+            return {
+                x: page.pageDimension.width * 0.45,
+                y: container.y * 0.1,
+                z: -1
+            };
+        }
+
         return {
             x: page.pageDimension.width * 0.45,
-            y: page.pageDimension.height * 0.1,
+            y: Math.abs(viewer.y - container.y) + this.borderWith,
             z: -1
         };
     }
