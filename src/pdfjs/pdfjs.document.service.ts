@@ -46,6 +46,7 @@ import { RescaleManager } from "./rescale-manager";
 import { StorageAdapterWrapper } from "./storage-adapter-wrapper";
 import { FormFactory } from "./tool/forms";
 import { EraserTool, FreehandTool, SelectionTool } from "./tool/tools";
+import { DefaultTouchZoomService, TouchZoomService } from "./touch-zoom.service";
 
 // PDF.js defaults
 GlobalWorkerOptions.workerSrc = "assets/pdf.worker.js";
@@ -121,7 +122,8 @@ export class PDFjsDocumentService implements PDFDocumentService {
                 highlighting,
                 {freehand, eraser, forms, selection: selectionTool},
                 searchController,
-                (): void => { dispose$.next(); dispose$.complete(); documentModel.dispose(); }
+                (): void => { dispose$.next(); dispose$.complete(); documentModel.dispose(); },
+                zoomService
             )))
             .toPromise();
 
@@ -189,6 +191,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
         );
 
         const rescaleManager: RescaleManager = new RescaleManager(viewer);
+        const zoomService: TouchZoomService = new DefaultTouchZoomService(viewer, documentModel);
 
         const searchController: DocumentSearch = new PDFjsDocumentSearch(findController);
         const highlighting: TextHighlighting = new TextHighlighting(documentModel);
@@ -456,8 +459,10 @@ class PDFjsDocument implements PDFDocument {
         private readonly _highlighting: TextHighlighting,
         readonly toolbox: Toolbox,
         readonly searchController: DocumentSearch,
-        private dispose: (() => void) | null
+        private dispose: (() => void) | null,
+        private readonly touchZoomService: TouchZoomService
     ) {
+        this.touchZoomService.pinchZoomEnabled = true;
 
         this.pageChange = new Observable((subscriber: Subscriber<PageChangingEvent>): TeardownLogic => {
             const eventHandler: (ev: PageChangingEvent) => void = (ev: PageChangingEvent): void => subscriber.next(ev);
