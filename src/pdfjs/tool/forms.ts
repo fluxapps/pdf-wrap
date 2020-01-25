@@ -9,6 +9,8 @@ import { DocumentModel, Page } from "../document.model";
 import { RescaleManager } from "../rescale-manager";
 import { AbstractBorderForm, AbstractStandardForm } from "./form.basic";
 
+const BASE_FORM_SCALE: number = 0.15;
+
 /**
  * Line form implementation.
  *
@@ -25,11 +27,17 @@ class LineForm extends AbstractBorderForm<Line> {
 
     create(): void {
         const page: Page = this.document.getPage();
-        const start: Point = this.position;
+        const size: number = Math.min(page.pageDimension.width, page.pageDimension.height) * BASE_FORM_SCALE;
+        const middlePoint: Point = this.position;
+        const start: Point = {
+            x: middlePoint.x - (size / 2),
+            y: middlePoint.y,
+            z: middlePoint.z
+        };
         const end: Point = {
-            x: start.x + (Math.min(page.pageDimension.width, page.pageDimension.height) * 0.4),
-            y: start.y,
-            z: start.z
+            x: middlePoint.x + (size / 2),
+            y: middlePoint.y,
+            z: middlePoint.z
         };
         const canvasLine: CanvasLine = page.drawLayer.line()
             .borderColor(this.borderColor)
@@ -61,8 +69,13 @@ class RectangleForm extends AbstractStandardForm<Rectangle> {
 
     create(): void {
         const page: Page = this.document.getPage();
-        const position: Point = this.position;
-        const size: number = Math.min(page.pageDimension.width, page.pageDimension.height) * 0.15;
+        const size: number = Math.min(page.pageDimension.width, page.pageDimension.height) * BASE_FORM_SCALE;
+        const middlePoint: Point = this.position;
+        const position: Point = {
+            x: middlePoint.x - (size / 2),
+            y: middlePoint.y - (size / 2),
+            z: middlePoint.z
+        };
 
         const canvasRectangle: CanvasRectangle = page.drawLayer.rectangle()
             .borderWidth(this.rescaleManager.rescalePixel(this.borderWith))
@@ -98,8 +111,14 @@ class EllipseForm extends AbstractStandardForm<Ellipse> {
 
     create(): void {
         const page: Page = this.document.getPage();
-        const position: Point = this.position;
-        const size: number = Math.min(page.pageDimension.width, page.pageDimension.height) * 0.15;
+        const middlePoint: Point = this.position;
+        const height: number = Math.min(page.pageDimension.width, page.pageDimension.height) * BASE_FORM_SCALE;
+        const width: number = height * 1.2;
+        const position: Point = {
+            x: middlePoint.x - (width / 2),
+            y: middlePoint.y - (height / 2),
+            z: middlePoint.z
+        };
 
         const canvasEllipse: CanvasEllipse = page.drawLayer.ellipse()
             .borderWidth(this.rescaleManager.rescalePixel(this.borderWith))
@@ -107,8 +126,8 @@ class EllipseForm extends AbstractStandardForm<Ellipse> {
             .fillColor(this.fillColor)
             .position(position)
             .dimension({
-                height: size,
-                width: size * 1.2,
+                height,
+                width,
             })
             .paint();
 
@@ -135,8 +154,13 @@ class CircleForm extends AbstractStandardForm<Circle> {
 
     create(): void {
         const page: Page = this.document.getPage();
-        const position: Point = this.position;
-        const size: number = Math.min(page.pageDimension.width, page.pageDimension.height) * 0.20;
+        const size: number = Math.min(page.pageDimension.width, page.pageDimension.height) * BASE_FORM_SCALE;
+        const middlePoint: Point = this.position;
+        const position: Point = {
+            x: middlePoint.x - (size / 2),
+            y: middlePoint.y - (size / 2),
+            z: middlePoint.z
+        };
 
         const canvasCircle: CanvasCircle = page.drawLayer.circle()
             .borderWidth(this.rescaleManager.rescalePixel(this.borderWith))

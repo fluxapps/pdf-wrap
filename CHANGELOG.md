@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## UNRELEASED
 ### Fixed
-* Forms are now positioned at the view port edge if the page is only partially visible.
+* Forms are now positioned in the middle of the visible part of the active page.
 
 ## 0.3.9 - 2020-01-16
 ### Changed

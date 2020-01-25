@@ -17,23 +17,24 @@ export abstract class AbstractBorderForm<T> implements BorderForm<T> {
 
     protected get position(): Point {
 
-        // Get the first visible page
         const page: Page = this.document.getPage();
-        const container: DOMRect = page.container.getBoundingClientRect();
+        const cStyle: CSSStyleDeclaration = getComputedStyle(page.container);
+        const containerTemp: DOMRect = page.container.getBoundingClientRect();
+        const container: DOMRect = new DOMRect(
+            containerTemp.x + parseInt(cStyle.borderLeftWidth, 10),
+            containerTemp.y + parseInt(cStyle.borderTopWidth, 10),
+            containerTemp.width - parseInt(cStyle.borderLeftWidth, 10) - parseInt(cStyle.borderRightWidth, 10),
+            containerTemp.height - parseInt(cStyle.borderTopWidth, 10) - parseInt(cStyle.borderBottomWidth, 10)
+        );
         const viewer: DOMRect = this.document.viewer.getBoundingClientRect();
+        const intersection: DOMRect = this.calculateRectangleIntersection(container, viewer);
+        const translated: DOMRect = this.translateToPageCoordinate(intersection, container);
 
-        // Page is completely in viewport
-        if (viewer.y < container.y) {
-            return {
-                x: page.pageDimension.width * 0.45,
-                y: container.y * 0.1,
-                z: -1
-            };
-        }
-
+        // width and height are only the visible part of the page! start viewer to page end!
+        // therefore visible part / 2 + distance to page edge.
         return {
-            x: page.pageDimension.width * 0.45,
-            y: Math.abs(viewer.y - container.y) + this.borderWith,
+            x: (translated.width * 0.5) + translated.x,
+            y: (translated.height * 0.5) + translated.y,
             z: -1
         };
     }
@@ -43,6 +44,42 @@ export abstract class AbstractBorderForm<T> implements BorderForm<T> {
     }
 
     abstract create(): void;
+
+    private calculateRectangleIntersection(rectA: DOMRect, rectB: DOMRect): DOMRect {
+        const x: number = Math.max(rectA.x, rectB.x);
+        const y: number = Math.max(rectA.y, rectB.y);
+        const width: number = Math.min(rectA.right - x, rectB.right - x);
+        const height: number = Math.min(rectA.bottom - y, rectB.bottom - y);
+        return  new DOMRect(
+            x,
+            y,
+            width,
+            height
+        );
+    }
+
+    private translateToPageCoordinate(rect: DOMRect, pagePosition: DOMRect): DOMRect {
+
+        /*
+            Source: https://www.math10.com/en/geometry/analytic-geometry/geometry1/coordinates-transformation.html
+            where (x, y) are old coordinates [i.e. coordinates relative to xy system],
+            (xp,yp) are new coordinates [relative to xp yp system] and (x0, y0) are the coordinates of the new origin 0'
+            relative to the old xy coordinate system.
+         */
+        const x0: number = pagePosition.x;
+        const y0: number = pagePosition.y;
+        const x: number = rect.x;
+        const y: number = rect.y;
+        const xp: number = x - x0;
+        const yp: number = y - y0;
+
+        return new DOMRect(
+            xp,
+            yp,
+            rect.width,
+            rect.height
+            );
+    }
 }
 
 export abstract class AbstractStandardForm<T> extends AbstractBorderForm<T> implements StandardForm<T> {
