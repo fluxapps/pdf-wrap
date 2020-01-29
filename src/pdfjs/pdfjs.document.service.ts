@@ -559,6 +559,7 @@ class PDFjsDocument implements PDFDocument {
             clearTimeout(this.viewer.renderingQueue.idleTimeout);
             this.viewer.renderingQueue.idleTimeout = null;
         }
+        this.touchZoomService.pinchZoomEnabled = false; // set to false in order to unbind events
         this._highlighting.dispose();
         this.viewer.pdfDocument.cleanup();
         await this.viewer.pdfDocument.destroy();
