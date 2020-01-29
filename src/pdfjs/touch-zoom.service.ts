@@ -43,7 +43,7 @@ export class DefaultTouchZoomService implements TouchZoomService {
         }
 
         // Prevent native iOS page zoom
-        document.addEventListener("touchmove", (e) => { if (e.scale !== 1) { e.preventDefault(); } }, { passive: false });
+        document.addEventListener("touchmove", (e) => { if (e.scale !== undefined && e.scale !== 1) { e.preventDefault(); } }, { passive: false });
         viewer.addEventListener("touchstart", (e) => {
             if (e.touches.length > 1) {
                 this.startX = (e.touches[0].pageX + e.touches[1].pageX) / 2;

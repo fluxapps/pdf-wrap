@@ -7,6 +7,8 @@ interface TouchEvent {
      * Values below 1.0 indicate an inward pinch (zoom out).
      * Values above 1.0 indicate an outward unpinch (zoom in).
      * Initial value: 1.0
+     *
+     * Undefined if the browser does not support this non standard!
      */
-    scale: number;
+    scale: number | undefined;
 }
