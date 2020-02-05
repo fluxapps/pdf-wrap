@@ -31,7 +31,7 @@ module.exports = {
     module: {
         rules: [{
             test: /\.css$/,
-            loaders: ['style-loader/url', 'file-loader']
+            loaders: ['style-loader', 'css-loader']
         }, {
             test: /\.html$/,
             loader: "raw-loader" // loaders: ['raw-loader'] is also perfectly acceptable.

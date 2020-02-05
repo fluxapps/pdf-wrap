@@ -36,6 +36,8 @@ export async function loadPDF() {
         layerStorage: URI.from("mem://chicken.pdf")
     });
 
+    pdfDocument.scaleTo("page-fit");
+
     new HighlightService(pdfDocument.highlighting);
     new PenButton(pdfDocument.toolbox.freehand);
     new EraserButton(pdfDocument.toolbox.eraser);
