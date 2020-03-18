@@ -4,19 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## UNRELEASED
-### Added
-* Pinch zoom.
-
-### Fixed
-* Forms are now positioned in the middle of the visible part of the active page.
-
-## 0.4.0 - 2020-02-05
+## 0.4.0 - 2020-03-18
 ### Added
 * Experimental pinch zoom.
 
 ### Changed
 * Update examples.
+* Forms are now positioned in the middle of the visible part of the active page.
 
 ### Fixed
 * Gulp tasks which spawn child processes now work on windows.
