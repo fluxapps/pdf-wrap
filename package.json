@@ -1,8 +1,11 @@
 {
   "name": "@srag/pdf-wrap",
-  "version": "0.3.9",
+  "version": "0.4.0",
   "description": "A high level PDF abstraction library with a rich set of additional features like full text document search. Its primary goal is to provide a simple api to create your own PDF viewer. Tasty! Isn't it?",
-  "repository": "https://github.com/studer-raimann/pdf-wrap",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/studer-raimann/pdf-wrap.git"
+  },
   "homepage": "https://studer-raimann.github.io/pdf-wrap/",
   "keywords": [
     "pdf",
@@ -15,9 +18,6 @@
   "engines": {
     "node": ">=10.9.0 <13.0.0",
     "yarn": ">=1.13.0 <2.0.0"
-  },
-  "scripts": {
-    "prepare": "install-peers"
   },
   "devDependencies": {
     "@types/chai": "^4.2.7",
@@ -42,6 +42,7 @@
     "gulp-typescript": "^6.0.0-alpha.1",
     "install-peers-cli": "^2.2.0",
     "mocha": "^7.0.0",
+    "rxjs": "^6.5.4",
     "terser": "^4.6.3",
     "ts-mockito": "^2.5.0",
     "tslint": "^5.20.1",

@@ -1,5 +1,6 @@
-html, body {
-    height: 100%;
+html, body, body > div {
+    height: 100vh;
+    width: 100vw;
 }
 
 .pdf-container {
@@ -21,14 +22,6 @@ html, body {
     overflow-y: scroll;
 }
 
-.sidebar.left {
-    float: left;
-}
-
-.sidebar.right {
-    float: right;
-}
-
 .dark {
     background-color: #333333;
 }
@@ -43,10 +36,4 @@ ul.no.style {
 
 li.center.aligned {
     text-align: center;
-}
-
-.positioned-viewport {
-    top: 239px!important;
-    left: 335px!important;
-    right: 160px!important;
 }

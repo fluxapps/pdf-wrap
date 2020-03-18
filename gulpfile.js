@@ -61,7 +61,7 @@ gulp.task("typedoc", () => {
  */
 gulp.task("mkdocs", gulp.series("typedoc", (done) => {
 
-    spawn("mkdocs", ["build"], {stdio: "inherit"})
+    spawn("mkdocs", ["build"], {stdio: "inherit", shell: true})
         .once("exit", function (code) {
             if (code === 0) {
 
@@ -82,7 +82,7 @@ gulp.task("mkdocs", gulp.series("typedoc", (done) => {
  */
 gulp.task("publishDoc", gulp.series("mkdocs", (done) => {
 
-    spawn("ghp-import", [`${appProperties.build.dirs.docs}/mkdocs`, "-p", "-n"], {stdio: "inherit"})
+    spawn("ghp-import", [`${appProperties.build.dirs.docs}/mkdocs`, "-p", "-n"], {stdio: "inherit", shell: true})
         .once("exit", function (code) {
             if (code === 0) {
                 done();
@@ -196,7 +196,7 @@ gulp.task("transpileTypescript", function () {
     return tsProject.src()
         .pipe(sourcemaps.init())
         .pipe(tsProject())
-        .pipe(sourcemaps.write())
+        .pipe(sourcemaps.write("."))
         .pipe(gulp.dest(appProperties.build.dirs.javascript));
 });
 
@@ -207,7 +207,7 @@ gulp.task("transpileTypescript", function () {
  * Runs the tests
  */
 gulp.task("test", gulp.series("transpileTypescript", (done) => {
-    spawn("yarn", ["mocha"], {stdio: "inherit"})
+    spawn("yarn", ["mocha"], {stdio: "inherit", shell: true})
         .once("exit", function (code) {
             if (code === 0) {
                 done();
@@ -257,7 +257,9 @@ gulp.task("minify", gulp.series("build", function () {
     };
 
     return gulp.src(`${appProperties.build.dirs.javascript}/src/**/*.js`)
+        .pipe(sourcemaps.init({loadMaps: true}))
         .pipe(terser(options))
+        .pipe(sourcemaps.write("."))
         .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap`))
 }));
 
@@ -297,7 +299,7 @@ gulp.task("repackage", gulp.series("clean", "package"));
  */
 gulp.task("pack", gulp.series("repackage", function (done) {
 
-    spawn("yarn", ["pack"], {stdio: "inherit", cwd: `${appProperties.build.dirs.dist}/npm`})
+    spawn("yarn", ["pack"], {stdio: "inherit", cwd: `${appProperties.build.dirs.dist}/npm`, shell: true})
         .once("exit", function (code) {
             if (code === 0) {
                 done();
@@ -312,7 +314,7 @@ gulp.task("pack", gulp.series("repackage", function (done) {
  * Publishes the npm distribution.
  */
 gulp.task("publish", gulp.series("repackage", function (done) {
-    spawn("yarn", ["publish", "--access", "public"], {stdio: "inherit", cwd: `${appProperties.build.dirs.dist}/npm`})
+    spawn("yarn", ["publish", "--access", "public"], {stdio: "inherit", cwd: `${appProperties.build.dirs.dist}/npm`, shell: true})
         .once("exit", function (code) {
             if (code === 0) {
                 done();
