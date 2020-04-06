@@ -10,6 +10,7 @@ const gulpTslint = require("gulp-tslint");
 const tslint = require("tslint");
 const typedoc = require("gulp-typedoc");
 const concat = require("gulp-concat");
+const resolve = require("resolve");
 
 const appProperties = require("./app.properties");
 
@@ -99,15 +100,7 @@ gulp.task("publishDoc", gulp.series("mkdocs", (done) => {
  * Copies every dependency declared in package.json
  */
 gulp.task("copyDependencies", function (done) {
-
-    copyNodeModules(appProperties.root, `${appProperties.build.dirs.libs}/pdf-wrap`, {devDependencies: false}, function (err, _) {
-
-        if (err) {
-            done(err);
-        } else {
-            done();
-        }
-    });
+    done(); // Noop don't bundle dependencies.
 });
 
 // --- copyCMaps
@@ -164,7 +157,6 @@ gulp.task("transformPackageJSON", function () {
     const pkg = require(`${appProperties.root}/package.json`);
     pkg.devDependencies = {};
     pkg.scripts = {};
-    pkg["bundledDependencies"] = Object.keys(pkg.dependencies);
 
     return file("package.json", JSON.stringify(pkg), {src: true})
         .pipe(gulp.dest(`${appProperties.build.dirs.dist}/npm`));
