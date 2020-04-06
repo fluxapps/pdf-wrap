@@ -183,50 +183,52 @@ export abstract class DrawingTool extends BaseTool {
          */
         this.touchStart = fromEvent<TouchEvent>(document.viewer, "touchstart")
             .pipe(filter(() => this.isActive))
-            .pipe(tap((it) => this.setPageByEvent(it)))
             .pipe(tap((it) => it.preventDefault()))
+            .pipe(tap((it) => this.setPageByEvent(it)))
+            .pipe(filter(() => this.hasPage))
             .pipe(tap((_) => this.log.trace(() => `Touch start event from drawing tool: tool=${this.constructor.name}`)))
             .pipe(share());
 
         this.touchMove = fromEvent<TouchEvent>(document.viewer, "touchmove")
             .pipe(filter(() => this.isActive))
-            .pipe(filter(() => this.hasPage))
             .pipe(tap((it) => it.preventDefault()))
+            .pipe(filter(() => this.hasPage))
             .pipe(tap((_) => this.log.trace(() => `Touch move event from drawing tool: tool=${this.constructor.name}`)))
             .pipe(share());
 
         this.touchEnd = fromEvent<TouchEvent>(document.viewer, "touchend")
             .pipe(filter(() => this.isActive))
-            .pipe(filter(() => this.hasPage))
             .pipe(tap((it) => it.preventDefault()))
+            .pipe(filter(() => this.hasPage))
             .pipe(tap((_) => this.log.trace(() => `Touch end event from drawing tool: tool=${this.constructor.name}`)))
             .pipe(share());
 
         this.touchCancel = fromEvent<TouchEvent>(document.viewer, "touchcancel")
             .pipe(filter(() => this.isActive))
-            .pipe(filter(() => this.hasPage))
             .pipe(tap((it) => it.preventDefault()))
+            .pipe(filter(() => this.hasPage))
             .pipe(tap((_) => this.log.trace(() => `Touch cancel event from drawing tool: tool=${this.constructor.name}`)))
             .pipe(share());
 
         this.mouseDown = fromEvent<MouseEvent>(document.viewer, "mousedown")
             .pipe(filter(() => this.isActive))
-            .pipe(tap((it) => this.setPageByEvent(it)))
             .pipe(tap((it) => it.preventDefault()))
+            .pipe(tap((it) => this.setPageByEvent(it)))
+            .pipe(filter(() => this.hasPage))
             .pipe(tap((_) => this.log.trace(() => `Mouse down event from drawing tool: tool=${this.constructor.name}`)))
             .pipe(share());
 
         this.mouseMove = fromEvent<MouseEvent>(document.viewer, "mousemove")
             .pipe(filter(() => this.isActive))
-            .pipe(filter(() => this.hasPage))
             .pipe(tap((it) => it.preventDefault()))
+            .pipe(filter(() => this.hasPage))
             .pipe(tap((_) => this.log.trace(() => `Mouse move event from drawing tool: tool=${this.constructor.name}`)))
             .pipe(share());
 
         this.mouseUp = fromEvent<MouseEvent>(document.viewer, "mouseup")
             .pipe(filter(() => this.isActive))
-            .pipe(filter(() => this.hasPage))
             .pipe(tap((it) => it.preventDefault()))
+            .pipe(filter(() => this.hasPage))
             .pipe(tap((_) => {
                 this.log.trace(() => `Mouse up event from drawing tool: tool=${this.constructor.name}`);
             }))
