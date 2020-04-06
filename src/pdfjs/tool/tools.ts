@@ -1,5 +1,5 @@
-import { fromEvent, merge, Subject, Observable, TeardownLogic, Subscriber } from "rxjs";
-import { bufferCount, filter, map, share, takeUntil, tap, throttleTime, withLatestFrom } from "rxjs/operators";
+import { combineLatest, fromEvent, merge, Observable, of, Subject, Subscriber, TeardownLogic } from "rxjs";
+import { bufferCount, exhaustMap, filter, map, share, takeUntil, tap, throttleTime } from "rxjs/operators";
 import { Logger } from "typescript-logging";
 import { Color, colorFrom, Colors } from "../../api/draw/color";
 import { Point } from "../../api/draw/draw.basic";
@@ -157,14 +157,19 @@ export class EraserTool extends DrawingTool implements Eraser {
                 )
                 .pipe(share());
 
-            merge(this.touchMove, this.mouseMove)
-                .pipe(map((it) => this.calcRelativePosition(it)))
-                .pipe(bufferCount(2, 1))
-                .pipe(map((it) => new ClientLine(it[0], it[1])))
-                .pipe(withLatestFrom(touchTransform))
-                .pipe(map((it): [ClientLine, Array<[string, ClientPolyline]>] => [it[0], it[1]]))
-                .pipe(takeUntil(merge(this.mouseUp, this.touchEnd)))
-                .subscribe((it) => {
+            const moveEvent: Observable<ClientLine> = merge(this.touchMove, this.mouseMove)
+                .pipe(
+                    map((it) => this.calcRelativePosition(it)),
+                    bufferCount(2, 1),
+                    map((it) => new ClientLine(it[0], it[1])),
+                    takeUntil(merge(this.mouseUp, this.touchEnd))
+                );
+
+            touchTransform.pipe(
+                    exhaustMap((it) => combineLatest([moveEvent, of(it)])),
+                    map((it): [ClientLine, Array<[string, ClientPolyline]>] => [it[0], it[1]]),
+                    takeUntil(merge(this.mouseUp, this.touchEnd))
+                ).subscribe((it) => {
                     const touchMoveLine: ClientLine = it[0];
                     for (const [polylineId, polyline] of it[1]) {
                         if (polyline.intersectsWith(touchMoveLine)) {
