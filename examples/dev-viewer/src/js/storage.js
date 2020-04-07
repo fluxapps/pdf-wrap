@@ -19,7 +19,6 @@ export class InMemStorageAdapter {
 
         events.afterPolyLineRendered().subscribe(it => {
             store.get("DRAWING").set(it.element.id, it);
-            console.log("PolyLine stored: ", it);
         }, (it) => console.error(it), () => console.log("afterPolyLineRendered complete"));
 
         events.afterHighlightRendered().subscribe(it => {
@@ -47,7 +46,6 @@ export class InMemStorageAdapter {
                     store.get("DRAWING").delete(it.element.id);
                     break;
             }
-            console.log("Element removed: ", it);
         }, (it) => console.error(it), () => console.log("afterElementRemoved complete"));
 
         events.afterRectangleRendered().subscribe(it => {
