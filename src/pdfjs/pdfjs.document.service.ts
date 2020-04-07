@@ -198,7 +198,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
         const freehand: FreehandTool = new FreehandTool(documentModel, rescaleManager);
         const eraser: EraserTool = new EraserTool(documentModel);
         const forms: Forms = new FormFactory(documentModel, rescaleManager);
-        const selectionTool: SelectionTool = new SelectionTool(documentModel, forms);
+        const selectionTool: SelectionTool = new SelectionTool(documentModel, forms, rescaleManager);
 
         freehand.stateChange
             .pipe(

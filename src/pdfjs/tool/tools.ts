@@ -22,7 +22,15 @@ import {
 import { PolyLinePainter } from "../../paint/painters";
 import { ClientLine, ClientPolyline } from "../client-line";
 import { DocumentModel, Page, PageVisibilityChangeEvent } from "../document.model";
-import { RescaleManager } from "../rescale-manager";
+import {
+    CircleRescaleStrategy,
+    EllipseRescaleStrategy,
+    LineRescaleStrategy,
+    PolyLineRescaleStrategy,
+    RectangleRescaleStrategy,
+    RescaleManager,
+    RescaleStrategy
+} from "../rescale-manager";
 import { BorderElementSelection, Disposable, FormElementSelection, ToolElementSelection } from "../selection";
 import { BaseTool, DrawingTool } from "./tool.basic";
 
@@ -230,7 +238,11 @@ export class SelectionTool extends BaseTool implements Selection {
 
     private readonly selectionLog: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/tool/tools:SelectionTool");
 
-    constructor(private readonly model: DocumentModel, private readonly forms: Forms) {
+    constructor(
+        private readonly model: DocumentModel,
+        private readonly forms: Forms,
+        private readonly rescaleManager: RescaleManager,
+    ) {
         super();
         this.onElementSelection = this._onElementSelection.asObservable();
         this.onElementRemoved = this._onElementRemoved.asObservable();
@@ -347,7 +359,11 @@ export class SelectionTool extends BaseTool implements Selection {
         return this.stateChange.pipe(filter((event) => !event.isActive));
     }
 
-    private attachListenerToBorderElement<R extends BorderElement, T extends CanvasBorderElement<R>>(page: Page, element: CanvasElement<DrawElement>):
+    private attachListenerToBorderElement<R extends BorderElement, T extends CanvasBorderElement<R>>(
+        page: Page,
+        element: CanvasElement<DrawElement>,
+        rescaleStrategy: RescaleStrategy<R>
+    ):
         Observable<BorderElementSelection<R, T>> {
         const clickEvents: Observable<MouseEvent> = element.on("mousedown");
         const pointerEvents: Observable<PointerEvent> = element.on("pointerdown");
@@ -370,14 +386,18 @@ export class SelectionTool extends BaseTool implements Selection {
                     it.resizable = true;
                 }),
                 tap(() => this.selectionLog.trace(`Selection change occurred.`)),
-                map((it) => new BorderElementSelection<R, T>(page, it)),
+                map((it) => new BorderElementSelection<R, T>(page, it, rescaleStrategy)),
                 takeUntil(this.toolNoLongerActive()),
                 takeUntil(this.pageNoLongerVisibleListener(page))
             );
     }
 
     private attachListenerToFormElement
-    <R extends Form, T extends CanvasFormElement<R>>(page: Page, element: CanvasElement<DrawElement>): Observable<FormElementSelection<R, T>> {
+    <R extends Form, T extends CanvasFormElement<R>>(
+        page: Page,
+        element: CanvasElement<DrawElement>,
+        rescaleStrategy: RescaleStrategy<R>
+    ): Observable<FormElementSelection<R, T>> {
         const clickEvents: Observable<MouseEvent> = element.on("mousedown");
         const pointerEvents: Observable<PointerEvent> = element.on("pointerdown");
         const touchEvents: Observable<TouchEvent> = element.on("touchstart");
@@ -399,14 +419,14 @@ export class SelectionTool extends BaseTool implements Selection {
                     it.resizable = true;
                 }),
                 tap(() => this.selectionLog.trace(`Selection change occurred.`)),
-                map((it) => new FormElementSelection<R, T>(page, it)),
+                map((it) => new FormElementSelection<R, T>(page, it, rescaleStrategy)),
                 takeUntil(this.toolNoLongerActive()),
                 takeUntil(this.pageNoLongerVisibleListener(page))
             );
     }
 
     private attachListenerToLine(page: Page, element: CanvasLine): void {
-        this.attachListenerToBorderElement<Line, CanvasLine>(page, element)
+        this.attachListenerToBorderElement<Line, CanvasLine>(page, element, new LineRescaleStrategy(this.rescaleManager))
             .pipe(
                 tap((it) => it.afterElementRemoved.subscribe({
                     complete: (): void => this.clearSelection(),
@@ -424,7 +444,7 @@ export class SelectionTool extends BaseTool implements Selection {
     }
 
     private attachListenerToPolyLine(page: Page, element: CanvasPolyLine): void {
-        this.attachListenerToBorderElement<PolyLine, CanvasPolyLine>(page, element)
+        this.attachListenerToBorderElement<PolyLine, CanvasPolyLine>(page, element, new PolyLineRescaleStrategy(this.rescaleManager))
             .pipe(
                 tap((it) => it.afterElementRemoved.subscribe({
                     complete: (): void => this.clearSelection(),
@@ -442,7 +462,7 @@ export class SelectionTool extends BaseTool implements Selection {
     }
 
     private attachListenerToRectangle(page: Page, element: CanvasRectangle): void {
-        this.attachListenerToFormElement<Rectangle, CanvasRectangle>(page, element)
+        this.attachListenerToFormElement<Rectangle, CanvasRectangle>(page, element, new RectangleRescaleStrategy(this.rescaleManager))
             .pipe(
                 tap((it) => it.afterElementRemoved.subscribe({
                     complete: (): void => this.clearSelection(),
@@ -460,7 +480,7 @@ export class SelectionTool extends BaseTool implements Selection {
     }
 
     private attachListenerToEllipse(page: Page, element: CanvasEllipse): void {
-        this.attachListenerToFormElement<Ellipse, CanvasEllipse>(page, element)
+        this.attachListenerToFormElement<Ellipse, CanvasEllipse>(page, element, new EllipseRescaleStrategy(this.rescaleManager))
             .pipe(
                 tap((it) => it.afterElementRemoved.subscribe({
                     complete: (): void => this.clearSelection(),
@@ -478,7 +498,7 @@ export class SelectionTool extends BaseTool implements Selection {
     }
 
     private attachListenerToCircle(page: Page, element: CanvasCircle): void {
-        this.attachListenerToFormElement<Circle, CanvasCircle>(page, element)
+        this.attachListenerToFormElement<Circle, CanvasCircle>(page, element, new CircleRescaleStrategy(this.rescaleManager))
             .pipe(
                 tap((it) => it.afterElementRemoved.subscribe({
                     complete: (): void => this.clearSelection(),

@@ -1,4 +1,4 @@
-import { Circle, Ellipse, Line, PolyLine, Rectangle } from "../api/draw/elements";
+import { BorderElement, Circle, Ellipse, Line, PolyLine, Rectangle } from "../api/draw/elements";
 import {Dimension, Point} from "../api/draw/draw.basic";
 import {PDFViewer} from "pdfjs-dist/web/pdf_viewer";
 import {ElementBuilderFactoryImpl} from "../paint/element.builders.impl";
@@ -303,5 +303,87 @@ export class RescaleManager {
             y: this.rescalePixel(position.y),
             z: position.z
         };
+    }
+}
+
+export interface RescaleStrategy<T extends BorderElement> {
+    normalize(form: T): T;
+    rescale(form: T): T;
+
+    normalizeNumber(value: number): number;
+    rescaleNumber(value: number): number;
+}
+
+abstract class AbstractRescaleStrategy<T extends BorderElement> implements RescaleStrategy<T> {
+
+    constructor(protected readonly rescaleManager: RescaleManager) {
+    }
+
+    abstract normalize(form: T): T;
+
+    normalizeNumber(value: number): number {
+        return this.rescaleManager.normalizePixel(value);
+    }
+
+    abstract rescale(form: T): T;
+
+    rescaleNumber(value: number): number {
+        return this.rescaleManager.rescalePixel(value);
+    }
+
+}
+
+export class LineRescaleStrategy extends AbstractRescaleStrategy<Line> {
+
+    normalize(form: Line): Line {
+        return this.rescaleManager.normalizeLine(form);
+    }
+
+    rescale(form: Line): Line {
+        return this.rescaleManager.rescaleLine(form);
+    }
+}
+
+export class PolyLineRescaleStrategy extends AbstractRescaleStrategy<PolyLine> {
+
+    normalize(form: PolyLine): PolyLine {
+        return this.rescaleManager.normalizePolyLine(form);
+    }
+
+    rescale(form: PolyLine): PolyLine {
+        return this.rescaleManager.rescalePolyLine(form);
+    }
+}
+
+export class RectangleRescaleStrategy extends AbstractRescaleStrategy<Rectangle> {
+
+    normalize(form: Rectangle): Rectangle {
+        return this.rescaleManager.normalizeRectangle(form);
+    }
+
+    rescale(form: Rectangle): Rectangle {
+        return this.rescaleManager.rescaleRectangle(form);
+    }
+}
+
+export class CircleRescaleStrategy extends AbstractRescaleStrategy<Circle> {
+
+    normalize(form: Circle): Circle {
+        return this.rescaleManager.normalizeCircle(form);
+    }
+
+    rescale(form: Circle): Circle {
+        return this.rescaleManager.rescaleCircle(form);
+    }
+}
+
+export class EllipseRescaleStrategy extends AbstractRescaleStrategy<Ellipse> {
+
+    normalize(form: Ellipse): Ellipse {
+        return this.rescaleManager.normalizeEllipse(form);
+    }
+
+    rescale(form: Ellipse): Ellipse {
+        return this.rescaleManager.rescaleEllipse(form);
     }
 }
