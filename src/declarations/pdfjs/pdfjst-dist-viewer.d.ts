@@ -103,6 +103,7 @@ declare module "pdfjs-dist/web/pdf_viewer" {
         renderer: RenderingType;
         enableWebGL: boolean;
         useOnlyCssZoom: boolean;
+        maxCanvasPixels?: number;
     }
 
     export interface PageView {

@@ -1,4 +1,6 @@
 import "./polyfill";
+// tslint:disable-next-line:no-implicit-dependencies (Type import for optional dependency)
+import { DeviceInfo, PluginRegistry } from "@capacitor/core";
 import {
     getDocument, GetViewPortOptions,
     GlobalWorkerOptions,
@@ -23,6 +25,7 @@ import {
 import { from, Subject, Observable, Subscriber, of, merge, fromEvent, TeardownLogic } from "rxjs";
 import { filter, first, flatMap, map, mergeMap, takeUntil, tap } from "rxjs/operators";
 import { Logger } from "typescript-logging";
+import { Optional } from "typescript-optional";
 import { LoadingOptions, PDFDocumentService } from "../api/document.service";
 import { Outline, PageThumbnail, TreeOutlineEntry } from "../api/document/document.info";
 import { PDFDocument, ScalePreset } from "../api/document/pdf.document";
@@ -132,7 +135,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
             cMapPacked: true,
             cMapUrl: mapUrl,
             data: pdfData,
-            maxImageSize: 4096 * 4096
+            maxImageSize: await this.determineMaxImageSize()
         }).promise;
 
         const linkService: PDFLinkService = new PDFLinkService({
@@ -147,6 +150,8 @@ export class PDFjsDocumentService implements PDFDocumentService {
         });
 
         this.log.trace(() => "Create PDF viewer");
+
+
         const viewer: PDFViewer = new PDFViewer({
             container: options.container,
             enablePrintAutoRotate: false,
@@ -416,6 +421,58 @@ export class PDFjsDocumentService implements PDFDocumentService {
         }
 
         return index;
+    }
+
+    /**
+     * Calculates the max image size for the current device.
+     * It will try to use the capacitor api if available and will fallback
+     * to user agent detection.
+     *
+     * Resolution for Desktop: 16 Megapixel
+     * Resolution for Mobile: 4 Megapixel
+     */
+    private async determineMaxImageSize(): Promise<number> {
+        try {
+            const isMobile: boolean = (await this.isMobileCapacitorCheck()).orElse(this.isMobileNavigatorCheck());
+
+            if (isMobile) {
+                // 4 Mega Pixel for mobile
+                return 1024 ** 2;
+            } else {
+                // 16 Mega Pixel limit for desktop
+                return 4096 ** 2;
+            }
+        } catch (e) {
+            return 4096 ** 2;
+        }
+    }
+
+    private async isMobileCapacitorCheck(): Promise<Optional<boolean>> {
+        try {
+            // tslint:disable-next-line:typedef
+            const { Plugins } = await import("@capacitor/core");
+            const { Device }: PluginRegistry = Plugins;
+            const info: DeviceInfo = await Device.getInfo();
+            if (info.operatingSystem === "ios" || info.operatingSystem === "android") {
+                return Optional.ofNonNull(true);
+            } else {
+                return Optional.ofNonNull(false);
+            }
+        } catch (e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * This is a "typescriptified" version of the pdfjs navigator check.
+     * It tries to determine the operating system with the given user agent.
+     * This test fails if the user overwrites the user agent which makes it less reliable.
+     */
+    private isMobileNavigatorCheck(): boolean {
+        const userAgent: string = (typeof navigator !== 'undefined' && navigator.userAgent) || "";
+        const isAndroid: boolean = /Android/.test(userAgent);
+        const isIOS: boolean = /\b(iPad|iPhone|iPod)(?=;)/.test(userAgent);
+        return isAndroid || isIOS;
     }
 }
 
