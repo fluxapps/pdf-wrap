@@ -18,6 +18,13 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
+"@capacitor/core@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@capacitor/core/-/core-2.0.1.tgz#d5ad065924602646128102078d55c3d9d633be40"
+  integrity sha512-6GoklVQdHZ6jBAkVgPySaTBw+/zz4P+U1yFZkNTVdYAEGze4Zv5cGlUF6OpvlZRiCk3p7ZWt4kC8baIh/Zxu3A==
+  dependencies:
+    tslib "^1.9.0"
+
 "@gulp-sourcemaps/identity-map@1.X":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@gulp-sourcemaps/identity-map/-/identity-map-1.0.2.tgz#1e6fe5d8027b1f285dc0d31762f566bccd73d5a9"
@@ -4969,6 +4976,11 @@ typescript-logging@^0.6.4:
   integrity sha512-jXISCGFyp4Q1uKLKi3zF0o8rwjeEipcIO7+C+jRttks3Ci8+8jDi9e87Jmz+8xuzZq+OcKJhDkiyHriqaWb+4A==
   dependencies:
     stacktrace-js "1.3.1"
+
+typescript-optional@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/typescript-optional/-/typescript-optional-2.0.1.tgz#1dd4826bd751f78756e7eb3f96a16fbbeb3f7ee6"
+  integrity sha512-xuwmqsCjE4OeeMKxbNX3jjNcISGzYh5Q9R1rM5OyxEVNIr94CB5llCkfKW+1nZTKbbUV0axN3QAUuX2fus/DhQ==
 
 typescript@3.7.x:
   version "3.7.5"
