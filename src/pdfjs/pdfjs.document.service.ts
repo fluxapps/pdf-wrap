@@ -469,9 +469,8 @@ export class PDFjsDocumentService implements PDFDocumentService {
      * This test fails if the user overwrites the user agent which makes it less reliable.
      */
     private isMobileNavigatorCheck(): boolean {
-        const userAgent: string = (typeof navigator !== 'undefined' && navigator.userAgent) || "";
-        const isAndroid: boolean = /Android/.test(userAgent);
-        const isIOS: boolean = /\b(iPad|iPhone|iPod)(?=;)/.test(userAgent);
+        const isAndroid: boolean = /Android/.test(navigator.userAgent);
+        const isIOS: boolean = /\b(iPad|iPhone|iPod)(?=;)/.test(navigator.userAgent);
         return isAndroid || isIOS;
     }
 }
