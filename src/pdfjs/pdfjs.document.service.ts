@@ -594,12 +594,17 @@ class PDFjsDocument implements PDFDocument {
                 canvas.height = rescaledViewport.height;
                 canvas.width = rescaledViewport.width;
 
+                const context: CanvasRenderingContext2D | null = canvas.getContext("2d");
+                if (context === null) {
+                    throw new Error("Browser does not support the required canvas context: 2d");
+                }
+
                 // we have to wait for the render method, then the canvas is ready
                 return from(
                     it.render({
-                        canvasContext: canvas.getContext("2d")!,
+                        canvasContext: context,
                         viewport: rescaledViewport
-                    })
+                    }).promise
                 )
                     .pipe(map(() => new PageThumbnail(canvas, it.pageNumber)));
             }));

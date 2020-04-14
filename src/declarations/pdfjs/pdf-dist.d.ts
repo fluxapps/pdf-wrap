@@ -54,13 +54,28 @@ declare module "pdfjs-dist" {
         viewport: PageViewPort;
     }
 
+    export interface RenderTask {
+
+        /**
+         * Promise for rendering task completion.
+         */
+        readonly promise: Promise<void>;
+
+        /**
+         * Cancels the rendering task. If the task is currently rendering it will
+         * not be cancelled until graphics pauses with a timeout. The promise that
+         * this object extends will be rejected when cancelled.
+         */
+        cancel(): void;
+    }
+
     export interface PDFPageProxy {
 
         readonly pageNumber: number;
 
         getViewport(options: GetViewPortOptions): PageViewPort;
 
-        render(opt: PageRenderOptions): Promise<void>;
+        render(opt: PageRenderOptions): RenderTask;
     }
 
     export interface GetViewPortOptions {
