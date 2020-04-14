@@ -1,6 +1,6 @@
 import { merge, Observable, Subject } from "rxjs";
 import { map, takeUntil } from "rxjs/operators";
-import { Color, colorFrom, Colors } from "../api/draw/color";
+import { Color } from "../api/draw/color";
 import { BorderElement, DrawElement, Form } from "../api/draw/elements";
 import { ElementSelection } from "../api/selection/selection.api";
 import { CanvasBorderElement, CanvasFormElement } from "../paint/canvas.elements";
@@ -19,11 +19,11 @@ export interface ToolElementSelection extends ElementSelection, Disposable {
 
 export class BorderElementSelection<R extends BorderElement, T extends CanvasBorderElement<R>> implements ToolElementSelection {
 
-    get fillColor(): Color {
-        return colorFrom(Colors.BLACK);
+    get fillColor(): Color | null {
+        return null;
     }
 
-    set fillColor(_: Color) {
+    set fillColor(_: Color | null) {
         this.validateState();
     }
 
@@ -169,12 +169,15 @@ export class FormElementSelection<R extends Form, T extends CanvasFormElement<R>
         super(page, selection, rescaleStrategy);
     }
 
-    get fillColor(): Color {
+    get fillColor(): Color | null {
         return this.transformedElement.fillColor;
     }
 
-    set fillColor(value: Color) {
+    set fillColor(value: Color | null) {
         this.validateState();
+        if (value === null) {
+            return;
+        }
         this._afterElementRemoved.next(this.transformedElement);
         this.selection.fillColor = value;
         this.transformedElement = this.selection.transform();
