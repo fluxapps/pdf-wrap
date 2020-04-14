@@ -1,2 +1,3 @@
 import "intersection-observer"; // Polyfill for Safari iOS < 12.2
 import "requestidlecallback-polyfill"; // requestIdleCallback polyfill for Safari ...
+import "core-js/stable/promise";
