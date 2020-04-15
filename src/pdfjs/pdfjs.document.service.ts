@@ -438,7 +438,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
             if (isMobile) {
                 this.log.info("Mobile platform detected, restrict max image size to 4 Megapixel");
                 // 4 Mega Pixel for mobile
-                return 1024 ** 2;
+                return 2048 ** 2;
             } else {
                 this.log.info("Desktop platform detected, restrict max image size to 16 Megapixel");
                 // 16 Mega Pixel limit for desktop
