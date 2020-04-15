@@ -433,16 +433,19 @@ export class PDFjsDocumentService implements PDFDocumentService {
      */
     private async determineMaxImageSize(): Promise<number> {
         try {
-            const isMobile: boolean = (await this.isMobileCapacitorCheck()).orElse(this.isMobileNavigatorCheck());
+            const isMobile: boolean = (await this.isMobileCapacitorCheck()).orElseGet(this.isMobileNavigatorCheck);
 
             if (isMobile) {
+                this.log.info("Mobile platform detected, restrict max image size to 4 Megapixel");
                 // 4 Mega Pixel for mobile
                 return 1024 ** 2;
             } else {
+                this.log.info("Desktop platform detected, restrict max image size to 16 Megapixel");
                 // 16 Mega Pixel limit for desktop
                 return 4096 ** 2;
             }
         } catch (e) {
+            this.log.info("Failed to detect platform, default to max image size of 16 Megapixel");
             return 4096 ** 2;
         }
     }
@@ -453,6 +456,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
             const { Plugins } = await import("@capacitor/core");
             const { Device }: PluginRegistry = Plugins;
             const info: DeviceInfo = await Device.getInfo();
+            this.log.debug("OS detection method: Capacitor");
             if (info.operatingSystem === "ios" || info.operatingSystem === "android") {
                 return Optional.ofNonNull(true);
             } else {
@@ -469,6 +473,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
      * This test fails if the user overwrites the user agent which makes it less reliable.
      */
     private isMobileNavigatorCheck(): boolean {
+        this.log.debug("OS detection method: UserAgent");
         const isAndroid: boolean = /Android/.test(navigator.userAgent);
         const isIOS: boolean = /\b(iPad|iPhone|iPod)(?=;)/.test(navigator.userAgent);
         return isAndroid || isIOS;
