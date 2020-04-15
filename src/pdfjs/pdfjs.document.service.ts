@@ -1,8 +1,6 @@
-import "./polyfill";
-// tslint:disable-next-line:no-implicit-dependencies (Type import for optional dependency)
-import { DeviceInfo, PluginRegistry } from "@capacitor/core";
 import {
-    getDocument, GetViewPortOptions,
+    getDocument,
+    GetViewPortOptions,
     GlobalWorkerOptions,
     OutlineDestination,
     PageRef,
@@ -22,10 +20,9 @@ import {
     RenderingType,
     TextLayerMode
 } from "pdfjs-dist/web/pdf_viewer";
-import { from, Subject, Observable, Subscriber, of, merge, fromEvent, TeardownLogic } from "rxjs";
+import { from, fromEvent, merge, Observable, of, Subject, Subscriber, TeardownLogic } from "rxjs";
 import { filter, first, flatMap, map, mergeMap, takeUntil, tap } from "rxjs/operators";
 import { Logger } from "typescript-logging";
-import { Optional } from "typescript-optional";
 import { LoadingOptions, PDFDocumentService } from "../api/document.service";
 import { Outline, PageThumbnail, TreeOutlineEntry } from "../api/document/document.info";
 import { PDFDocument, ScalePreset } from "../api/document/pdf.document";
@@ -45,6 +42,7 @@ import { PDFjsDocumentSearch } from "./document.search";
 import { TextHighlighting } from "./highlight";
 import { LayerManager } from "./layer-manager";
 import { PDFjsPageEvenCollection } from "./page-event-collection";
+import "./polyfill";
 import { RescaleManager } from "./rescale-manager";
 import { StorageAdapterWrapper } from "./storage-adapter-wrapper";
 import { FormFactory } from "./tool/forms";
@@ -135,7 +133,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
             cMapPacked: true,
             cMapUrl: mapUrl,
             data: pdfData,
-            maxImageSize: await this.determineMaxImageSize()
+            maxImageSize: 4096 ** 2
         }).promise;
 
         const linkService: PDFLinkService = new PDFLinkService({
@@ -421,62 +419,6 @@ export class PDFjsDocumentService implements PDFDocumentService {
         }
 
         return index;
-    }
-
-    /**
-     * Calculates the max image size for the current device.
-     * It will try to use the capacitor api if available and will fallback
-     * to user agent detection.
-     *
-     * Resolution for Desktop: 16 Megapixel
-     * Resolution for Mobile: 4 Megapixel
-     */
-    private async determineMaxImageSize(): Promise<number> {
-        try {
-            const isMobile: boolean = (await this.isMobileCapacitorCheck()).orElseGet(this.isMobileNavigatorCheck);
-
-            if (isMobile) {
-                this.log.info("Mobile platform detected, restrict max image size to 4 Megapixel");
-                // 4 Mega Pixel for mobile
-                return 1024 ** 2;
-            } else {
-                this.log.info("Desktop platform detected, restrict max image size to 16 Megapixel");
-                // 16 Mega Pixel limit for desktop
-                return 4096 ** 2;
-            }
-        } catch (e) {
-            this.log.info("Failed to detect platform, default to max image size of 16 Megapixel");
-            return 4096 ** 2;
-        }
-    }
-
-    private async isMobileCapacitorCheck(): Promise<Optional<boolean>> {
-        try {
-            // tslint:disable-next-line:typedef
-            const { Plugins } = await import("@capacitor/core");
-            const { Device }: PluginRegistry = Plugins;
-            const info: DeviceInfo = await Device.getInfo();
-            this.log.debug("OS detection method: Capacitor");
-            if (info.operatingSystem === "ios" || info.operatingSystem === "android") {
-                return Optional.ofNonNull(true);
-            } else {
-                return Optional.ofNonNull(false);
-            }
-        } catch (e) {
-            return Optional.empty();
-        }
-    }
-
-    /**
-     * This is a "typescriptified" version of the pdfjs navigator check.
-     * It tries to determine the operating system with the given user agent.
-     * This test fails if the user overwrites the user agent which makes it less reliable.
-     */
-    private isMobileNavigatorCheck(): boolean {
-        this.log.debug("OS detection method: UserAgent");
-        const isAndroid: boolean = /Android/.test(navigator.userAgent);
-        const isIOS: boolean = /\b(iPad|iPhone|iPod)(?=;)/.test(navigator.userAgent);
-        return isAndroid || isIOS;
     }
 }
 

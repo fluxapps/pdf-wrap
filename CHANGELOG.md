@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.5.1 - 2020-04-16
+### Changed
+* Downgrade pdfjs to version ~2.3 in order to fix a white page issue which
+sometimes appeared after scrolling many times through a large pdf document.
+
+### Removed
+* The 4 Megapixel image limit has caused a lot of visual issues with a lot of
+our test pdfs. Therefore, we decided to set the limit to 16 Megapixels for all
+platforms and remove the device detection logic.
+
 ## 0.5.0 - 2020-04-15
 
 ### Added

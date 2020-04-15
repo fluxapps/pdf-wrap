@@ -1,6 +1,6 @@
 {
   "name": "@srag/pdf-wrap",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "A high level PDF abstraction library with a rich set of additional features like full text document search. Its primary goal is to provide a simple api to create your own PDF viewer. Tasty! Isn't it?",
   "repository": {
     "type": "git",
@@ -20,7 +20,6 @@
     "yarn": ">=1.13.0 <2.0.0"
   },
   "devDependencies": {
-    "@capacitor/core": "^2.0.1",
     "@types/chai": "^4.2.7",
     "@types/chai-as-promised": "^7.1.2",
     "@types/mocha": "^5.2.7",
@@ -55,7 +54,7 @@
   },
   "dependencies": {
     "intersection-observer": "^0.7.0",
-    "pdfjs-dist": "~2.4.0",
+    "pdfjs-dist": "~2.3.200",
     "requestidlecallback-polyfill": "^1.0.2",
     "svg.draggable.js": "^2.0.0",
     "svg.js": "^2.7.1",
@@ -67,12 +66,6 @@
     "uuid-js": "^0.7.5"
   },
   "peerDependencies": {
-    "@capacitor/core": ">=1.5.0 <3.0.0",
     "rxjs": "^6.5.4"
-  },
-  "peerDependenciesMeta": {
-    "@capacitor/core": {
-      "optional": true
-    }
   }
 }
