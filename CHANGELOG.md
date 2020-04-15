@@ -4,6 +4,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.5.0 - 2020-04-15
+
+### Added
+* Optional peer dependency to Capacitor which is used to detect mobile platforms
+with modified user agents.
+* We restricted the max image size to 4 Megapixel on mobile platforms.
+Which should keep resource constrained devices from crashing.
+
+### Fixed
+* Eraser tool no longer tracks mouse movement without click or touch event.
+* Tools no longer error if the user clicks on the background of the pdf viewer.
+* The border size of the selected item is now normalized.
+
+### Changed
+* Upgrade to typescript 3.8
+* Upgrade to pdfjs 2.4
+* Tools now always prevent the default action if they are active.
+* Dependencies are no longer bundled.
+* The selection fill color is now possibly null, 
+because lines and polylines have no fill color at all.
+
+*BREAKING CHANGES:*
+* Selection fill color is now possibly null.
+* The selection border width is now normalized, which could lead to different
+behaviour depending on the zoom factor of the document.
+* pdfjs 2.4 no longer ships with all the polyfills which may break browsers which are not up to date.
+Angular users may want to update the zone.js package because older version don't support `Promise.allSettled()`.
+
 ## 0.4.0 - 2020-03-18
 ### Added
 * Experimental pinch zoom.
