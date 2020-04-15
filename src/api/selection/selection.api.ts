@@ -10,9 +10,9 @@ export interface ElementSelection {
 
     /**
      * The fill color of the current selection.
-     * @since 0.3.0
+     * @since 0.5.0
      */
-    fillColor: Color;
+    fillColor: Color | null;
 
     /**
      * The border color of the selection.

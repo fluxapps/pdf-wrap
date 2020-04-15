@@ -1,16 +1,16 @@
 import { StateChangeEvent } from "../api/event/event.api";
-import {Highlighting, Target, TextSelection} from "../api/highlight/highlight.api";
-import {Observable, fromEvent, merge, Subject} from "rxjs";
-import {Color} from "../api/draw/color";
-import {DocumentModel, getPageNumberByEvent, Page} from "./document.model";
-import {Canvas} from "../paint/painters";
+import { Highlighting, Target, TextSelection } from "../api/highlight/highlight.api";
+import { Observable, fromEvent, merge, Subject } from "rxjs";
+import { Color } from "../api/draw/color";
+import { DocumentModel, getPageNumberByEvent, Page } from "./document.model";
+import { Canvas } from "../paint/painters";
 import { filter, map, share, takeUntil, tap, withLatestFrom } from "rxjs/operators";
-import {DrawElement, Rectangle} from "../api/draw/elements";
-import {DrawEvent, PageLayer} from "../api/storage/page.event";
-import {CanvasRectangle} from "../paint/canvas.elements";
-import {ClientRectangle} from "./client-rectangle";
-import {Logger} from "typescript-logging";
-import {LoggerFactory} from "../log-config";
+import { DrawElement, Rectangle } from "../api/draw/elements";
+import { DrawEvent, PageLayer } from "../api/storage/page.event";
+import { CanvasRectangle } from "../paint/canvas.elements";
+import { ClientRectangle } from "./client-rectangle";
+import { Logger } from "typescript-logging";
+import { LoggerFactory } from "../log-config";
 
 /**
  * Represents the text highlighting feature of a PDF.
@@ -57,56 +57,50 @@ export class TextHighlighting implements Highlighting {
 
         // get the page where the mouse down event was
         const page: Observable<Page> = merge(
-            fromEvent(document.viewer, "mousedown", { passive: true }),
-            fromEvent<TouchEvent>(document.viewer, "touchstart", { passive: true })
+            fromEvent(document.viewer, "mousedown", {passive: true}),
+            fromEvent<TouchEvent>(document.viewer, "touchstart", {passive: true})
         )
-            .pipe(tap((_) => this.log.debug(() => "get page number by event")))
-            .pipe(map((it) => getPageNumberByEvent(it)))
-            .pipe(filter((it) => it !== undefined && this.document.hasPage(it)))
-            .pipe(map((it) => this.document.getPage(it!)))
-            .pipe(tap((it) => this.log.debug(() => `found page number by event: ${it.pageNumber}`)))
-            .pipe(takeUntil(this.dispose$));
+            .pipe(
+                tap((_) => this.log.debug(() => "get page number by event")),
+                map((it) => getPageNumberByEvent(it)),
+                filter((it) => it !== undefined && this.document.hasPage(it)),
+                map((it) => this.document.getPage(it!)),
+                tap((it) => this.log.debug(() => `found page number by event: ${it.pageNumber}`)),
+                takeUntil(this.dispose$)
+            );
 
         // transformed selection on mouse up only inside the viewer
-        const selections: Observable<Array<Target>> = fromEvent(window.document, "selectionchange", { passive: true })
-            .pipe(map((_) => window.getSelection()))
-            .pipe(filter((it): it is Selection => it !== null))
-            .pipe(map(transformSelection))
-            .pipe(filter((it) => it.length > 0))
-            .pipe(tap((it) => this.log.debug(() => `targets: ${JSON.stringify(it)}`)))
-            .pipe(takeUntil(this.dispose$));
+        const selections: Observable<Array<Target>> = fromEvent(window.document, "selectionchange", {passive: true})
+            .pipe(
+                map((_) => window.getSelection()),
+                filter((it): it is Selection => it !== null),
+                map(transformSelection),
+                filter((it) => it.length > 0),
+                tap((it) => this.log.debug(() => `targets: ${JSON.stringify(it)}`)),
+                takeUntil(this.dispose$)
+            );
 
         // page and selections observable zipped determines a valid text selection
         this.onTextSelection = selections
-            .pipe(withLatestFrom(page))
-            .pipe(tap((it) => this.log.debug(() => `Page for selection: page=${it[1].pageNumber}`)))
-            .pipe(filter((_) => this.enabled))
-            .pipe(map((it) => new TextSelectionImpl(it[1])))
-            .pipe(takeUntil(this.dispose$))
-            .pipe(share());
-
-
-        // the actions when noting is selected
-        // const onHighlight: Observable<void> = this.onTextSelection
-        //     .pipe(mergeMap((it: TextSelection) => it.onHighlighting))
-        //     .pipe(map((_) => {/* return void */}));
-        //
-        // const onRemoveHighlight: Observable<void> = this.onTextSelection
-        //     .pipe(mergeMap((it: TextSelection) => it.onRemoveHighlighting))
-        //     .pipe(map((_) => {/* return void */}));
-
-        const onMouseUpUnselection: Observable<void> = merge(
-            fromEvent(document.viewer, "mouseup", { passive: true }),
-            fromEvent<TouchEvent>(document.viewer, "touchend", { passive: true })
-        )
-            .pipe(map((_) => window.getSelection()!.rangeCount))
-            // .pipe(map(transformSelection))
-            .pipe(filter((it) => it < 1))
-            .pipe(map((_) => {/* return void */}))
-            .pipe(takeUntil(this.dispose$));
+            .pipe(
+                withLatestFrom(page),
+                tap((it) => this.log.debug(() => `Page for selection: page=${it[1].pageNumber}`)),
+                filter((_) => this.enabled),
+                map((it) => new TextSelectionImpl(it[1])),
+                takeUntil(this.dispose$),
+                share()
+            );
 
         // if one of them emits, nothing is selected
-        this.onTextUnselection = onMouseUpUnselection;
+        this.onTextUnselection = merge(
+            fromEvent(document.viewer, "mouseup", {passive: true}),
+            fromEvent<TouchEvent>(document.viewer, "touchend", {passive: true})
+        ).pipe(
+            map((_) => window.getSelection()!.rangeCount),
+            filter((it) => it < 1),
+            map((_) => {/* return void */}),
+            takeUntil(this.dispose$)
+        );
     }
 
     /**
@@ -283,7 +277,7 @@ export class HighlightManager {
         return !this.highlights
             .some((it) => {
                 return it.clientRectangle.intersectionAreaOf(this.target) === this.target.area()
-                && it.rectangle.fillColor.hex() === this.highlightColor!.hex();
+                    && it.rectangle.fillColor.hex() === this.highlightColor!.hex();
             });
     }
 
@@ -594,7 +588,7 @@ function getNodeSizedClientRects(range: Range): Array<DOMRect> {
             startRange.setEnd(node, range.endOffset);
             const tempRect: DOMRect = startRange.getBoundingClientRect() as DOMRect;
             const rect: DOMRect = node.parentElement!.getBoundingClientRect() as DOMRect;
-            selectionNodes.push(new DOMRect(rect.left, rect.top, tempRect.width , rect.height));
+            selectionNodes.push(new DOMRect(rect.left, rect.top, tempRect.width, rect.height));
             break;
         }
 

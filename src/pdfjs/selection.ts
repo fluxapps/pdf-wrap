@@ -1,11 +1,12 @@
 import { merge, Observable, Subject } from "rxjs";
 import { map, takeUntil } from "rxjs/operators";
-import { Color, colorFrom, Colors } from "../api/draw/color";
+import { Color } from "../api/draw/color";
 import { BorderElement, DrawElement, Form } from "../api/draw/elements";
 import { ElementSelection } from "../api/selection/selection.api";
 import { CanvasBorderElement, CanvasFormElement } from "../paint/canvas.elements";
 import { BoxDragData, PaintEvent } from "../paint/events";
 import { Page } from "./document.model";
+import { RescaleStrategy } from "./rescale-manager";
 
 export interface Disposable {
     readonly isDisposed: boolean;
@@ -18,11 +19,11 @@ export interface ToolElementSelection extends ElementSelection, Disposable {
 
 export class BorderElementSelection<R extends BorderElement, T extends CanvasBorderElement<R>> implements ToolElementSelection {
 
-    get fillColor(): Color {
-        return colorFrom(Colors.BLACK);
+    get fillColor(): Color | null {
+        return null;
     }
 
-    set fillColor(_: Color) {
+    set fillColor(_: Color | null) {
         this.validateState();
     }
 
@@ -54,13 +55,13 @@ export class BorderElementSelection<R extends BorderElement, T extends CanvasBor
     }
 
     get borderWidth(): number {
-        return this.transformedElement.borderWidth;
+        return this.rescaleStrategy.normalizeNumber(this.transformedElement.borderWidth);
     }
 
     set borderWidth(value: number) {
         this.validateState();
         this._afterElementRemoved.next(this.transformedElement);
-        this.selection.borderWidth = value;
+        this.selection.borderWidth = this.rescaleStrategy.rescaleNumber(value);
         this.transformedElement = this.selection.transform();
         this._afterElementModified.next(this.transformedElement);
     }
@@ -73,7 +74,11 @@ export class BorderElementSelection<R extends BorderElement, T extends CanvasBor
         return this.transformedElement.id;
     }
 
-    constructor(protected readonly page: Page, protected readonly selection: T) {
+    constructor(
+        protected readonly page: Page,
+        protected readonly selection: T,
+        protected readonly rescaleStrategy: RescaleStrategy<R>,
+        ) {
         this.afterElementRemoved = this._afterElementRemoved.asObservable();
         this.afterElementModified = this._afterElementModified.asObservable();
         this.afterPositionChange = this._afterPositionChange.asObservable();
@@ -160,16 +165,19 @@ export class BorderElementSelection<R extends BorderElement, T extends CanvasBor
 
 export class FormElementSelection<R extends Form, T extends CanvasFormElement<R>> extends BorderElementSelection<R, T> {
 
-    constructor(page: Page, selection: T) {
-        super(page, selection);
+    constructor(page: Page, selection: T, rescaleStrategy: RescaleStrategy<R>) {
+        super(page, selection, rescaleStrategy);
     }
 
-    get fillColor(): Color {
+    get fillColor(): Color | null {
         return this.transformedElement.fillColor;
     }
 
-    set fillColor(value: Color) {
+    set fillColor(value: Color | null) {
         this.validateState();
+        if (value === null) {
+            return;
+        }
         this._afterElementRemoved.next(this.transformedElement);
         this.selection.fillColor = value;
         this.transformedElement = this.selection.transform();

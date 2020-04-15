@@ -1,5 +1,5 @@
-import { fromEvent, merge, Subject, Observable, TeardownLogic, Subscriber } from "rxjs";
-import { bufferCount, filter, map, share, takeUntil, tap, throttleTime, withLatestFrom } from "rxjs/operators";
+import { combineLatest, fromEvent, merge, Observable, of, Subject, Subscriber, TeardownLogic } from "rxjs";
+import { exhaustMap, filter, map, pairwise, share, switchMap, takeUntil, tap, throttleTime } from "rxjs/operators";
 import { Logger } from "typescript-logging";
 import { Color, colorFrom, Colors } from "../../api/draw/color";
 import { Point } from "../../api/draw/draw.basic";
@@ -22,7 +22,15 @@ import {
 import { PolyLinePainter } from "../../paint/painters";
 import { ClientLine, ClientPolyline } from "../client-line";
 import { DocumentModel, Page, PageVisibilityChangeEvent } from "../document.model";
-import { RescaleManager } from "../rescale-manager";
+import {
+    CircleRescaleStrategy,
+    EllipseRescaleStrategy,
+    LineRescaleStrategy,
+    PolyLineRescaleStrategy,
+    RectangleRescaleStrategy,
+    RescaleManager,
+    RescaleStrategy
+} from "../rescale-manager";
 import { BorderElementSelection, Disposable, FormElementSelection, ToolElementSelection } from "../selection";
 import { BaseTool, DrawingTool } from "./tool.basic";
 
@@ -96,7 +104,8 @@ export class FreehandTool extends DrawingTool implements Freehand {
         }).pipe(share());
 
         // use our after line rendered observable and map it to void in order to emit on the onFinish observable
-        this.onFinish = this.afterLineRendered.pipe(map((_) => {/* return void */}));
+        this.onFinish = this.afterLineRendered.pipe(map((_) => {/* return void */
+        }));
     }
 
     setColor(color: Color): Freehand {
@@ -140,31 +149,35 @@ export class EraserTool extends DrawingTool implements Eraser {
 
         this.afterElementRemoved = new Observable((subscriber: Subscriber<DrawEvent<DrawElement>>): TeardownLogic => {
 
-            const touchTransform: Observable<Array<[string, ClientPolyline]>> = merge(this.touchStart, this.mouseDown)
-                .pipe(map((_) => (
-                    this.page.drawLayer.select("polyline.drawing")
-                        .map((it) => it.transform() as PolyLine)
-                        .map((it): [string, ClientPolyline] =>
-                            [
-                                it.id,
-                                new ClientPolyline(
-                                    it.coordinates
-                                )
-                            ]
-                        )
-                    )),
-                    takeUntil(merge(this.mouseUp, this.touchEnd))
-                )
-                .pipe(share());
+            // Fetch all polylines from the selected page.
+            const downEvent: Observable<Array<[string, ClientPolyline]>> = of(undefined).pipe(
+                map(() => (
+                        this.page.drawLayer.select("polyline.drawing")
+                            .map((it) => it.transform() as PolyLine)
+                            .map((it): [string, ClientPolyline] =>
+                                [
+                                    it.id,
+                                    new ClientPolyline(
+                                        it.coordinates
+                                    )
+                                ]
+                            )
+                    ))
+                );
 
-            merge(this.touchMove, this.mouseMove)
-                .pipe(map((it) => this.calcRelativePosition(it)))
-                .pipe(bufferCount(2, 1))
-                .pipe(map((it) => new ClientLine(it[0], it[1])))
-                .pipe(withLatestFrom(touchTransform))
-                .pipe(map((it): [ClientLine, Array<[string, ClientPolyline]>] => [it[0], it[1]]))
-                .pipe(takeUntil(merge(this.mouseUp, this.touchEnd)))
-                .subscribe((it) => {
+            // Calculate lines pairwise from mouse movement.
+            const moveEvent: Observable<ClientLine> = merge(this.touchMove, this.mouseMove)
+                .pipe(
+                    map((it) => this.calcRelativePosition(it)),
+                    pairwise(),
+                    map((it) => new ClientLine(it[0], it[1]))
+                );
+
+            // Collision detection, until mouse up event fires.
+            const upEvent: Observable<[ClientLine, Array<[string, ClientPolyline]>]> = downEvent.pipe(
+                exhaustMap((it) => combineLatest([moveEvent, of(it)])),
+                map((it): [ClientLine, Array<[string, ClientPolyline]>] => [it[0], it[1]]),
+                tap((it) => {
                     const touchMoveLine: ClientLine = it[0];
                     for (const [polylineId, polyline] of it[1]) {
                         if (polyline.intersectsWith(touchMoveLine)) {
@@ -187,39 +200,20 @@ export class EraserTool extends DrawingTool implements Eraser {
                             }
                         }
                     }
-                });
+                }),
+                takeUntil(merge(this.mouseUp, this.touchEnd))
+            );
 
-            /*
-            this.mouseDown.subscribe(() => {
-                this.page.drawLayer.select(".drawing")
-                    .forEach((it) => {
+            // Start collision detection on mouse down.
+            merge(this.touchStart, this.mouseDown).pipe(
+                switchMap(() => upEvent),
+            ).subscribe();
 
-                        it.on("mouseover")
-                            .pipe(takeWhile(() => this.hasPage))
-                            .pipe(takeUntil(this.mouseUp))
-                            .subscribe(() => {
-
-                                this.eraserLog.debug(() => `Remove drawing with id: ${it.transform().id}`);
-
-                                const drawEvent: DrawEvent<DrawElement> = new DrawEvent(
-                                    it.transform(),
-                                    this.page.pageNumber,
-                                    PageLayer.DRAWING
-                                );
-
-                                subscriber.next(drawEvent);
-
-                                it.remove();
-                            });
-
-                });
-
-            });
-            */
-        });
+        }).pipe(share());
 
         // use our after element removed observable and map it to void in order to emit on the onFinish observable
-        this.onFinish = this.afterElementRemoved.pipe(map((_) => {/* return void */}));
+        this.onFinish = this.afterElementRemoved.pipe(map((_) => {/* return void */
+        }));
     }
 }
 
@@ -244,7 +238,11 @@ export class SelectionTool extends BaseTool implements Selection {
 
     private readonly selectionLog: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/tool/tools:SelectionTool");
 
-    constructor(private readonly model: DocumentModel, private readonly forms: Forms) {
+    constructor(
+        private readonly model: DocumentModel,
+        private readonly forms: Forms,
+        private readonly rescaleManager: RescaleManager,
+    ) {
         super();
         this.onElementSelection = this._onElementSelection.asObservable();
         this.onElementRemoved = this._onElementRemoved.asObservable();
@@ -259,49 +257,51 @@ export class SelectionTool extends BaseTool implements Selection {
             .pipe(filter((event) => event.isActive)) // Only attach listener if tool state is changing to active.
             .subscribe(() => {
 
-            this.model.visiblePages.forEach((page) => {
-                this.attachListenersToPage(page);
-            });
-
-            this.forms.line.afterPaintCompleted
-                .pipe(takeUntil(this.stateChange))
-                .subscribe((event) => {
-                    const element: CanvasLine = this.getCanvasElementByEvent(event);
-
-                    this.attachListenerToLine(this.model.getPage(event.pageNumber), element);
+                this.model.visiblePages.forEach((page) => {
+                    this.attachListenersToPage(page);
                 });
 
-            this.forms.rectangle.afterPaintCompleted
-                .pipe(takeUntil(this.stateChange))
-                .subscribe((event) => {
-                    const element: CanvasRectangle = this.getCanvasElementByEvent(event);
-                    this.attachListenerToRectangle(this.model.getPage(event.pageNumber), element);
-                });
+                this.forms.line.afterPaintCompleted
+                    .pipe(takeUntil(this.stateChange))
+                    .subscribe((event) => {
+                        const element: CanvasLine = this.getCanvasElementByEvent(event);
 
-            this.forms.ellipse.afterPaintCompleted
-                .pipe(takeUntil(this.stateChange))
-                .subscribe((event) => {
-                    const element: CanvasEllipse = this.getCanvasElementByEvent(event);
-                    this.attachListenerToEllipse(this.model.getPage(event.pageNumber), element);
-                });
+                        this.attachListenerToLine(this.model.getPage(event.pageNumber), element);
+                    });
 
-            this.forms.circle.afterPaintCompleted
-                .pipe(takeUntil(this.stateChange))
-                .subscribe((event) => {
-                    const element: CanvasCircle = this.getCanvasElementByEvent(event);
-                    this.attachListenerToCircle(this.model.getPage(event.pageNumber), element);
-                });
+                this.forms.rectangle.afterPaintCompleted
+                    .pipe(takeUntil(this.stateChange))
+                    .subscribe((event) => {
+                        const element: CanvasRectangle = this.getCanvasElementByEvent(event);
+                        this.attachListenerToRectangle(this.model.getPage(event.pageNumber), element);
+                    });
 
-            // Listen to page changes as long as the tool is active.
-            this.model.onPageVisibilityChange
-                .pipe(takeUntil(this.stateChange))
-                .subscribe({
-                        complete: (): void =>  this.clearSelection(),
+                this.forms.ellipse.afterPaintCompleted
+                    .pipe(takeUntil(this.stateChange))
+                    .subscribe((event) => {
+                        const element: CanvasEllipse = this.getCanvasElementByEvent(event);
+                        this.attachListenerToEllipse(this.model.getPage(event.pageNumber), element);
+                    });
+
+                this.forms.circle.afterPaintCompleted
+                    .pipe(takeUntil(this.stateChange))
+                    .subscribe((event) => {
+                        const element: CanvasCircle = this.getCanvasElementByEvent(event);
+                        this.attachListenerToCircle(this.model.getPage(event.pageNumber), element);
+                    });
+
+                // Listen to page changes as long as the tool is active.
+                this.model.onPageVisibilityChange
+                    .pipe(takeUntil(this.stateChange))
+                    .subscribe({
+                        complete: (): void => this.clearSelection(),
                         next: (event: PageVisibilityChangeEvent): void => {
-                            if (event.visible) { this.attachListenersToPage(event.page); }
-                    }
-                });
-        });
+                            if (event.visible) {
+                                this.attachListenersToPage(event.page);
+                            }
+                        }
+                    });
+            });
     }
 
     private attachListenersToPage(page: Page): void {
@@ -359,8 +359,11 @@ export class SelectionTool extends BaseTool implements Selection {
         return this.stateChange.pipe(filter((event) => !event.isActive));
     }
 
-    private attachListenerToBorderElement
-    <R extends BorderElement, T extends CanvasBorderElement<R>>(page: Page, element: CanvasElement<DrawElement>):
+    private attachListenerToBorderElement<R extends BorderElement, T extends CanvasBorderElement<R>>(
+        page: Page,
+        element: CanvasElement<DrawElement>,
+        rescaleStrategy: RescaleStrategy<R>
+    ):
         Observable<BorderElementSelection<R, T>> {
         const clickEvents: Observable<MouseEvent> = element.on("mousedown");
         const pointerEvents: Observable<PointerEvent> = element.on("pointerdown");
@@ -377,16 +380,24 @@ export class SelectionTool extends BaseTool implements Selection {
                 filter((_) => !this.selection || this.selection.selectionId !== elementId),
                 throttleTime(100),
                 tap(this.clearSelection.bind(this)),
-                tap((it) => {it.selected = true; it.draggable = true; it.resizable = true; }),
+                tap((it) => {
+                    it.selected = true;
+                    it.draggable = true;
+                    it.resizable = true;
+                }),
                 tap(() => this.selectionLog.trace(`Selection change occurred.`)),
-                map((it) => new BorderElementSelection<R, T>(page, it)),
+                map((it) => new BorderElementSelection<R, T>(page, it, rescaleStrategy)),
                 takeUntil(this.toolNoLongerActive()),
                 takeUntil(this.pageNoLongerVisibleListener(page))
             );
     }
 
     private attachListenerToFormElement
-    <R extends Form, T extends CanvasFormElement<R>>(page: Page, element: CanvasElement<DrawElement>): Observable<FormElementSelection<R, T>> {
+    <R extends Form, T extends CanvasFormElement<R>>(
+        page: Page,
+        element: CanvasElement<DrawElement>,
+        rescaleStrategy: RescaleStrategy<R>
+    ): Observable<FormElementSelection<R, T>> {
         const clickEvents: Observable<MouseEvent> = element.on("mousedown");
         const pointerEvents: Observable<PointerEvent> = element.on("pointerdown");
         const touchEvents: Observable<TouchEvent> = element.on("touchstart");
@@ -402,16 +413,20 @@ export class SelectionTool extends BaseTool implements Selection {
                 filter((_) => !this.selection || this.selection.selectionId !== elementId),
                 throttleTime(100),
                 tap(this.clearSelection.bind(this)),
-                tap((it) => {it.selected = true; it.draggable = true; it.resizable = true; }),
+                tap((it) => {
+                    it.selected = true;
+                    it.draggable = true;
+                    it.resizable = true;
+                }),
                 tap(() => this.selectionLog.trace(`Selection change occurred.`)),
-                map((it) => new FormElementSelection<R, T>(page, it)),
+                map((it) => new FormElementSelection<R, T>(page, it, rescaleStrategy)),
                 takeUntil(this.toolNoLongerActive()),
                 takeUntil(this.pageNoLongerVisibleListener(page))
             );
     }
 
     private attachListenerToLine(page: Page, element: CanvasLine): void {
-        this.attachListenerToBorderElement<Line, CanvasLine>(page, element)
+        this.attachListenerToBorderElement<Line, CanvasLine>(page, element, new LineRescaleStrategy(this.rescaleManager))
             .pipe(
                 tap((it) => it.afterElementRemoved.subscribe({
                     complete: (): void => this.clearSelection(),
@@ -422,14 +437,14 @@ export class SelectionTool extends BaseTool implements Selection {
                 ),
                 tap((it) => it.afterPositionChange.subscribe(() => this.reemitElementsOfPage(page)))
             ).subscribe((it) => {
-                this._onElementSelection.next(new SelectionChangeEvent(true, it));
-                this.selection = it;
-                this.selectionLog.trace("Store new selection.");
+            this._onElementSelection.next(new SelectionChangeEvent(true, it));
+            this.selection = it;
+            this.selectionLog.trace("Store new selection.");
         });
     }
 
     private attachListenerToPolyLine(page: Page, element: CanvasPolyLine): void {
-        this.attachListenerToBorderElement<PolyLine, CanvasPolyLine>(page, element)
+        this.attachListenerToBorderElement<PolyLine, CanvasPolyLine>(page, element, new PolyLineRescaleStrategy(this.rescaleManager))
             .pipe(
                 tap((it) => it.afterElementRemoved.subscribe({
                     complete: (): void => this.clearSelection(),
@@ -447,7 +462,7 @@ export class SelectionTool extends BaseTool implements Selection {
     }
 
     private attachListenerToRectangle(page: Page, element: CanvasRectangle): void {
-        this.attachListenerToFormElement<Rectangle, CanvasRectangle>(page, element)
+        this.attachListenerToFormElement<Rectangle, CanvasRectangle>(page, element, new RectangleRescaleStrategy(this.rescaleManager))
             .pipe(
                 tap((it) => it.afterElementRemoved.subscribe({
                     complete: (): void => this.clearSelection(),
@@ -465,7 +480,7 @@ export class SelectionTool extends BaseTool implements Selection {
     }
 
     private attachListenerToEllipse(page: Page, element: CanvasEllipse): void {
-        this.attachListenerToFormElement<Ellipse, CanvasEllipse>(page, element)
+        this.attachListenerToFormElement<Ellipse, CanvasEllipse>(page, element, new EllipseRescaleStrategy(this.rescaleManager))
             .pipe(
                 tap((it) => it.afterElementRemoved.subscribe({
                     complete: (): void => this.clearSelection(),
@@ -483,7 +498,7 @@ export class SelectionTool extends BaseTool implements Selection {
     }
 
     private attachListenerToCircle(page: Page, element: CanvasCircle): void {
-        this.attachListenerToFormElement<Circle, CanvasCircle>(page, element)
+        this.attachListenerToFormElement<Circle, CanvasCircle>(page, element, new CircleRescaleStrategy(this.rescaleManager))
             .pipe(
                 tap((it) => it.afterElementRemoved.subscribe({
                     complete: (): void => this.clearSelection(),

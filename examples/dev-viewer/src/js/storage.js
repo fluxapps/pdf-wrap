@@ -26,14 +26,26 @@ export class InMemStorageAdapter {
         }, (it) => console.error(it), () => console.log("afterHighlightRendered complete"));
 
         events.afterElementRemoved().subscribe(it => {
-            const subStore =
-                store.get("HIGHLIGHT").get(it.element.id) ||
-                store.get("RECTANGLE").get(it.element.id) ||
-                store.get("ELLIPSE").get(it.element.id) ||
-                store.get("CIRCLE").get(it.element.id) ||
-                store.get("LINE").get(it.element.id) ||
-                store.get("DRAWING").get(it.element.id);
-            subStore.delete(it.element.id);
+            switch(true) {
+                case !!store.get("HIGHLIGHT").get(it.element.id):
+                    store.get("HIGHLIGHT").delete(it.element.id);
+                    break;
+                case !!store.get("RECTANGLE").get(it.element.id):
+                    store.get("RECTANGLE").delete(it.element.id);
+                    break;
+                case !!store.get("ELLIPSE").get(it.element.id):
+                    store.get("ELLIPSE").delete(it.element.id);
+                    break;
+                case !!store.get("CIRCLE").get(it.element.id):
+                    store.get("CIRCLE").delete(it.element.id);
+                    break;
+                case !!store.get("LINE").get(it.element.id):
+                    store.get("LINE").delete(it.element.id);
+                    break;
+                case !!store.get("DRAWING").get(it.element.id):
+                    store.get("DRAWING").delete(it.element.id);
+                    break;
+            }
         }, (it) => console.error(it), () => console.log("afterElementRemoved complete"));
 
         events.afterRectangleRendered().subscribe(it => {

@@ -26,6 +26,7 @@
     "@srag/pdf-wrap": "file:../../build/distributions/npm",
     "bootstrap": "^4.3.1",
     "bootstrap-colorpicker": "^3.1.2",
+    "core-js": "^3.6.5",
     "jquery": "^3.4.1",
     "popper.js": "^1.14.7",
     "rxjs": "^6.5.4"

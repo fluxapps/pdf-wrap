@@ -1,3 +1,4 @@
+import 'core-js/stable/promise';
 import './ui';
 import './storage';
 
