@@ -5,10 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## 0.6.0
+## Added
+* Optional feature configuration:
+  * Enable/Disable invisible text layer (Defaults to enable)
+  * Enable/Disable webgl for pdf page rendering (Defaults to enable)
+
 ## Changed
-- Migrate from tslint to eslint
-- Upgrade typescript to version 3.9
-- Minor dependency cleanup
+* Migrate from tslint to eslint
+* Upgrade typescript to version 3.9
+* Minor dependency cleanup
+* Migrate mocha configuration to ".mocharc.js"
 
 ## 0.5.1 - 2020-04-16
 ### Changed

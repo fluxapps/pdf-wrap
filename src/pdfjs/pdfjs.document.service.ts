@@ -23,7 +23,7 @@ import {
 import { from, fromEvent, merge, Observable, of, Subject, Subscriber, TeardownLogic } from "rxjs";
 import { filter, first, flatMap, map, mergeMap, takeUntil, tap } from "rxjs/operators";
 import { Logger } from "typescript-logging";
-import { LoadingOptions, PDFDocumentService } from "../api/document.service";
+import { LoadingOptions, PageRenderingMode, PDFDocumentService, ViewFeatures } from "../api/document.service";
 import { Outline, PageThumbnail, TreeOutlineEntry } from "../api/document/document.info";
 import { PDFDocument, ScalePreset } from "../api/document/pdf.document";
 import { Point } from "../api/draw/draw.basic";
@@ -52,6 +52,11 @@ import { DefaultTouchZoomService, TouchZoomService } from "./touch-zoom.service"
 // PDF.js defaults
 GlobalWorkerOptions.workerSrc = "assets/pdf.worker.js";
 let mapUrl: string = "assets/cmaps";
+
+const defaultFeatureConfig: ViewFeatures = Object.freeze({
+    renderingMode: PageRenderingMode.WEBGL,
+    selectableText: true
+});
 
 /**
  * Sets the assets directory.
@@ -110,6 +115,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
 
         const dispose$: Subject<void> = new Subject<void>();
         const pdfData: ArrayBuffer = await this.readBlob(options.pdf);
+        const featureConfig: ViewFeatures = parseViewFeatureConfig(options.features);
         const eventBus: EventBus = new EventBus();
 
         const fullyLoadPdf: Promise<PDFDocument> = new Observable((subscriber: Subscriber<PagesLoadedEvent>): TeardownLogic => {
@@ -153,14 +159,14 @@ export class PDFjsDocumentService implements PDFDocumentService {
         const viewer: PDFViewer = new PDFViewer({
             container: options.container,
             enablePrintAutoRotate: false,
-            enableWebGL: true,
+            enableWebGL: featureConfig.renderingMode === PageRenderingMode.WEBGL,
             eventBus,
             findController,
             linkService,
             removePageBorders: false,
             renderInteractiveForms: false,
             renderer: RenderingType.CANVAS,
-            textLayerMode: TextLayerMode.ENABLE_ENHANCED,
+            textLayerMode: featureConfig.selectableText ? TextLayerMode.ENABLE_ENHANCED : TextLayerMode.DISABLE,
             useOnlyCssZoom: false
         });
 
@@ -623,6 +629,26 @@ class PDFjsDocument implements PDFDocument {
 
         return out;
     }
+}
+
+/**
+ * Takes the optional feature config and adds the missing default values.
+ *
+ * @param partialConfig - The partial feature config which overwrites the default values.
+ * @return A valid view feature configuration.
+ */
+function parseViewFeatureConfig(partialConfig: Partial<ViewFeatures> | undefined): ViewFeatures {
+    if (!partialConfig) {
+        return defaultFeatureConfig;
+    }
+
+    const defaults: ViewFeatures = Object.assign({}, defaultFeatureConfig);
+    const config: ViewFeatures = Object.assign(
+        defaults,
+        partialConfig
+    );
+
+    return Object.freeze(config);
 }
 
 /**
