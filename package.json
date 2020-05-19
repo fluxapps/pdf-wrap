@@ -31,7 +31,6 @@
     "@typescript-eslint/parser": "^2.34.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "copy-node-modules": "^1.0.4",
     "del": "^5.1.0",
     "eslint": "^6.0.0",
     "gulp": "^4.0.2",

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 0.6.0
 ## Changed
 - Migrate from tslint to eslint
+- Upgrade typescript to version 3.9
+- Minor dependency cleanup
 
 ## 0.5.1 - 2020-04-16
 ### Changed
