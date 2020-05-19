@@ -208,7 +208,7 @@ export function getPageNumberByEvent(evt: Event): number | undefined {
 
         if (dataPageNumber !== undefined) {
             log.trace(() => `Found page number by event: event=${evt.type}, pageNumber=${dataPageNumber}`);
-            return parseInt(dataPageNumber!, 10);
+            return parseInt(dataPageNumber, 10);
         }
 
         return undefined;

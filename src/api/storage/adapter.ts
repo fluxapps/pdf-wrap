@@ -120,8 +120,8 @@ export class EmptyStorageAdapter implements StorageAdapter {
         this.log.info(() => "You are using an empty storage adapter. No page overlay data will be provided or stored");
     }
 
-    async loadPage(_: URI, pageNumber: number): Promise<PageOverlay> {
-        return new PageOverlay(pageNumber, [], [], [], [], [], []);
+    loadPage(_: URI, pageNumber: number): Promise<PageOverlay> {
+        return Promise.resolve(new PageOverlay(pageNumber, [], [], [], [], [], []));
     }
 
     register(): URI {

@@ -64,7 +64,7 @@ export class TextHighlighting implements Highlighting {
                 tap((_) => this.log.debug(() => "get page number by event")),
                 map((it) => getPageNumberByEvent(it)),
                 filter((it) => it !== undefined && this.document.hasPage(it)),
-                map((it) => this.document.getPage(it!)),
+                map((it) => this.document.getPage(it)),
                 tap((it) => this.log.debug(() => `found page number by event: ${it.pageNumber}`)),
                 takeUntil(this.dispose$)
             );
@@ -239,7 +239,7 @@ export class TextSelectionImpl implements TextSelection {
             x: target.x - this.page.pagePosition.x,
             y: target.y - this.page.pagePosition.y
         };
-    }
+    };
 }
 
 /**
@@ -400,14 +400,14 @@ export class HighlightManager {
     private readonly isIntersected: (data: HighlightData) => boolean = (data) => {
         return this.isAtSameHeight(data)
             && data.clientRectangle.isIntersectedWith(this.target);
-    }
+    };
 
     private readonly isAtSameHeight: (data: HighlightData) => boolean = (data) => {
         const slightlySmaller: boolean = data.clientRectangle.height > this.target.height * 0.98;
         const slightlyBigger: boolean = data.clientRectangle.height <= this.target.height * 1.02;
 
         return slightlySmaller && slightlyBigger;
-    }
+    };
 
     private readonly isNotIntersected: (data: HighlightData) => boolean = (data) => !this.isIntersected(data);
 
@@ -430,20 +430,20 @@ export class HighlightManager {
 
                 this._onAdd.next(newRect.transform());
             });
-    }
+    };
 
     private readonly isSameHighlight: (data: HighlightData) => boolean = (data) => {
         return this.isAtSameHeight(data)
             && (data.clientRectangle.left === this.target.right || data.clientRectangle.right === this.target.left);
-    }
+    };
 
     private readonly isSameColor: (data: HighlightData) => boolean = (data) => {
         return data.rectangle.fillColor.hex() === this.highlightColor!.hex();
-    }
+    };
 
     private readonly isNotSameColor: (data: HighlightData) => boolean = (data) => {
         return !this.isSameColor(data);
-    }
+    };
 
     private adjustHeight(clientRect: ClientRectangle): ClientRectangle {
         return ClientRectangle.fromCoordinates(
@@ -539,7 +539,7 @@ function getNodeSizedClientRects(range: Range): Array<DOMRect> {
 
     // tslint:disable-next-line:strict-type-predicates
     if (typeof document === "undefined") {
-        return Array.from(range.getClientRects() as DOMRectList);
+        return Array.from(range.getClientRects());
     }
 
     log.trace("Recalculate size of the selected nodes.");
@@ -564,8 +564,8 @@ function getNodeSizedClientRects(range: Range): Array<DOMRect> {
             const startRange: Range = new Range();
             startRange.setStart(node, range.startOffset);
             startRange.setEnd(node, range.endOffset);
-            const tempRect: DOMRect = startRange.getBoundingClientRect() as DOMRect;
-            const rect: DOMRect = node.parentElement!.getBoundingClientRect() as DOMRect;
+            const tempRect: DOMRect = startRange.getBoundingClientRect();
+            const rect: DOMRect = node.parentElement!.getBoundingClientRect();
             selectionNodes.push(new DOMRect(tempRect.left, rect.top, tempRect.width, rect.height));
             break;
         }
@@ -575,8 +575,8 @@ function getNodeSizedClientRects(range: Range): Array<DOMRect> {
             const startRange: Range = new Range();
             startRange.setStart(node, range.startOffset);
             startRange.setEndAfter(node);
-            const tempRect: DOMRect = startRange.getBoundingClientRect() as DOMRect;
-            const rect: DOMRect = node.parentElement!.getBoundingClientRect() as DOMRect;
+            const tempRect: DOMRect = startRange.getBoundingClientRect();
+            const rect: DOMRect = node.parentElement!.getBoundingClientRect();
             selectionNodes.push(new DOMRect(tempRect.left, rect.top, tempRect.width, rect.height));
             continue;
         }
@@ -586,14 +586,14 @@ function getNodeSizedClientRects(range: Range): Array<DOMRect> {
             const startRange: Range = new Range();
             startRange.setStartBefore(node);
             startRange.setEnd(node, range.endOffset);
-            const tempRect: DOMRect = startRange.getBoundingClientRect() as DOMRect;
-            const rect: DOMRect = node.parentElement!.getBoundingClientRect() as DOMRect;
+            const tempRect: DOMRect = startRange.getBoundingClientRect();
+            const rect: DOMRect = node.parentElement!.getBoundingClientRect();
             selectionNodes.push(new DOMRect(rect.left, rect.top, tempRect.width, rect.height));
             break;
         }
 
         // we are in the middle of the selection at this point just add it.
-        selectionNodes.push(node.parentElement!.getBoundingClientRect() as DOMRect);
+        selectionNodes.push(node.parentElement!.getBoundingClientRect());
     }
 
     return selectionNodes;

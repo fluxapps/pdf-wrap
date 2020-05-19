@@ -269,11 +269,28 @@ export class ClientRectangle implements DOMRect {
     }
 
     get [Symbol.toStringTag](): string {
-        return `left: ${this.left}, top: ${this.top}, right: ${this.right}, bottom: ${this.bottom}, height: ${this.height}, width: ${this.width}, x: ${this.x}, y: ${this.y}`;
+        return `
+        left: ${this.left}, 
+        op: ${this.top}, 
+        right: ${this.right}, 
+        bottom: ${this.bottom}, 
+        height: ${this.height}, 
+        width: ${this.width}, 
+        x: ${this.x}, 
+        y: ${this.y}`;
     }
 
     toJSON(): string {
-        return `{"left": ${this.left}, "top": ${this.top}, "right": ${this.right}, "bottom": ${this.bottom}, "height": ${this.height}, "width": ${this.width}, "x": ${this.x}, "y": ${this.y}}`;
+        return `{
+        "left": ${this.left}, 
+        "top": ${this.top}, 
+        "right": ${this.right}, 
+        "bottom": ${this.bottom}, 
+        "height": ${this.height}, 
+        "width": ${this.width}, 
+        "x": ${this.x}, 
+        "y": ${this.y}
+        }`;
     }
 
     private overlapLeft(other: ClientRect): number {

@@ -58,7 +58,7 @@ export abstract class BaseTool implements Tool {
     }
 
     private emit(): void {
-        this.stateChangeEvent!.next(new StateChangeEvent(this._isActive));
+        this.stateChangeEvent.next(new StateChangeEvent(this._isActive));
     }
 }
 
@@ -252,7 +252,7 @@ export abstract class DrawingTool extends BaseTool {
     protected calcRelativePosition(evt: MouseEvent | TouchEvent): Point {
 
         if (evt instanceof TouchEvent) {
-            const touch: TouchEvent = evt as TouchEvent;
+            const touch: TouchEvent = evt;
             if (touch.touches.length === 0 && touch.changedTouches.length === 0) {
                 return { x: 0, y: 0, z: 0};
             }

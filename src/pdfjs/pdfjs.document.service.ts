@@ -279,7 +279,10 @@ export class PDFjsDocumentService implements PDFDocumentService {
             this.log.trace("Listen on pagerendered event");
             const eventHandler: (ev: PageRenderedEvent) => void = (ev: PageRenderedEvent): void => subscriber.next(ev);
             viewer.eventBus.on("pagerendered", eventHandler);
-            return (): void => viewer.eventBus.off("pagerendered", eventHandler);
+            return (): void => {
+                this.log.trace("Unsubscribe from pagerendered event");
+                viewer.eventBus.off("pagerendered", eventHandler);
+            };
         })
             .pipe(map((it) => new LayerManager(it)))
             .pipe(takeUntil(dispose$))
@@ -299,6 +302,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
 
                 // this can easily made async without awaiting it
                 this.log.trace(() => `Load page data: pageNumber=${it.pageNumber}`);
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
                 storageAdapter.loadPage(options.layerStorage, it.pageNumber).then((pageData) => {
 
                     pageData.highlightings

@@ -409,7 +409,7 @@ class SVGPolyLinePainter implements PolyLinePainter {
 
         this._coordinates.push(position);
 
-        this.line!.plot(this.flatCoordinates);
+        this.line.plot(this.flatCoordinates);
     }
 
     /**

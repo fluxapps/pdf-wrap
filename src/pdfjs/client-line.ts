@@ -86,6 +86,7 @@ export class ClientLine {
 export class ClientPolyline {
 
     private readonly lines: Array<ClientLine> = [];
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/client-line:ClientPolyline");
 
     constructor(points: Array<Point>) {
 
@@ -94,7 +95,9 @@ export class ClientPolyline {
             .pipe(bufferCount(2, 1))
             .pipe(filter((it) => it.length === 2))          // Filter collections with less then two points
             .pipe(map((it) => new ClientLine(it[0], it[1])))
-            .forEach((it) => this.lines.push(it));
+            .forEach((it) => this.lines.push(it))
+            .then(() => this.log.trace("Client polyline mapping successful"))
+            .catch(() => this.log.error("Client polyline mapping failed!"));
     }
 
     /**

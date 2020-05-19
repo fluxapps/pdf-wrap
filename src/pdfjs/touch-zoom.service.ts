@@ -71,7 +71,9 @@ export class DefaultTouchZoomService implements TouchZoomService {
         const viewer: HTMLElement | null | undefined = (container?.firstElementChild as (HTMLElement | null | undefined));
 
         if (viewer === null || viewer === undefined) {
-            this.log.error("Can't bind to viewer or container DOM! The elements '#viewerContainer' and '#viewerContainer > .pdfViewer' are not present.");
+            this.log.error(
+                "Can't bind to viewer or container DOM! The elements '#viewerContainer' and '#viewerContainer > .pdfViewer' are not present."
+            );
             return;
         }
 

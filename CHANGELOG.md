@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.6.0
+## Changed
+- Migrate from tslint to eslint
+
 ## 0.5.1 - 2020-04-16
 ### Changed
 * Downgrade pdfjs to version ~2.3 in order to fix a white page issue which
