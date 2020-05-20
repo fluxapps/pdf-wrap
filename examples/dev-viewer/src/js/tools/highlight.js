@@ -18,8 +18,20 @@ export class HighlightService {
     constructor(highlight) {
         this._textSelection = null;
 
+        const highlightModeButton = new HighlightModeButton(highlight);
         const highlightButton = new HighlightButton(this);
         const clearButton = new ClearButton(this);
+
+        highlight.stateChange.subscribe((it) => {
+            if (!it.isActive) {
+                highlightButton.disable();
+                clearButton.disable();
+                this._textSelection = null;
+                highlightModeButton.disable();
+            } else {
+                highlightModeButton.enable();
+            }
+        });
 
         // highlighting
         highlight.onTextSelection
@@ -68,6 +80,26 @@ class HighlightButton {
     disable() {
         this._button.classList.add("disabled");
         this._button.removeEventListener("click", this._onClick);
+    }
+}
+
+class HighlightModeButton {
+
+    constructor(highlight) {
+        this._button = document.getElementById("highlight-button-mode");
+
+        this._button.addEventListener("click", () => {
+            highlight.toggle();
+        })
+    }
+
+    enable() {
+        this._button.classList.add("active");
+
+    }
+
+    disable() {
+        this._button.classList.remove("active");
     }
 }
 

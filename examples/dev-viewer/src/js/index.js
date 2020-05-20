@@ -115,7 +115,6 @@ export async function loadPDF() {
     sidebarManager.renderOutline();
     sidebarManager.renderThumbnails();
 
-    pdfDocument.highlighting.enable();
     pdfDoc = pdfDocument;
 
 }
