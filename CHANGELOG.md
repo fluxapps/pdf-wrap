@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Upgrade typescript to version 3.9
 * Minor dependency cleanup
 * Migrate mocha configuration to ".mocharc.js"
+* Text highlight mode is no longer active by default.
+* The text highlight mode is no longer re enabled if no other tool is active.
+* The current text selection ranges are cleared on text highlight mode state change. 
+
+## Fixed
+* The text highlight logic no longer tries to detect text selections while inactive.
 
 ## 0.5.1 - 2020-04-16
 ### Changed

@@ -41,7 +41,7 @@ import { Canvas } from "../paint/painters";
 import { parseViewFeatureConfig } from "./document-configuration";
 import { DocumentModel, Page } from "./document.model";
 import { PDFjsDocumentSearch } from "./document.search";
-import { TextHighlighting } from "./highlight";
+import { DisposableHighlighting, DummyTextHighlighting, TextHighlighting } from "./highlight";
 import { LayerManager } from "./layer-manager";
 import { PDFjsPageEvenCollection } from "./page-event-collection";
 import "./polyfill";
@@ -202,7 +202,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
         const zoomSettings: DefaultZoomSettings = new DefaultZoomSettings(pinchZoom, doubleTapZoom);
 
         const searchController: DocumentSearch = new PDFjsDocumentSearch(findController);
-        const highlighting: TextHighlighting = new TextHighlighting(documentModel);
+        const highlighting: DisposableHighlighting = featureConfig.selectableText ? new TextHighlighting(documentModel) : new DummyTextHighlighting();
         const freehand: FreehandTool = new FreehandTool(documentModel, rescaleManager);
         const eraser: EraserTool = new EraserTool(documentModel);
         const forms: Forms = new FormFactory(documentModel, rescaleManager);
@@ -216,7 +216,9 @@ export class PDFjsDocumentService implements PDFDocumentService {
             .subscribe(() => {
                 eraser.deactivate();
                 selectionTool.deactivate();
-                highlighting.disable();
+                if (featureConfig.selectableText) {
+                    highlighting.disable();
+                }
             });
 
         eraser.stateChange
@@ -227,7 +229,9 @@ export class PDFjsDocumentService implements PDFDocumentService {
             .subscribe(() => {
                 freehand.deactivate();
                 selectionTool.deactivate();
-                highlighting.disable();
+                if (featureConfig.selectableText) {
+                    highlighting.disable();
+                }
             });
 
         selectionTool.stateChange
@@ -238,28 +242,23 @@ export class PDFjsDocumentService implements PDFDocumentService {
             .subscribe(() => {
                 freehand.deactivate();
                 eraser.deactivate();
-                highlighting.disable();
-            });
-
-        highlighting.stateChange
-            .pipe(
-                filter((it) => it.isActive),
-                takeUntil(dispose$)
-            )
-            .subscribe(() => {
-                freehand.deactivate();
-                eraser.deactivate();
-                selectionTool.deactivate();
-            });
-
-        // Default to highlighting if no tool is active.
-        merge(highlighting.stateChange, freehand.stateChange, eraser.stateChange, selectionTool.stateChange)
-            .pipe(takeUntil(dispose$))
-            .subscribe(() => {
-                if (!(highlighting.isEnabled || freehand.isActive || eraser.isActive || selectionTool.isActive)) {
-                    highlighting.enable();
+                if (featureConfig.selectableText) {
+                    highlighting.disable();
                 }
             });
+
+        if (featureConfig.selectableText) {
+            highlighting.stateChange
+                .pipe(
+                    filter((it) => it.isActive),
+                    takeUntil(dispose$)
+                )
+                .subscribe(() => {
+                    freehand.deactivate();
+                    eraser.deactivate();
+                    selectionTool.deactivate();
+                });
+        }
 
         const pageEventCollection: PageEventCollection = new PDFjsPageEvenCollection(
             merge(freehand.afterLineRendered, selectionTool.afterPolyLineModified).pipe(takeUntil(dispose$)),
@@ -275,10 +274,12 @@ export class PDFjsDocumentService implements PDFDocumentService {
 
         storageAdapter.start(options.layerStorage, pageEventCollection);
 
-        // move draw layers to front in order to make the mouse listeners work
-        merge(freehand.stateChange, eraser.stateChange, selectionTool.stateChange)
-            .pipe(takeUntil(dispose$))
-            .subscribe(moveDrawLayerToFront);
+        if (featureConfig.selectableText) {
+            // move draw layers to front in order to make the mouse listeners work
+            merge(freehand.stateChange, eraser.stateChange, selectionTool.stateChange)
+                .pipe(takeUntil(dispose$))
+                .subscribe(moveDrawLayerToFront);
+        }
 
         new Observable((subscriber: Subscriber<PageRenderedEvent>): TeardownLogic => {
             this.log.trace("Listen on pagerendered event");
@@ -300,8 +301,12 @@ export class PDFjsDocumentService implements PDFDocumentService {
                 const highlightTransparencyLayer: Canvas = it.createHighlightTransparencyLayer();
                 const drawLayer: Canvas = it.createDrawingLayer();
 
-                // Restore draw-layer position after page repainting. (for example after Zoom-In / Zoom-Out
-                if (freehand.isActive || eraser.isActive || selectionTool.isActive) {
+                if (featureConfig.selectableText) {
+                    // Restore draw-layer position after page repainting. (for example after Zoom-In / Zoom-Out
+                    if (freehand.isActive || eraser.isActive || selectionTool.isActive) {
+                        moveDrawLayerToFront(new StateChangeEvent(true));
+                    }
+                } else {
                     moveDrawLayerToFront(new StateChangeEvent(true));
                 }
 
@@ -472,7 +477,7 @@ class PDFjsDocument implements PDFDocument {
 
     constructor(
         private readonly viewer: PDFViewer,
-        private readonly _highlighting: TextHighlighting,
+        private readonly _highlighting: DisposableHighlighting,
         readonly toolbox: Toolbox,
         readonly searchController: DocumentSearch,
         private dispose: (() => void) | null,
