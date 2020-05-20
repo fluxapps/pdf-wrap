@@ -35,6 +35,7 @@ import { StorageRegistry } from "../api/storage/adapter.registry";
 import { PageEventCollection } from "../api/storage/page.event";
 import { Forms } from "../api/tool/forms";
 import { Toolbox } from "../api/tool/toolbox";
+import { ZoomSettings } from "../api/zoom/settings";
 import { LoggerFactory } from "../log-config";
 import { Canvas } from "../paint/painters";
 import { DocumentModel, Page } from "./document.model";
@@ -47,7 +48,7 @@ import { RescaleManager } from "./rescale-manager";
 import { StorageAdapterWrapper } from "./storage-adapter-wrapper";
 import { FormFactory } from "./tool/forms";
 import { EraserTool, FreehandTool, SelectionTool } from "./tool/tools";
-import { DefaultTouchZoomService, TouchZoomService } from "./touch-zoom.service";
+import { DefaultZoomSettings, DoubleTapZoomingInteractionImpl, PinchZoomingInteraction } from "./zoom";
 
 // PDF.js defaults
 GlobalWorkerOptions.workerSrc = "assets/pdf.worker.js";
@@ -130,7 +131,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
                 {freehand, eraser, forms, selection: selectionTool},
                 searchController,
                 (): void => { dispose$.next(); dispose$.complete(); documentModel.dispose(); },
-                zoomService
+                zoomSettings
             )))
             .toPromise();
 
@@ -200,7 +201,9 @@ export class PDFjsDocumentService implements PDFDocumentService {
         );
 
         const rescaleManager: RescaleManager = new RescaleManager(viewer);
-        const zoomService: TouchZoomService = new DefaultTouchZoomService(viewer, documentModel);
+        const pinchZoom: PinchZoomingInteraction = new PinchZoomingInteraction(viewer, documentModel);
+        const doubleTapZoom: DoubleTapZoomingInteractionImpl = new DoubleTapZoomingInteractionImpl(viewer, documentModel);
+        const zoomSettings: DefaultZoomSettings = new DefaultZoomSettings(pinchZoom, doubleTapZoom);
 
         const searchController: DocumentSearch = new PDFjsDocumentSearch(findController);
         const highlighting: TextHighlighting = new TextHighlighting(documentModel);
@@ -461,6 +464,10 @@ class PDFjsDocument implements PDFDocument {
         this.viewer.currentScale = scale;
     }
 
+    get zoom(): ZoomSettings {
+        return this.zoomSettings;
+    }
+
     readonly pageChange: Observable<PageChangeEvent>;
     readonly pageCount: number;
     readonly dispose$: Subject<void> = new Subject<void>();
@@ -473,9 +480,10 @@ class PDFjsDocument implements PDFDocument {
         readonly toolbox: Toolbox,
         readonly searchController: DocumentSearch,
         private dispose: (() => void) | null,
-        private readonly touchZoomService: TouchZoomService
+        private readonly zoomSettings: DefaultZoomSettings,
     ) {
-        this.touchZoomService.pinchZoomEnabled = true;
+        this.zoomSettings.pinch.enabled = true;
+        this.zoomSettings.doubleTap.enabled = true;
 
         this.pageChange = new Observable((subscriber: Subscriber<PageChangingEvent>): TeardownLogic => {
             const eventHandler: (ev: PageChangingEvent) => void = (ev: PageChangingEvent): void => subscriber.next(ev);
@@ -577,7 +585,7 @@ class PDFjsDocument implements PDFDocument {
             clearTimeout(this.viewer.renderingQueue.idleTimeout);
             this.viewer.renderingQueue.idleTimeout = null;
         }
-        this.touchZoomService.pinchZoomEnabled = false; // set to false in order to unbind events
+        this.zoomSettings.dispose();
         this._highlighting.dispose();
         this.viewer.pdfDocument.cleanup();
         await this.viewer.pdfDocument.destroy();

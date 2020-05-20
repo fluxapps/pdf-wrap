@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Optional feature configuration:
   * Enable/Disable invisible text layer (Defaults to enable)
   * Enable/Disable webgl for pdf page rendering (Defaults to enable)
+* New zoom gesture API
+  * Double touch/click zoom
+  * Pinch zoom
 
 ## Changed
 * Migrate from tslint to eslint
