@@ -38,6 +38,7 @@ import { Toolbox } from "../api/tool/toolbox";
 import { ZoomSettings } from "../api/zoom/settings";
 import { LoggerFactory } from "../log-config";
 import { Canvas } from "../paint/painters";
+import { parseViewFeatureConfig } from "./document-configuration";
 import { DocumentModel, Page } from "./document.model";
 import { PDFjsDocumentSearch } from "./document.search";
 import { TextHighlighting } from "./highlight";
@@ -53,11 +54,6 @@ import { DefaultZoomSettings, DoubleTapZoomingInteractionImpl, PinchZoomingInter
 // PDF.js defaults
 GlobalWorkerOptions.workerSrc = "assets/pdf.worker.js";
 let mapUrl: string = "assets/cmaps";
-
-const defaultFeatureConfig: ViewFeatures = Object.freeze({
-    renderingMode: PageRenderingMode.WEBGL,
-    selectableText: true
-});
 
 /**
  * Sets the assets directory.
@@ -637,26 +633,6 @@ class PDFjsDocument implements PDFDocument {
 
         return out;
     }
-}
-
-/**
- * Takes the optional feature config and adds the missing default values.
- *
- * @param partialConfig - The partial feature config which overwrites the default values.
- * @return A valid view feature configuration.
- */
-function parseViewFeatureConfig(partialConfig: Partial<ViewFeatures> | undefined): ViewFeatures {
-    if (!partialConfig) {
-        return defaultFeatureConfig;
-    }
-
-    const defaults: ViewFeatures = Object.assign({}, defaultFeatureConfig);
-    const config: ViewFeatures = Object.assign(
-        defaults,
-        partialConfig
-    );
-
-    return Object.freeze(config);
 }
 
 /**
