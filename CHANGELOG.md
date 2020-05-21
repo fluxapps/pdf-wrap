@@ -20,7 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Migrate mocha configuration to ".mocharc.js"
 * Text highlight mode is no longer active by default.
 * The text highlight mode is no longer re enabled if no other tool is active.
-* The current text selection ranges are cleared on text highlight mode state change. 
+* The current text selection ranges are cleared on text highlight mode state change.
+* Pinch and double tap zoom gestures are disabled while the freehand or eraser tool is active.
+* Text is only selectable while the text highlight mode is active. 
 
 ## Fixed
 * The text highlight logic no longer tries to detect text selections while inactive.
