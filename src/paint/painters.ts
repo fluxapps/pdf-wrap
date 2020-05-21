@@ -214,7 +214,7 @@ export interface PolyLinePainter extends BorderPainter<PolyLinePainter, CanvasPo
      * @returns the painted poly line
      * @throws {IllegalPaintStateError} if {@code beginLine} was not called before this method
      */
-    endLine(position: Point): CanvasPolyLine;
+    endLine(position?: Point): CanvasPolyLine;
 }
 
 /**
@@ -420,11 +420,13 @@ class SVGPolyLinePainter implements PolyLinePainter {
      * @returns the painted poly line
      * @throws {IllegalPaintStateError} if {@code beginLine} was not called before this method
      */
-    endLine(position: Point): CanvasPolyLine {
+    endLine(position?: Point): CanvasPolyLine {
 
         this.log.trace(() => `Paint poly line on svg: polyLineId=${this._id}`);
 
-        this.drawTo(position);
+        if (!!position) {
+            this.drawTo(position);
+        }
 
         const createdPolyLine: CanvasPolyLine = new CanvasPolyLine(this.line!);
 
