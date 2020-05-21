@@ -20,8 +20,8 @@ import {
     RenderingType,
     TextLayerMode
 } from "pdfjs-dist/web/pdf_viewer";
-import { from, fromEvent, merge, Observable, of, Subject, Subscriber, TeardownLogic } from "rxjs";
-import { filter, first, flatMap, map, mergeMap, takeUntil, tap } from "rxjs/operators";
+import { combineLatest, from, fromEvent, merge, Observable, of, Subject, Subscriber, TeardownLogic } from "rxjs";
+import { distinctUntilChanged, filter, first, flatMap, map, mergeMap, takeUntil, tap } from "rxjs/operators";
 import { Logger } from "typescript-logging";
 import { LoadingOptions, PageRenderingMode, PDFDocumentService, ViewFeatures } from "../api/document.service";
 import { Outline, PageThumbnail, TreeOutlineEntry } from "../api/document/document.info";
@@ -259,6 +259,31 @@ export class PDFjsDocumentService implements PDFDocumentService {
                     selectionTool.deactivate();
                 });
         }
+
+        let oldPinchZoomState: boolean | null = null;
+        let oldDoubleTapZoomState: boolean | null = null;
+        combineLatest([freehand.stateChange, eraser.stateChange])
+            .pipe(
+                map((it) => it[0].isActive || it[1].isActive),
+                distinctUntilChanged()
+            )
+            .subscribe((it) => {
+            if (it && oldPinchZoomState === null && oldDoubleTapZoomState === null) {
+                this.log.trace(`Disable gestures and store state, pinch: "${oldPinchZoomState}" doubleTap: "${oldDoubleTapZoomState}"`);
+                oldDoubleTapZoomState = zoomSettings.doubleTap.enabled;
+                oldPinchZoomState = zoomSettings.pinch.enabled;
+                zoomSettings.doubleTap.enabled = false;
+                zoomSettings.pinch.enabled = false;
+            }
+
+            if (!it && oldPinchZoomState !== null && oldDoubleTapZoomState !== null) {
+                this.log.trace(`Restore gesture state, pinch: "${oldPinchZoomState}" doubleTap: "${oldDoubleTapZoomState}"`);
+                zoomSettings.doubleTap.enabled = oldDoubleTapZoomState;
+                zoomSettings.pinch.enabled = oldPinchZoomState;
+                oldDoubleTapZoomState = null;
+                oldPinchZoomState = null;
+            }
+        });
 
         const pageEventCollection: PageEventCollection = new PDFjsPageEvenCollection(
             merge(freehand.afterLineRendered, selectionTool.afterPolyLineModified).pipe(takeUntil(dispose$)),
