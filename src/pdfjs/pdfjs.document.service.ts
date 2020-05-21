@@ -300,9 +300,12 @@ export class PDFjsDocumentService implements PDFDocumentService {
         storageAdapter.start(options.layerStorage, pageEventCollection);
 
         if (featureConfig.selectableText) {
-            // move draw layers to front in order to make the mouse listeners work
-            merge(freehand.stateChange, eraser.stateChange, selectionTool.stateChange)
-                .pipe(takeUntil(dispose$))
+            // move draw layers to front in order to make the mouse listeners work, if text highlight disabled
+            highlighting.stateChange
+                .pipe(
+                    map((it) => new StateChangeEvent(!it.isActive)),
+                    takeUntil(dispose$)
+                )
                 .subscribe(moveDrawLayerToFront);
         }
 
@@ -328,7 +331,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
 
                 if (featureConfig.selectableText) {
                     // Restore draw-layer position after page repainting. (for example after Zoom-In / Zoom-Out
-                    if (freehand.isActive || eraser.isActive || selectionTool.isActive) {
+                    if (!highlighting.isEnabled) {
                         moveDrawLayerToFront(new StateChangeEvent(true));
                     }
                 } else {
