@@ -1,15 +1,12 @@
 import { PDFViewer } from "pdfjs-dist/web/pdf_viewer";
 import { Logger } from "typescript-logging";
-import { LoggerFactory } from "../log-config";
-import { DocumentModel } from "./document.model";
+import { ZoomingInteraction } from "../../api/zoom/interaction";
+import { LoggerFactory } from "../../log-config";
+import { DocumentModel } from "../document.model";
 
-export interface TouchZoomService {
-    pinchZoomEnabled: boolean;
-}
+export class PinchZoomingInteraction implements ZoomingInteraction {
 
-export class DefaultTouchZoomService implements TouchZoomService {
-
-    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/touch-zoom-service:DefaultTouchZoomService");
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/zoomt/pinch-zoom:PinchZoomingInteraction");
 
     private isPinchZoomEnabled: boolean = false;
 
@@ -48,11 +45,11 @@ export class DefaultTouchZoomService implements TouchZoomService {
 
     private unsubscribe: (() => void) | null = null;
 
-    get pinchZoomEnabled(): boolean {
+    get enabled(): boolean {
         return this.isPinchZoomEnabled;
     }
 
-    set pinchZoomEnabled(value: boolean) {
+    set enabled(value: boolean) {
         this.isPinchZoomEnabled = value;
         if (value) {
             this.enablePinchZoom();
@@ -66,12 +63,18 @@ export class DefaultTouchZoomService implements TouchZoomService {
     constructor(private readonly viewer: PDFViewer, private readonly container: DocumentModel) {
     }
 
+    toggle(): void {
+        this.enabled = !this.enabled;
+    }
+
     private enablePinchZoom(): void {
         const container: HTMLElement = this.container.viewer;
         const viewer: HTMLElement | null | undefined = (container?.firstElementChild as (HTMLElement | null | undefined));
 
         if (viewer === null || viewer === undefined) {
-            this.log.error("Can't bind to viewer or container DOM! The elements '#viewerContainer' and '#viewerContainer > .pdfViewer' are not present.");
+            this.log.error(
+                "Can't bind to viewer or container DOM! The elements '#viewerContainer' and '#viewerContainer > .pdfViewer' are not present."
+            );
             return;
         }
 
@@ -244,5 +247,9 @@ export class DefaultTouchZoomService implements TouchZoomService {
     private reset(): void {
         this.startX = this.startY = this.initialPinchDistance = 0;
         this.pinchScale = 1;
+    }
+
+    dispose(): void {
+        this.enabled = false;
     }
 }

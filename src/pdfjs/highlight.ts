@@ -1,24 +1,22 @@
+import { fromEvent, merge, Observable, ReplaySubject, Subject } from "rxjs";
+import { filter, map, share, takeUntil, tap, withLatestFrom } from "rxjs/operators";
+import { Logger } from "typescript-logging";
+import { Color } from "../api/draw/color";
+import { DrawElement, Rectangle } from "../api/draw/elements";
 import { StateChangeEvent } from "../api/event/event.api";
 import { Highlighting, Target, TextSelection } from "../api/highlight/highlight.api";
-import { Observable, fromEvent, merge, Subject } from "rxjs";
-import { Color } from "../api/draw/color";
-import { DocumentModel, getPageNumberByEvent, Page } from "./document.model";
-import { Canvas } from "../paint/painters";
-import { filter, map, share, takeUntil, tap, withLatestFrom } from "rxjs/operators";
-import { DrawElement, Rectangle } from "../api/draw/elements";
 import { DrawEvent, PageLayer } from "../api/storage/page.event";
-import { CanvasRectangle } from "../paint/canvas.elements";
-import { ClientRectangle } from "./client-rectangle";
-import { Logger } from "typescript-logging";
 import { LoggerFactory } from "../log-config";
-
+import { CanvasRectangle } from "../paint/canvas.elements";
+import { Canvas } from "../paint/painters";
+import { ClientRectangle } from "./client-rectangle";
 /**
  * Represents the text highlighting feature of a PDF.
  *
  * @author Nicolas Märchy <nm@studer-raimann.ch>
  * @since 0.0.1
  */
-export class TextHighlighting implements Highlighting {
+export class TextHighlighting implements DisposableHighlighting {
 
     /**
      * Emits a {@link TextSelection} when a user selects text on a PDF page.
@@ -41,7 +39,8 @@ export class TextHighlighting implements Highlighting {
 
     private readonly dispose$: Subject<void> = new Subject<void>();
 
-    private readonly _stateChange: Subject<StateChangeEvent> = new Subject();
+    private readonly _stateChange: ReplaySubject<StateChangeEvent> = new ReplaySubject(1);
+    private readonly internalUnselection: Subject<void> = new Subject<void>();
 
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/highlight:TextHighlighting");
 
@@ -54,6 +53,7 @@ export class TextHighlighting implements Highlighting {
     ) {
 
         this.stateChange = this._stateChange.asObservable();
+        this._stateChange.next(new StateChangeEvent(this.isEnabled));
 
         // get the page where the mouse down event was
         const page: Observable<Page> = merge(
@@ -61,10 +61,11 @@ export class TextHighlighting implements Highlighting {
             fromEvent<TouchEvent>(document.viewer, "touchstart", {passive: true})
         )
             .pipe(
+                filter((_) => this.enabled),
                 tap((_) => this.log.debug(() => "get page number by event")),
                 map((it) => getPageNumberByEvent(it)),
                 filter((it) => it !== undefined && this.document.hasPage(it)),
-                map((it) => this.document.getPage(it!)),
+                map((it) => this.document.getPage(it)),
                 tap((it) => this.log.debug(() => `found page number by event: ${it.pageNumber}`)),
                 takeUntil(this.dispose$)
             );
@@ -72,6 +73,7 @@ export class TextHighlighting implements Highlighting {
         // transformed selection on mouse up only inside the viewer
         const selections: Observable<Array<Target>> = fromEvent(window.document, "selectionchange", {passive: true})
             .pipe(
+                filter((_) => this.enabled),
                 map((_) => window.getSelection()),
                 filter((it): it is Selection => it !== null),
                 map(transformSelection),
@@ -83,9 +85,9 @@ export class TextHighlighting implements Highlighting {
         // page and selections observable zipped determines a valid text selection
         this.onTextSelection = selections
             .pipe(
+                filter((_) => this.enabled),
                 withLatestFrom(page),
                 tap((it) => this.log.debug(() => `Page for selection: page=${it[1].pageNumber}`)),
-                filter((_) => this.enabled),
                 map((it) => new TextSelectionImpl(it[1])),
                 takeUntil(this.dispose$),
                 share()
@@ -94,9 +96,11 @@ export class TextHighlighting implements Highlighting {
         // if one of them emits, nothing is selected
         this.onTextUnselection = merge(
             fromEvent(document.viewer, "mouseup", {passive: true}),
-            fromEvent<TouchEvent>(document.viewer, "touchend", {passive: true})
+            fromEvent<TouchEvent>(document.viewer, "touchend", {passive: true}),
+            this.internalUnselection.asObservable()
         ).pipe(
-            map((_) => window.getSelection()!.rangeCount),
+            filter((_) => this.enabled),
+            map(() => window.getSelection() !== null ? window.getSelection()!.rangeCount : 0),
             filter((it) => it < 1),
             map((_) => {/* return void */}),
             takeUntil(this.dispose$)
@@ -109,6 +113,7 @@ export class TextHighlighting implements Highlighting {
     disable(): void {
         this.log.info(() => "Disable text highlighting");
         this.enabled = false;
+        this.clearTextSelection();
         this._stateChange.next(new StateChangeEvent(this.enabled));
     }
 
@@ -118,6 +123,7 @@ export class TextHighlighting implements Highlighting {
     enable(): void {
         this.log.info(() => "Enable text highlighting");
         this.enabled = true;
+        this.clearTextSelection();
         this._stateChange.next(new StateChangeEvent(this.enabled));
     }
 
@@ -138,7 +144,95 @@ export class TextHighlighting implements Highlighting {
         this.disable();
         this.dispose$.next();
         this.dispose$.complete();
-        this.dispose$.unsubscribe();
+        this.internalUnselection.complete();
+    }
+
+    private clearTextSelection(): void {
+        if (window.getSelection()) {
+            this.log.trace(() => "Clear user text selection.");
+            window.getSelection()!.removeAllRanges();
+            this.internalUnselection.next();
+        }
+    }
+}
+
+import { DocumentModel, getPageNumberByEvent, Page } from "./document.model";
+
+export interface DisposableHighlighting extends Highlighting {
+    dispose(): void;
+}
+
+/**
+ * Dummy implementation for the text highlight feature.
+ * Which does nothing if the text layer is disabled for the document.
+ *
+ * @author Nicolas Märchy <nm@studer-raimann.ch>
+ * @since 0.0.1
+ */
+export class DummyTextHighlighting implements DisposableHighlighting {
+
+    /**
+     * Emits a {@link TextSelection} when a user selects text on a PDF page.
+     */
+    readonly onTextSelection: Observable<TextSelection>;
+
+    /**
+     * @deprecated Will be removed in the future
+     */
+    readonly onTextUnselection: Observable<void>;
+
+    /**
+     * Emits the new state of the text highlight mode.
+     *
+     * @since 0.3.0
+     */
+    readonly stateChange: Observable<StateChangeEvent>;
+
+    private readonly enabled: boolean = false;
+
+    private readonly _stateChange: Subject<StateChangeEvent> = new Subject();
+
+    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/highlight:DummyTextHighlighting");
+
+    get isEnabled(): boolean {
+        return this.enabled;
+    }
+
+    constructor(
+    ) {
+
+        this.stateChange = this._stateChange.asObservable();
+
+        // They will never emit a value therefore just cast the subject to the correct type.
+        this.onTextSelection = (this._stateChange as unknown) as Observable<TextSelection>;
+        this.onTextUnselection = (this._stateChange as unknown) as Observable<void>;
+    }
+
+    /**
+     * Disable the text selection for a user.
+     */
+    disable(): void {
+        this.log.warn(() => "Text layer is disabled for this document.");
+    }
+
+    /**
+     * Enables the text selection for a user.
+     */
+    enable(): void {
+        this.log.warn(() => "Text layer is disabled for this document.");
+    }
+
+    /**
+     * Toggles the text selection for a user.
+     *
+     * @since 0.3.0
+     */
+    toggle(): void {
+        this.log.warn(() => "Text layer is disabled for this document.");
+    }
+
+    dispose(): void {
+        this._stateChange.complete();
     }
 }
 
@@ -239,7 +333,7 @@ export class TextSelectionImpl implements TextSelection {
             x: target.x - this.page.pagePosition.x,
             y: target.y - this.page.pagePosition.y
         };
-    }
+    };
 }
 
 /**
@@ -400,14 +494,14 @@ export class HighlightManager {
     private readonly isIntersected: (data: HighlightData) => boolean = (data) => {
         return this.isAtSameHeight(data)
             && data.clientRectangle.isIntersectedWith(this.target);
-    }
+    };
 
     private readonly isAtSameHeight: (data: HighlightData) => boolean = (data) => {
         const slightlySmaller: boolean = data.clientRectangle.height > this.target.height * 0.98;
         const slightlyBigger: boolean = data.clientRectangle.height <= this.target.height * 1.02;
 
         return slightlySmaller && slightlyBigger;
-    }
+    };
 
     private readonly isNotIntersected: (data: HighlightData) => boolean = (data) => !this.isIntersected(data);
 
@@ -430,20 +524,20 @@ export class HighlightManager {
 
                 this._onAdd.next(newRect.transform());
             });
-    }
+    };
 
     private readonly isSameHighlight: (data: HighlightData) => boolean = (data) => {
         return this.isAtSameHeight(data)
             && (data.clientRectangle.left === this.target.right || data.clientRectangle.right === this.target.left);
-    }
+    };
 
     private readonly isSameColor: (data: HighlightData) => boolean = (data) => {
         return data.rectangle.fillColor.hex() === this.highlightColor!.hex();
-    }
+    };
 
     private readonly isNotSameColor: (data: HighlightData) => boolean = (data) => {
         return !this.isSameColor(data);
-    }
+    };
 
     private adjustHeight(clientRect: ClientRectangle): ClientRectangle {
         return ClientRectangle.fromCoordinates(
@@ -539,7 +633,7 @@ function getNodeSizedClientRects(range: Range): Array<DOMRect> {
 
     // tslint:disable-next-line:strict-type-predicates
     if (typeof document === "undefined") {
-        return Array.from(range.getClientRects() as DOMRectList);
+        return Array.from(range.getClientRects());
     }
 
     log.trace("Recalculate size of the selected nodes.");
@@ -564,8 +658,8 @@ function getNodeSizedClientRects(range: Range): Array<DOMRect> {
             const startRange: Range = new Range();
             startRange.setStart(node, range.startOffset);
             startRange.setEnd(node, range.endOffset);
-            const tempRect: DOMRect = startRange.getBoundingClientRect() as DOMRect;
-            const rect: DOMRect = node.parentElement!.getBoundingClientRect() as DOMRect;
+            const tempRect: DOMRect = startRange.getBoundingClientRect();
+            const rect: DOMRect = node.parentElement!.getBoundingClientRect();
             selectionNodes.push(new DOMRect(tempRect.left, rect.top, tempRect.width, rect.height));
             break;
         }
@@ -575,8 +669,8 @@ function getNodeSizedClientRects(range: Range): Array<DOMRect> {
             const startRange: Range = new Range();
             startRange.setStart(node, range.startOffset);
             startRange.setEndAfter(node);
-            const tempRect: DOMRect = startRange.getBoundingClientRect() as DOMRect;
-            const rect: DOMRect = node.parentElement!.getBoundingClientRect() as DOMRect;
+            const tempRect: DOMRect = startRange.getBoundingClientRect();
+            const rect: DOMRect = node.parentElement!.getBoundingClientRect();
             selectionNodes.push(new DOMRect(tempRect.left, rect.top, tempRect.width, rect.height));
             continue;
         }
@@ -586,14 +680,14 @@ function getNodeSizedClientRects(range: Range): Array<DOMRect> {
             const startRange: Range = new Range();
             startRange.setStartBefore(node);
             startRange.setEnd(node, range.endOffset);
-            const tempRect: DOMRect = startRange.getBoundingClientRect() as DOMRect;
-            const rect: DOMRect = node.parentElement!.getBoundingClientRect() as DOMRect;
+            const tempRect: DOMRect = startRange.getBoundingClientRect();
+            const rect: DOMRect = node.parentElement!.getBoundingClientRect();
             selectionNodes.push(new DOMRect(rect.left, rect.top, tempRect.width, rect.height));
             break;
         }
 
         // we are in the middle of the selection at this point just add it.
-        selectionNodes.push(node.parentElement!.getBoundingClientRect() as DOMRect);
+        selectionNodes.push(node.parentElement!.getBoundingClientRect());
     }
 
     return selectionNodes;

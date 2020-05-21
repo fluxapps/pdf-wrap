@@ -122,11 +122,11 @@ export function colorFromRgba(red: number, green: number, blue: number, alpha: n
  */
 export function colorFromHex(value: string): Color {
 
-    const hex: string = (value.charAt(0) === "#") ? value.substring(1, value.length) : value;
+    const hex: string = (value.startsWith("#")) ? value.substring(1, value.length) : value;
 
     if (HEX_COLOR_SHORT_REGX.test(hex)) {
 
-        const groups: RegExpMatchArray = hex.match(HEX_COLOR_SHORT_REGX) as RegExpMatchArray;
+        const groups: RegExpMatchArray = HEX_COLOR_SHORT_REGX.exec(hex) as RegExpExecArray;
 
         const redHex: string = `${groups[1]}${groups[1]}`;
         const greenHex: string = `${groups[2]}${groups[2]}`;
@@ -137,7 +137,7 @@ export function colorFromHex(value: string): Color {
 
     if (HEX_COLOR_SHORT_ALPHA_REGX.test(hex)) {
 
-        const groups: RegExpMatchArray = hex.match(HEX_COLOR_SHORT_ALPHA_REGX) as RegExpMatchArray;
+        const groups: RegExpMatchArray = HEX_COLOR_SHORT_ALPHA_REGX.exec(hex) as RegExpExecArray;
 
         const redHex: string = `${groups[1]}${groups[1]}`;
         const greenHex: string = `${groups[2]}${groups[2]}`;
@@ -149,7 +149,7 @@ export function colorFromHex(value: string): Color {
 
     if (HEX_COLOR_ALPHA_REGX.test(hex)) {
 
-        const groups: RegExpMatchArray = hex.match(HEX_COLOR_ALPHA_REGX) as RegExpMatchArray;
+        const groups: RegExpMatchArray = HEX_COLOR_ALPHA_REGX.exec(hex) as RegExpExecArray;
 
         const redHex: string = `${groups[1]}`;
         const greenHex: string = `${groups[2]}`;
@@ -161,7 +161,7 @@ export function colorFromHex(value: string): Color {
 
     if (HEX_COLOR_REGX.test(hex)) {
 
-        const groups: RegExpMatchArray = hex.match(HEX_COLOR_REGX) as RegExpMatchArray;
+        const groups: RegExpMatchArray = HEX_COLOR_REGX.exec(hex) as RegExpExecArray;
 
         const redHex: string = `${groups[1]}`;
         const greenHex: string = `${groups[2]}`;

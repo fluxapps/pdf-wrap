@@ -1,5 +1,43 @@
-{
-    "rules": {
+module.exports = {
+    parser: "@typescript-eslint/parser",
+    extends: [
+        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+    ],
+    parserOptions: {
+        tsconfigRootDir: __dirname,
+        project: "./tsconfig.json"
+    },
+    rules: {
+        "no-debugger": "error",
+        "no-eval": "error",
+        "max-len": [ "error", {code: 150}],
+        "@typescript-eslint/no-explicit-any": "error",
+        "@typescript-eslint/no-throw-literal": "error",
+        "@typescript-eslint/no-misused-new": "error",
+        "@typescript-eslint/no-empty-interface": "off",
+        "@typescript-eslint/no-floating-promises": "error",
+        "@typescript-eslint/no-misused-promises": ["error", {checksConditionals: true, checksVoidReturn: true}],
+        "@typescript-eslint/semi": [ "error" ],
+        "@typescript-eslint/quotes": [ "off" ],
+        "@typescript-eslint/indent": "off",
+        "@typescript-eslint/typedef": [ "error", {
+            arrayDestructuring: true,
+            arrowParameter: false,
+            memberVariableDeclaration: true,
+            objectDestructuring: true,
+            parameter: true,
+            propertyDeclaration: true,
+            variableDeclaration: true,
+            variableDeclarationIgnoreFunction: true
+        }],
+        "@typescript-eslint/no-require-imports": "error",
+        "@typescript-eslint/prefer-as-const": "error",
+        "@typescript-eslint/prefer-readonly": "error",
+        "@typescript-eslint/array-type": [ "error", { "default": "generic" }],
+    }
+}
+/*
+"rules": {
         "no-duplicate-variable": true,
         "strict-type-predicates": true,
         "member-access": false,
@@ -46,11 +84,4 @@
         "max-classes-per-file": 4,
         "max-line-length": [true, 150],
         "interface-name": false
-    },
-    "rulesDirectory": [
-        "node_modules/tslint-eslint-rules/dist/rules"
-    ],
-    "extends": [
-        "tslint:latest"
-    ]
-}
+ */

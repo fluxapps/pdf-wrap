@@ -20,10 +20,10 @@ import {
     RenderingType,
     TextLayerMode
 } from "pdfjs-dist/web/pdf_viewer";
-import { from, fromEvent, merge, Observable, of, Subject, Subscriber, TeardownLogic } from "rxjs";
-import { filter, first, flatMap, map, mergeMap, takeUntil, tap } from "rxjs/operators";
+import { combineLatest, from, fromEvent, merge, Observable, of, Subject, Subscriber, TeardownLogic } from "rxjs";
+import { distinctUntilChanged, filter, first, flatMap, map, mergeMap, takeUntil, tap } from "rxjs/operators";
 import { Logger } from "typescript-logging";
-import { LoadingOptions, PDFDocumentService } from "../api/document.service";
+import { LoadingOptions, PageRenderingMode, PDFDocumentService, ViewFeatures } from "../api/document.service";
 import { Outline, PageThumbnail, TreeOutlineEntry } from "../api/document/document.info";
 import { PDFDocument, ScalePreset } from "../api/document/pdf.document";
 import { Point } from "../api/draw/draw.basic";
@@ -35,11 +35,13 @@ import { StorageRegistry } from "../api/storage/adapter.registry";
 import { PageEventCollection } from "../api/storage/page.event";
 import { Forms } from "../api/tool/forms";
 import { Toolbox } from "../api/tool/toolbox";
+import { ZoomSettings } from "../api/zoom/settings";
 import { LoggerFactory } from "../log-config";
 import { Canvas } from "../paint/painters";
+import { parseViewFeatureConfig } from "./document-configuration";
 import { DocumentModel, Page } from "./document.model";
 import { PDFjsDocumentSearch } from "./document.search";
-import { TextHighlighting } from "./highlight";
+import { DisposableHighlighting, DummyTextHighlighting, TextHighlighting } from "./highlight";
 import { LayerManager } from "./layer-manager";
 import { PDFjsPageEvenCollection } from "./page-event-collection";
 import "./polyfill";
@@ -47,7 +49,7 @@ import { RescaleManager } from "./rescale-manager";
 import { StorageAdapterWrapper } from "./storage-adapter-wrapper";
 import { FormFactory } from "./tool/forms";
 import { EraserTool, FreehandTool, SelectionTool } from "./tool/tools";
-import { DefaultTouchZoomService, TouchZoomService } from "./touch-zoom.service";
+import { DefaultZoomSettings, DoubleTapZoomingInteractionImpl, PinchZoomingInteraction } from "./zoom";
 
 // PDF.js defaults
 GlobalWorkerOptions.workerSrc = "assets/pdf.worker.js";
@@ -110,6 +112,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
 
         const dispose$: Subject<void> = new Subject<void>();
         const pdfData: ArrayBuffer = await this.readBlob(options.pdf);
+        const featureConfig: ViewFeatures = parseViewFeatureConfig(options.features);
         const eventBus: EventBus = new EventBus();
 
         const fullyLoadPdf: Promise<PDFDocument> = new Observable((subscriber: Subscriber<PagesLoadedEvent>): TeardownLogic => {
@@ -124,7 +127,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
                 {freehand, eraser, forms, selection: selectionTool},
                 searchController,
                 (): void => { dispose$.next(); dispose$.complete(); documentModel.dispose(); },
-                zoomService
+                zoomSettings
             )))
             .toPromise();
 
@@ -153,14 +156,14 @@ export class PDFjsDocumentService implements PDFDocumentService {
         const viewer: PDFViewer = new PDFViewer({
             container: options.container,
             enablePrintAutoRotate: false,
-            enableWebGL: true,
+            enableWebGL: featureConfig.renderingMode === PageRenderingMode.WEBGL,
             eventBus,
             findController,
             linkService,
             removePageBorders: false,
             renderInteractiveForms: false,
             renderer: RenderingType.CANVAS,
-            textLayerMode: TextLayerMode.ENABLE_ENHANCED,
+            textLayerMode: featureConfig.selectableText ? TextLayerMode.ENABLE_ENHANCED : TextLayerMode.DISABLE,
             useOnlyCssZoom: false
         });
 
@@ -194,10 +197,12 @@ export class PDFjsDocumentService implements PDFDocumentService {
         );
 
         const rescaleManager: RescaleManager = new RescaleManager(viewer);
-        const zoomService: TouchZoomService = new DefaultTouchZoomService(viewer, documentModel);
+        const pinchZoom: PinchZoomingInteraction = new PinchZoomingInteraction(viewer, documentModel);
+        const doubleTapZoom: DoubleTapZoomingInteractionImpl = new DoubleTapZoomingInteractionImpl(viewer, documentModel);
+        const zoomSettings: DefaultZoomSettings = new DefaultZoomSettings(pinchZoom, doubleTapZoom);
 
         const searchController: DocumentSearch = new PDFjsDocumentSearch(findController);
-        const highlighting: TextHighlighting = new TextHighlighting(documentModel);
+        const highlighting: DisposableHighlighting = featureConfig.selectableText ? new TextHighlighting(documentModel) : new DummyTextHighlighting();
         const freehand: FreehandTool = new FreehandTool(documentModel, rescaleManager);
         const eraser: EraserTool = new EraserTool(documentModel);
         const forms: Forms = new FormFactory(documentModel, rescaleManager);
@@ -211,7 +216,9 @@ export class PDFjsDocumentService implements PDFDocumentService {
             .subscribe(() => {
                 eraser.deactivate();
                 selectionTool.deactivate();
-                highlighting.disable();
+                if (featureConfig.selectableText) {
+                    highlighting.disable();
+                }
             });
 
         eraser.stateChange
@@ -222,7 +229,9 @@ export class PDFjsDocumentService implements PDFDocumentService {
             .subscribe(() => {
                 freehand.deactivate();
                 selectionTool.deactivate();
-                highlighting.disable();
+                if (featureConfig.selectableText) {
+                    highlighting.disable();
+                }
             });
 
         selectionTool.stateChange
@@ -233,28 +242,48 @@ export class PDFjsDocumentService implements PDFDocumentService {
             .subscribe(() => {
                 freehand.deactivate();
                 eraser.deactivate();
-                highlighting.disable();
-            });
-
-        highlighting.stateChange
-            .pipe(
-                filter((it) => it.isActive),
-                takeUntil(dispose$)
-            )
-            .subscribe(() => {
-                freehand.deactivate();
-                eraser.deactivate();
-                selectionTool.deactivate();
-            });
-
-        // Default to highlighting if no tool is active.
-        merge(highlighting.stateChange, freehand.stateChange, eraser.stateChange, selectionTool.stateChange)
-            .pipe(takeUntil(dispose$))
-            .subscribe(() => {
-                if (!(highlighting.isEnabled || freehand.isActive || eraser.isActive || selectionTool.isActive)) {
-                    highlighting.enable();
+                if (featureConfig.selectableText) {
+                    highlighting.disable();
                 }
             });
+
+        if (featureConfig.selectableText) {
+            highlighting.stateChange
+                .pipe(
+                    filter((it) => it.isActive),
+                    takeUntil(dispose$)
+                )
+                .subscribe(() => {
+                    freehand.deactivate();
+                    eraser.deactivate();
+                    selectionTool.deactivate();
+                });
+        }
+
+        let oldPinchZoomState: boolean | null = null;
+        let oldDoubleTapZoomState: boolean | null = null;
+        combineLatest([freehand.stateChange, eraser.stateChange])
+            .pipe(
+                map((it) => it[0].isActive || it[1].isActive),
+                distinctUntilChanged()
+            )
+            .subscribe((it) => {
+            if (it && oldPinchZoomState === null && oldDoubleTapZoomState === null) {
+                this.log.trace(`Disable gestures and store state, pinch: "${oldPinchZoomState}" doubleTap: "${oldDoubleTapZoomState}"`);
+                oldDoubleTapZoomState = zoomSettings.doubleTap.enabled;
+                oldPinchZoomState = zoomSettings.pinch.enabled;
+                zoomSettings.doubleTap.enabled = false;
+                zoomSettings.pinch.enabled = false;
+            }
+
+            if (!it && oldPinchZoomState !== null && oldDoubleTapZoomState !== null) {
+                this.log.trace(`Restore gesture state, pinch: "${oldPinchZoomState}" doubleTap: "${oldDoubleTapZoomState}"`);
+                zoomSettings.doubleTap.enabled = oldDoubleTapZoomState;
+                zoomSettings.pinch.enabled = oldPinchZoomState;
+                oldDoubleTapZoomState = null;
+                oldPinchZoomState = null;
+            }
+        });
 
         const pageEventCollection: PageEventCollection = new PDFjsPageEvenCollection(
             merge(freehand.afterLineRendered, selectionTool.afterPolyLineModified).pipe(takeUntil(dispose$)),
@@ -270,16 +299,24 @@ export class PDFjsDocumentService implements PDFDocumentService {
 
         storageAdapter.start(options.layerStorage, pageEventCollection);
 
-        // move draw layers to front in order to make the mouse listeners work
-        merge(freehand.stateChange, eraser.stateChange, selectionTool.stateChange)
-            .pipe(takeUntil(dispose$))
-            .subscribe(moveDrawLayerToFront);
+        if (featureConfig.selectableText) {
+            // move draw layers to front in order to make the mouse listeners work, if text highlight disabled
+            highlighting.stateChange
+                .pipe(
+                    map((it) => new StateChangeEvent(!it.isActive)),
+                    takeUntil(dispose$)
+                )
+                .subscribe(moveDrawLayerToFront);
+        }
 
         new Observable((subscriber: Subscriber<PageRenderedEvent>): TeardownLogic => {
             this.log.trace("Listen on pagerendered event");
             const eventHandler: (ev: PageRenderedEvent) => void = (ev: PageRenderedEvent): void => subscriber.next(ev);
             viewer.eventBus.on("pagerendered", eventHandler);
-            return (): void => viewer.eventBus.off("pagerendered", eventHandler);
+            return (): void => {
+                this.log.trace("Unsubscribe from pagerendered event");
+                viewer.eventBus.off("pagerendered", eventHandler);
+            };
         })
             .pipe(map((it) => new LayerManager(it)))
             .pipe(takeUntil(dispose$))
@@ -292,13 +329,18 @@ export class PDFjsDocumentService implements PDFDocumentService {
                 const highlightTransparencyLayer: Canvas = it.createHighlightTransparencyLayer();
                 const drawLayer: Canvas = it.createDrawingLayer();
 
-                // Restore draw-layer position after page repainting. (for example after Zoom-In / Zoom-Out
-                if (freehand.isActive || eraser.isActive || selectionTool.isActive) {
+                if (featureConfig.selectableText) {
+                    // Restore draw-layer position after page repainting. (for example after Zoom-In / Zoom-Out
+                    if (!highlighting.isEnabled) {
+                        moveDrawLayerToFront(new StateChangeEvent(true));
+                    }
+                } else {
                     moveDrawLayerToFront(new StateChangeEvent(true));
                 }
 
                 // this can easily made async without awaiting it
                 this.log.trace(() => `Load page data: pageNumber=${it.pageNumber}`);
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
                 storageAdapter.loadPage(options.layerStorage, it.pageNumber).then((pageData) => {
 
                     pageData.highlightings
@@ -451,6 +493,10 @@ class PDFjsDocument implements PDFDocument {
         this.viewer.currentScale = scale;
     }
 
+    get zoom(): ZoomSettings {
+        return this.zoomSettings;
+    }
+
     readonly pageChange: Observable<PageChangeEvent>;
     readonly pageCount: number;
     readonly dispose$: Subject<void> = new Subject<void>();
@@ -459,13 +505,14 @@ class PDFjsDocument implements PDFDocument {
 
     constructor(
         private readonly viewer: PDFViewer,
-        private readonly _highlighting: TextHighlighting,
+        private readonly _highlighting: DisposableHighlighting,
         readonly toolbox: Toolbox,
         readonly searchController: DocumentSearch,
         private dispose: (() => void) | null,
-        private readonly touchZoomService: TouchZoomService
+        private readonly zoomSettings: DefaultZoomSettings,
     ) {
-        this.touchZoomService.pinchZoomEnabled = true;
+        this.zoomSettings.pinch.enabled = true;
+        this.zoomSettings.doubleTap.enabled = true;
 
         this.pageChange = new Observable((subscriber: Subscriber<PageChangingEvent>): TeardownLogic => {
             const eventHandler: (ev: PageChangingEvent) => void = (ev: PageChangingEvent): void => subscriber.next(ev);
@@ -567,7 +614,7 @@ class PDFjsDocument implements PDFDocument {
             clearTimeout(this.viewer.renderingQueue.idleTimeout);
             this.viewer.renderingQueue.idleTimeout = null;
         }
-        this.touchZoomService.pinchZoomEnabled = false; // set to false in order to unbind events
+        this.zoomSettings.dispose();
         this._highlighting.dispose();
         this.viewer.pdfDocument.cleanup();
         await this.viewer.pdfDocument.destroy();

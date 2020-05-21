@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.6.0
+## Added
+* Optional feature configuration:
+  * Enable/Disable invisible text layer (Defaults to enable)
+  * Enable/Disable webgl for pdf page rendering (Defaults to enable)
+* New zoom gesture API
+  * Double touch/click zoom
+  * Pinch zoom
+
+## Changed
+* Migrate from tslint to eslint
+* Upgrade typescript to version 3.9
+* Minor dependency cleanup
+* Migrate mocha configuration to ".mocharc.js"
+* Text highlight mode is no longer active by default.
+* The text highlight mode is no longer re enabled if no other tool is active.
+* The current text selection ranges are cleared on text highlight mode state change.
+* Pinch and double tap zoom gestures are disabled while the freehand or eraser tool is active.
+* Text is only selectable while the text highlight mode is active. 
+
+## Fixed
+* The text highlight logic no longer tries to detect text selections while inactive.
+
 ## 0.5.1 - 2020-04-16
 ### Changed
 * Downgrade pdfjs to version ~2.3 in order to fix a white page issue which

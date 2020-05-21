@@ -1,5 +1,6 @@
 import {Observable} from "rxjs";
 import {PageChangeEvent} from "../event/event.api";
+import { ZoomSettings } from "../zoom/settings";
 import {Outline, PageThumbnail} from "./document.info";
 import {Toolbox} from "../tool/toolbox";
 import {Highlighting} from "../highlight/highlight.api";
@@ -37,6 +38,11 @@ export interface PDFDocument {
      * A toolbox containing several tools to modify a PDF page.
      */
     readonly toolbox: Toolbox;
+
+    /**
+     * Zoom gesture settings.
+     */
+    readonly zoom: ZoomSettings;
 
     /**
      * Highlighting object to enable / disable or modify the text highlighting of a PDF page.

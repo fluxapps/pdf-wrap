@@ -42,6 +42,48 @@ export interface LoadingOptions {
      * This value will be passed in to all registered {@code StorageAdapter}.
      */
     readonly layerStorage: URI;
+
+    /**
+     * The features of the reader which can be configured:
+     * - Selectable Text
+     * - Rendering mode of the canvas: 2d or webgl
+     *
+     * The selectable text feature defaults to true, which is the old default behaviour.
+     * The rendering mode defaults to webgl because older versions always used webgl to render the pdf pages.
+     */
+    readonly features?: Partial<ViewFeatures>;
+}
+
+/**
+ * Contains all the configurable features of the pdf view.
+ */
+export interface ViewFeatures {
+    /**
+     * Places invisible text over the pdf canvas
+     * in order to enable users to select text in the
+     * document.
+     *
+     * Defaults to true.
+     *
+     * The selection api does not work if this feature is disabled.
+     */
+    readonly selectableText: boolean;
+
+    /**
+     * Rendering mode of the canvas, which is used to draw the pdf.
+     *
+     * Defaults to webgl, this option should only be changed if the pdf has some visual errors.
+     */
+    readonly renderingMode: PageRenderingMode;
+}
+
+/**
+ * Canvas rendering modes.
+ * Which are currently supported by pdfjs.
+ */
+export enum PageRenderingMode {
+    '2D',
+    WEBGL
 }
 
 /**
@@ -76,7 +118,7 @@ export class URI {
         readonly uri: string,
     ) {
         if (URI_REGX.test(uri)) {
-            this.schema = uri.match(URI_REGX)![1];
+            this.schema = URI_REGX.exec(uri)![1];
         } else {
             throw new IllegalURIError(`Could not create uri from illegal value: uri=${uri}`);
         }

@@ -2,15 +2,12 @@ const gulp = require("gulp");
 const ts = require("gulp-typescript");
 const sourcemaps = require("gulp-sourcemaps");
 const del = require("del");
-const copyNodeModules = require("copy-node-modules");
 const file = require("gulp-file");
 const spawn = require("child_process").spawn;
 const terser = require("gulp-terser");
-const gulpTslint = require("gulp-tslint");
-const tslint = require("tslint");
+const eslint = require("gulp-eslint");
 const typedoc = require("gulp-typedoc");
 const concat = require("gulp-concat");
-const resolve = require("resolve");
 
 const appProperties = require("./app.properties");
 
@@ -215,15 +212,9 @@ gulp.task("test", gulp.series("transpileTypescript", (done) => {
  */
 gulp.task("lint", () =>
     gulp.src(`${appProperties.root}/src/**/*.ts`)
-        .pipe(gulpTslint({
-            formatter: "stylish",
-            program: tslint.Linter.createProgram("./tsconfig.json"), // required for type aware rules
-            configuration: "./tslint.json"
-        }))
-        .pipe(gulpTslint.report({
-            summarizeFailureOutput: true,
-            allowWarnings: false
-        }))
+        .pipe(eslint())
+        .pipe(eslint.format())
+        .pipe(eslint.failAfterError())
 );
 
 // --- build

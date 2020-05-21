@@ -1,5 +1,5 @@
-import { fromEvent, merge, Observable, Subject } from "rxjs";
-import { delayWhen, filter, share, tap } from "rxjs/operators";
+import { fromEvent, merge, Observable, ReplaySubject } from "rxjs";
+import { exhaustMap, filter, share, tap } from "rxjs/operators";
 import { Logger } from "typescript-logging";
 import { Point } from "../../api/draw/draw.basic";
 import { StateChangeEvent } from "../../api/event/event.api";
@@ -11,7 +11,7 @@ import { DocumentModel, getPageNumberByEvent, Page } from "../document.model";
  * Implements the basic features of a tool.
  *
  * @author Nicolas Märchy <nm@studer-raimann.ch>
- * @since 0.0.1
+ * @since 0.0.2
  * @internal
  */
 export abstract class BaseTool implements Tool {
@@ -30,10 +30,11 @@ export abstract class BaseTool implements Tool {
 
     private _isActive: boolean = false;
 
-    private readonly stateChangeEvent: Subject<StateChangeEvent> = new Subject();
+    private readonly stateChangeEvent: ReplaySubject<StateChangeEvent> = new ReplaySubject(1);
 
     protected constructor() {
-        this.stateChange = this.stateChangeEvent.asObservable().pipe(share());
+        this.stateChange = this.stateChangeEvent.asObservable();
+        this.stateChangeEvent.next(new StateChangeEvent(this._isActive));
     }
 
     activate(): void {
@@ -58,7 +59,7 @@ export abstract class BaseTool implements Tool {
     }
 
     private emit(): void {
-        this.stateChangeEvent!.next(new StateChangeEvent(this._isActive));
+        this.stateChangeEvent.next(new StateChangeEvent(this._isActive));
     }
 }
 
@@ -172,7 +173,7 @@ export abstract class DrawingTool extends BaseTool {
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/tool/tool.basic:DrawingTool");
 
     protected constructor(
-        protected readonly document: DocumentModel
+        protected readonly document: DocumentModel,
     ) {
         super();
 
@@ -234,12 +235,24 @@ export abstract class DrawingTool extends BaseTool {
             }))
             .pipe(share());
 
-        // We use our mouse up observable and delay it until the onFinish observable emits
-        merge(this.mouseUp, this.touchEnd, this.touchCancel)
-            .pipe(delayWhen((_) => this.onFinish))
-            .subscribe(() => {
-                this._page = undefined;
-            });
+        merge(this.mouseDown, this.touchStart, this.touchMove, this.touchCancel, this.touchEnd)
+            .pipe(exhaustMap(() => this.onFinish),
+                tap((_) => {
+                    this.log.trace(() => `On finish fired: tool=${this.constructor.name}`);
+                }))
+            .subscribe(
+                () => {
+                    this._page = undefined;
+                },
+                () => {
+                    this._page = undefined;
+                    this.log.error(`Unhandled on finish error encountered tool=${this.constructor.name}`);
+                },
+                () => {
+                    this._page = undefined;
+                    this.log.error(`Drawing tool complete tool=${this.constructor.name}`);
+                }
+            );
     }
 
     /**
@@ -252,9 +265,9 @@ export abstract class DrawingTool extends BaseTool {
     protected calcRelativePosition(evt: MouseEvent | TouchEvent): Point {
 
         if (evt instanceof TouchEvent) {
-            const touch: TouchEvent = evt as TouchEvent;
+            const touch: TouchEvent = evt;
             if (touch.touches.length === 0 && touch.changedTouches.length === 0) {
-                return { x: 0, y: 0, z: 0};
+                return {x: 0, y: 0, z: 0};
             }
 
             if (touch.changedTouches.length === 0) {
@@ -277,6 +290,18 @@ export abstract class DrawingTool extends BaseTool {
             y: evt.clientY - this.page.pagePosition.y,
             z: this.page.pagePosition.z
         };
+    }
+
+    protected isStartEvent(event: Event): boolean {
+        return event.type === "touchstart" || event.type === "mousedown";
+    }
+
+    protected isMoveEvent(event: Event): boolean {
+        return event.type === "touchmove" || event.type === "mousemove";
+    }
+
+    protected isEndEvent(event: Event): boolean {
+        return event.type === "touchend" || event.type === "touchcancel" || event.type === "mouseup";
     }
 
     private setPageByEvent(evt: Event): void {
