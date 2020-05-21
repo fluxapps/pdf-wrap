@@ -35,7 +35,7 @@ export interface DoubleTapZoomingInteraction extends ZoomingInteraction {
      *
      * Floating point values are rounded to the next bigger integer.
      *
-     * Defaults to 250ms.
+     * Defaults to 500ms.
      */
     maxDoubleTapDelta: number;
 

@@ -12,7 +12,7 @@ export class DoubleTapZoomingInteractionImpl implements DoubleTapZoomingInteract
     private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/zoomt/double-tap-zoom:DoubleTapZoomingInteractionImpl");
 
     private isEnabled: boolean = false;
-    private gestureDelta: number = 250;
+    private gestureDelta: number = 500;
     private documentZoomFactor: number = 1.2;
 
     get enabled(): boolean {
