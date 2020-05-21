@@ -1,5 +1,5 @@
-import { combineLatest, merge, Observable, of, Subscriber, TeardownLogic } from "rxjs";
-import { exhaustMap, map, pairwise, share, switchMap, takeUntil, tap } from "rxjs/operators";
+import { combineLatest, merge, Observable, of, Subject } from "rxjs";
+import { exhaustMap, filter, map, mapTo, pairwise, switchMap, takeUntil, tap } from "rxjs/operators";
 import { Logger } from "typescript-logging";
 import { DrawElement, PolyLine } from "../../../api/draw/elements";
 import { DrawEvent, PageLayer } from "../../../api/storage/page.event";
@@ -15,12 +15,14 @@ import { DrawingTool } from "../tool.basic";
  * while the mouse is pressed.
  *
  * @author Nicolas Märchy <nm@studer-raimann.ch>
- * @since 0.0.1
+ * @since 0.0.2
  * @internal
  */
 export class EraserTool extends DrawingTool implements Eraser {
 
-    readonly afterElementRemoved: Observable<DrawEvent<DrawElement>>;
+    private readonly afterElementRemovedEvent: Subject<DrawEvent<DrawElement>> = new Subject<DrawEvent<DrawElement>>();
+    private readonly dispose$: Subject<void> = new Subject<void>();
+    readonly afterElementRemoved: Observable<DrawEvent<DrawElement>> = this.afterElementRemovedEvent.asObservable();
 
     protected readonly onFinish: Observable<void>;
 
@@ -31,72 +33,84 @@ export class EraserTool extends DrawingTool implements Eraser {
     ) {
         super(document);
 
-        this.afterElementRemoved = new Observable((subscriber: Subscriber<DrawEvent<DrawElement>>): TeardownLogic => {
-
-            // Fetch all polylines from the selected page.
-            const downEvent: Observable<Array<[string, ClientPolyline]>> = of(undefined).pipe(
-                map(() => (
-                    this.page.drawLayer.select("polyline.drawing")
-                        .map((it) => it.transform() as PolyLine)
-                        .map((it): [string, ClientPolyline] =>
-                            [
-                                it.id,
-                                new ClientPolyline(
-                                    it.coordinates
-                                )
-                            ]
-                        )
-                ))
-            );
-
-            // Calculate lines pairwise from mouse movement.
-            const moveEvent: Observable<ClientLine> = merge(this.touchMove, this.mouseMove)
-                .pipe(
-                    map((it) => this.calcRelativePosition(it)),
-                    pairwise(),
-                    map((it) => new ClientLine(it[0], it[1]))
-                );
-
-            // Collision detection, until mouse up event fires.
-            const upEvent: Observable<[ClientLine, Array<[string, ClientPolyline]>]> = downEvent.pipe(
-                exhaustMap((it) => combineLatest([moveEvent, of(it)])),
-                map((it): [ClientLine, Array<[string, ClientPolyline]>] => [it[0], it[1]]),
-                tap((it) => {
-                    const touchMoveLine: ClientLine = it[0];
-                    for (const [polylineId, polyline] of it[1]) {
-                        if (polyline.intersectsWith(touchMoveLine)) {
-                            const elements: Array<CanvasElement<DrawElement>> = this.page.drawLayer.select(`#${polylineId}`);
-
-                            if (elements.length > 0) {
-
-                                const element: CanvasElement<DrawElement> = elements[0];
-                                const drawEvent: DrawEvent<DrawElement> = new DrawEvent(
-                                    element.transform(),
-                                    this.page.pageNumber,
-                                    PageLayer.DRAWING
-                                );
-
-                                this.eraserLog.debug(() => `Eraser moved over ${drawEvent.element.id}`);
-
-                                subscriber.next(drawEvent);
-
-                                element.remove();
-                            }
-                        }
-                    }
-                }),
-                takeUntil(merge(this.mouseUp, this.touchEnd))
-            );
-
-            // Start collision detection on mouse down.
-            merge(this.touchStart, this.mouseDown).pipe(
-                switchMap(() => upEvent),
-            ).subscribe();
-
-        }).pipe(share());
+        this.stateChange.subscribe((it) => {
+            if(it.isActive) {
+                this.listenToChanges();
+            } else {
+                this.stopListenToChanges();
+            }
+        });
 
         // use our after element removed observable and map it to void in order to emit on the onFinish observable
-        this.onFinish = this.afterElementRemoved.pipe(map((_) => {/* return void */
-        }));
+        this.onFinish = this.stateChange.pipe(filter((it) => !it.isActive), mapTo(undefined));
+    }
+
+    private listenToChanges(): void {
+        // Fetch all polylines from the selected page.
+        const downEvent: Observable<Array<[string, ClientPolyline]>> = of(undefined).pipe(
+            map(() => (
+                this.page.drawLayer.select("polyline.drawing")
+                    .map((it) => it.transform() as PolyLine)
+                    .map((it): [string, ClientPolyline] =>
+                        [
+                            it.id,
+                            new ClientPolyline(
+                                it.coordinates
+                            )
+                        ]
+                    )
+            ))
+        );
+
+        // Calculate lines pairwise from mouse movement.
+        const moveEvent: Observable<ClientLine> = merge(this.touchMove, this.mouseMove)
+            .pipe(
+                filter((it) => ("touches" in it) ? it.touches.length === 1 : true),
+                map((it) => this.calcRelativePosition(it)),
+                pairwise(),
+                map((it) => new ClientLine(it[0], it[1]))
+            );
+
+        // Collision detection, until mouse up event fires.
+        const upEvent: Observable<[ClientLine, Array<[string, ClientPolyline]>]> = downEvent.pipe(
+            exhaustMap((it) => combineLatest([moveEvent, of(it)])),
+            map((it): [ClientLine, Array<[string, ClientPolyline]>] => [it[0], it[1]]),
+            tap((it) => {
+                const touchMoveLine: ClientLine = it[0];
+                for (const [polylineId, polyline] of it[1]) {
+                    if (polyline.intersectsWith(touchMoveLine)) {
+                        const elements: Array<CanvasElement<DrawElement>> = this.page.drawLayer.select(`#${polylineId}`);
+
+                        if (elements.length > 0) {
+
+                            const element: CanvasElement<DrawElement> = elements[0];
+                            const drawEvent: DrawEvent<DrawElement> = new DrawEvent(
+                                element.transform(),
+                                this.page.pageNumber,
+                                PageLayer.DRAWING
+                            );
+
+                            this.eraserLog.debug(() => `Eraser moved over ${drawEvent.element.id}`);
+
+                            this.afterElementRemovedEvent.next(drawEvent);
+
+                            element.remove();
+                        }
+                    }
+                }
+            }),
+            takeUntil(merge(this.mouseUp, this.touchEnd)),
+            takeUntil(this.dispose$)
+        );
+
+        // Start collision detection on mouse down.
+        merge(this.touchStart, this.mouseDown).pipe(
+            switchMap(() => upEvent),
+            takeUntil(this.dispose$)
+        ).subscribe();
+    }
+
+    private stopListenToChanges(): void {
+        this.dispose$.next();
     }
 }
