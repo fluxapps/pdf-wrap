@@ -1,6 +1,6 @@
 import { PDFViewer } from "pdfjs-dist/web/pdf_viewer";
-import { fromEvent, merge, Subject } from "rxjs";
-import { bufferCount, filter, map, takeUntil, tap } from "rxjs/operators";
+import { fromEvent, merge, Observable, Subject } from "rxjs";
+import { bufferCount, filter, map, mapTo, takeUntil, tap, throttleTime } from "rxjs/operators";
 import { Logger } from "typescript-logging";
 import { DoubleTapZoomingInteraction } from "../../api/zoom";
 import { LoggerFactory } from "../../log-config";
@@ -71,24 +71,14 @@ export class DoubleTapZoomingInteractionImpl implements DoubleTapZoomingInteract
     }
 
     private listenForGesture(): void {
-
         // Actual zoom logic
         let previousScale: number = 0;
         let latestKnownScale: number = this.viewer.currentScale;
         merge(
-            fromEvent<MouseEvent>(
-                this.container.viewer,
-                "click", {passive: true}),
-            fromEvent<TouchEvent>(
-                this.container.viewer,
-                "touch", {passive: true})
+            this.listenForDoubleClick(),
+            this.listenForDoubleTab()
         ).pipe(
-            filter((it) => "touches" in it ? it.touches.length === 1 : true),
-            map((it) => it.timeStamp),
-            bufferCount(2, 1),
-            tap((it) => this.log.trace(`Touch interval 1: ${it[0]}, 2: ${it[1]} diff: ${it[1] - it[0]} delta: ${this.gestureDelta}`)),
-            filter((it) => (it[1] - it[0]) <= this.gestureDelta),
-            map(() => undefined),
+            throttleTime(100),
             takeUntil(this.dispose$)
         ).subscribe(() => {
             this.log.debug("Double tap detected.");
@@ -105,6 +95,27 @@ export class DoubleTapZoomingInteractionImpl implements DoubleTapZoomingInteract
             latestKnownScale = this.viewer.currentScale;
             this.log.trace(`Double tap zoom in to: ${latestKnownScale}`);
         });
+
+    }
+
+    private listenForDoubleClick(): Observable<void> {
+        return fromEvent<TouchEvent>(this.container.viewer, "dblclick", {passive: true}).pipe(
+            mapTo(undefined),
+            takeUntil(this.dispose$)
+        );
+    }
+
+    private listenForDoubleTab(): Observable<void> {
+        return fromEvent<TouchEvent>(this.container.viewer, "touchend", {passive: true}).pipe(
+            tap((it) => this.log.trace(`Touches detected: ${it.touches.length}`)),
+            filter((it) => it.touches.length === 0),
+            map((it) => it.timeStamp),
+            bufferCount(2, 1),
+            tap((it) => this.log.trace(`Touch interval 1: ${it[0]}, 2: ${it[1]} diff: ${it[1] - it[0]} delta: ${this.gestureDelta}`)),
+            filter((it) => (it[1] - it[0]) <= this.gestureDelta),
+            mapTo(undefined),
+            takeUntil(this.dispose$)
+        );
     }
 
 

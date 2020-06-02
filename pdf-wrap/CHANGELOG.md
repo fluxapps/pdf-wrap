@@ -11,6 +11,7 @@ ellipses proportional (circle).
 
 ### Fixed
 * The selection tool ignored new forms while active.
+* Fix double tap behaviour on touch screens.
 
 ### BREAKING CHANGES
 * The public api of the library is directly exported via "@srag/pdf-wrap".
