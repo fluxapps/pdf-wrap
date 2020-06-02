@@ -74,7 +74,7 @@ export class SelectionTool extends BaseTool implements Selection {
                 });
 
                 this.forms.line.afterPaintCompleted
-                    .pipe(takeUntil(this.stateChange))
+                    .pipe(takeUntil(this.toolNoLongerActive()))
                     .subscribe((event) => {
                         const element: CanvasLine = this.getCanvasElementByEvent(event);
 
@@ -82,21 +82,21 @@ export class SelectionTool extends BaseTool implements Selection {
                     });
 
                 this.forms.rectangle.afterPaintCompleted
-                    .pipe(takeUntil(this.stateChange))
+                    .pipe(takeUntil(this.toolNoLongerActive()))
                     .subscribe((event) => {
                         const element: CanvasRectangle = this.getCanvasElementByEvent(event);
                         this.attachListenerToRectangle(this.model.getPage(event.pageNumber), element);
                     });
 
                 this.forms.ellipse.afterPaintCompleted
-                    .pipe(takeUntil(this.stateChange))
+                    .pipe(takeUntil(this.toolNoLongerActive()))
                     .subscribe((event) => {
                         const element: CanvasEllipse = this.getCanvasElementByEvent(event);
                         this.attachListenerToEllipse(this.model.getPage(event.pageNumber), element);
                     });
 
                 this.forms.circle.afterPaintCompleted
-                    .pipe(takeUntil(this.stateChange))
+                    .pipe(takeUntil(this.toolNoLongerActive()))
                     .subscribe((event) => {
                         const element: CanvasCircle = this.getCanvasElementByEvent(event);
                         this.attachListenerToCircle(this.model.getPage(event.pageNumber), element);
@@ -104,7 +104,7 @@ export class SelectionTool extends BaseTool implements Selection {
 
                 // Listen to page changes as long as the tool is active.
                 this.model.onPageVisibilityChange
-                    .pipe(takeUntil(this.stateChange))
+                    .pipe(takeUntil(this.toolNoLongerActive()))
                     .subscribe({
                         complete: (): void => this.clearSelection(),
                         next: (event: PageVisibilityChangeEvent): void => {

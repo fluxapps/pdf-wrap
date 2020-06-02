@@ -4,8 +4,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.7.0
+### Added
+* The ellipse from tool now accepts an optional config object, which allows users to drop
+ellipses proportional (circle).
+
+### Fixed
+* The selection tool ignored new forms while active.
+
+### BREAKING CHANGES
+* The public api of the library is directly exported via "@srag/pdf-wrap".
+* The types of the forms toolbox API are renamed to *Tool
+    * Form          -> FormTool
+    * BorderForm    -> BorderFormTool
+    * StandardForm  -> StandardFormTool
+
 ## 0.6.0
-## Added
+### Added
 * Optional feature configuration:
   * Enable/Disable invisible text layer (Defaults to enable)
   * Enable/Disable webgl for pdf page rendering (Defaults to enable)
@@ -13,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   * Double touch/click zoom
   * Pinch zoom
 
-## Changed
+### Changed
 * Migrate from tslint to eslint
 * Upgrade typescript to version 3.9
 * Minor dependency cleanup
@@ -24,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Pinch and double tap zoom gestures are disabled while the freehand or eraser tool is active.
 * Text is only selectable while the text highlight mode is active. 
 
-## Fixed
+### Fixed
 * The text highlight logic no longer tries to detect text selections while inactive.
 
 ## 0.5.1 - 2020-04-16
