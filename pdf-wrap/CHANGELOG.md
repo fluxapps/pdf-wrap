@@ -13,6 +13,9 @@ ellipses proportional (circle).
 * The selection tool ignored new forms while active.
 * Fix double tap behaviour on touch screens.
 
+### Changed
+* Disable zoom gestures while the selection tool is active.
+
 ### BREAKING CHANGES
 * The public api of the library is directly exported via "@srag/pdf-wrap".
 * The types of the forms toolbox API are renamed to *Tool

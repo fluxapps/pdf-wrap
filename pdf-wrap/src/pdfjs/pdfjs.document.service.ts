@@ -258,9 +258,10 @@ export class PDFjsDocumentService implements PDFDocumentService {
 
         let oldPinchZoomState: boolean | null = null;
         let oldDoubleTapZoomState: boolean | null = null;
-        combineLatest([freehand.stateChange, eraser.stateChange])
+        combineLatest([freehand.stateChange, eraser.stateChange, selectionTool.stateChange])
             .pipe(
-                map((it) => it[0].isActive || it[1].isActive),
+                map((it) => it.reduceRight((acc, curr) => new StateChangeEvent(acc.isActive || curr.isActive))),
+                map((it) => it.isActive),
                 distinctUntilChanged()
             )
             .subscribe((it) => {
