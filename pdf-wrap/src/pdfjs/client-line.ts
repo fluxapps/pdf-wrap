@@ -1,9 +1,8 @@
-
-import {Point} from "../api/draw/draw.basic";
-import {LoggerFactory} from "../log-config";
-import {Logger} from "typescript-logging";
 import { from } from "rxjs";
-import {bufferCount, filter, map} from "rxjs/operators";
+import { bufferCount, filter, map } from "rxjs/operators";
+import { Logger } from "typescript-logging";
+import { Point } from "../api/draw";
+import { LoggerFactory } from "../log-config";
 
 /**
  * Specific class for lines which provides intersection calculation of two {@code ClientLine}.

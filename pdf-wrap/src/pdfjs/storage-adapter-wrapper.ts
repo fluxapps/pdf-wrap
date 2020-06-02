@@ -1,9 +1,7 @@
-import {PageOverlay, StorageAdapter} from "../api/storage/adapter";
-import {StorageRegistry} from "../api/storage/adapter.registry";
-import {URI} from "../api/document.service";
-import {PageEventCollection} from "../api/storage/page.event";
-import {Logger} from "typescript-logging";
-import {LoggerFactory} from "../log-config";
+import { Logger } from "typescript-logging";
+import { URI } from "../api";
+import { PageEventCollection, PageOverlay, StorageAdapter, StorageRegistry } from "../api/storage";
+import { LoggerFactory } from "../log-config";
 
 /**
  * A wrapper for each registered {@link StorageAdapter}.

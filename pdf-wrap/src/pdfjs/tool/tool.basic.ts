@@ -1,9 +1,9 @@
 import { fromEvent, merge, Observable, ReplaySubject } from "rxjs";
 import { exhaustMap, filter, share, tap } from "rxjs/operators";
 import { Logger } from "typescript-logging";
-import { Point } from "../../api/draw/draw.basic";
-import { StateChangeEvent } from "../../api/event/event.api";
-import { Tool } from "../../api/tool/toolbox";
+import { Point } from "../../api/draw";
+import { StateChangeEvent } from "../../api/event";
+import { Tool } from "../../api/tool";
 import { LoggerFactory } from "../../log-config";
 import { DocumentModel, getPageNumberByEvent, Page } from "../document.model";
 

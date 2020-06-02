@@ -1,25 +1,17 @@
 import { fromEvent, merge, Observable, Subject } from "rxjs";
 import { filter, map, takeUntil, tap, throttleTime } from "rxjs/operators";
 import { Logger } from "typescript-logging";
-import {
-    BorderElement,
-    Circle,
-    DrawElement,
-    Ellipse,
-    Form,
-    Line,
-    PolyLine,
-    Rectangle
-} from "../../../api/draw/elements";
-import { SelectionChangeEvent, StateChangeEvent } from "../../../api/event/event.api";
-import { DrawEvent, PageLayer } from "../../../api/storage/page.event";
-import { FormsTool } from "../../../api/tool/forms";
-import { Selection } from "../../../api/tool/toolbox";
+import { BorderElement, Circle, DrawElement, Ellipse, Form, Line, PolyLine, Rectangle } from "../../../api/draw";
+import { SelectionChangeEvent, StateChangeEvent } from "../../../api/event";
+import { DrawEvent, PageLayer } from "../../../api/storage";
+import { FormsTool, Selection } from "../../../api/tool";
 import { LoggerFactory } from "../../../log-config";
 import {
     CanvasBorderElement,
-    CanvasCircle, CanvasElement,
-    CanvasEllipse, CanvasFormElement,
+    CanvasCircle,
+    CanvasElement,
+    CanvasEllipse,
+    CanvasFormElement,
     CanvasLine,
     CanvasPolyLine,
     CanvasRectangle

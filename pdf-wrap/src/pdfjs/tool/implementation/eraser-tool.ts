@@ -1,9 +1,9 @@
 import { combineLatest, merge, Observable, of, Subject } from "rxjs";
 import { exhaustMap, filter, map, mapTo, pairwise, switchMap, takeUntil, tap } from "rxjs/operators";
 import { Logger } from "typescript-logging";
-import { DrawElement, PolyLine } from "../../../api/draw/elements";
-import { DrawEvent, PageLayer } from "../../../api/storage/page.event";
-import { Eraser } from "../../../api/tool/toolbox";
+import { DrawElement, PolyLine } from "../../../api/draw";
+import { DrawEvent, PageLayer } from "../../../api/storage";
+import { Eraser } from "../../../api/tool";
 import { LoggerFactory } from "../../../log-config";
 import { CanvasElement } from "../../../paint/canvas.elements";
 import { ClientLine, ClientPolyline } from "../../client-line";

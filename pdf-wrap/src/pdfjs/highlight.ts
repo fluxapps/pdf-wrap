@@ -1,15 +1,16 @@
 import { fromEvent, merge, Observable, ReplaySubject, Subject } from "rxjs";
 import { filter, map, share, takeUntil, tap, withLatestFrom } from "rxjs/operators";
 import { Logger } from "typescript-logging";
-import { Color } from "../api/draw/color";
-import { DrawElement, Rectangle } from "../api/draw/elements";
-import { StateChangeEvent } from "../api/event/event.api";
-import { Highlighting, Target, TextSelection } from "../api/highlight/highlight.api";
-import { DrawEvent, PageLayer } from "../api/storage/page.event";
+import { Color, DrawElement, Rectangle } from "../api/draw";
+import { StateChangeEvent } from "../api/event";
+import { Highlighting, Target, TextSelection } from "../api/highlight";
+import { DrawEvent, PageLayer } from "../api/storage";
 import { LoggerFactory } from "../log-config";
 import { CanvasRectangle } from "../paint/canvas.elements";
 import { Canvas } from "../paint/painters";
 import { ClientRectangle } from "./client-rectangle";
+import { DocumentModel, getPageNumberByEvent, Page } from "./document.model";
+
 /**
  * Represents the text highlighting feature of a PDF.
  *
@@ -155,8 +156,6 @@ export class TextHighlighting implements DisposableHighlighting {
         }
     }
 }
-
-import { DocumentModel, getPageNumberByEvent, Page } from "./document.model";
 
 export interface DisposableHighlighting extends Highlighting {
     dispose(): void;

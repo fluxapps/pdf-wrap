@@ -1,6 +1,6 @@
 import { PDFViewer } from "pdfjs-dist/web/pdf_viewer";
 import { Logger } from "typescript-logging";
-import { ZoomingInteraction } from "../../api/zoom/interaction";
+import { ZoomingInteraction } from "../../api/zoom";
 import { LoggerFactory } from "../../log-config";
 import { DocumentModel } from "../document.model";
 

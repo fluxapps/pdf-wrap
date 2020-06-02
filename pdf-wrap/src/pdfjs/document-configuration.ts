@@ -1,4 +1,4 @@
-import { PageRenderingMode, ViewFeatures } from "../api/document.service";
+import { PageRenderingMode, ViewFeatures } from "../api";
 
 const DEFAULT_FEATURE_CONFIG: ViewFeatures = Object.freeze({
     renderingMode: PageRenderingMode.WEBGL,

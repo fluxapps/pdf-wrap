@@ -1,9 +1,7 @@
 import { Logger } from "typescript-logging";
-import { Point } from "../../api/draw/draw.basic";
-import { Circle, Ellipse, Line, Rectangle } from "../../api/draw/elements";
-import { DrawEvent, PageLayer } from "../../api/storage/page.event";
-import { EllipseToolConfig } from "../../api/tool";
-import { BorderFormTool, FormsTool, StandardFormTool } from "../../api/tool/forms";
+import { Circle, Ellipse, Line, Point, Rectangle } from "../../api/draw";
+import { DrawEvent, PageLayer } from "../../api/storage";
+import { BorderFormTool, EllipseToolConfig, FormsTool, StandardFormTool } from "../../api/tool";
 import { LoggerFactory } from "../../log-config";
 import { CanvasCircle, CanvasEllipse, CanvasLine, CanvasRectangle } from "../../paint/canvas.elements";
 import { DocumentModel, Page } from "../document.model";

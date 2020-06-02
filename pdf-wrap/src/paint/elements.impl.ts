@@ -1,7 +1,7 @@
 import {Canvas} from "./painters";
-import { Circle, Ellipse, Line, PolyLine, Rectangle } from "../api/draw/elements";
-import {Dimension, Point} from "../api/draw/draw.basic";
-import {Color} from "../api/draw/color";
+import { Circle, Ellipse, Line, PolyLine, Rectangle } from "../api/draw";
+import {Dimension, Point} from "../api/draw";
+import {Color} from "../api/draw";
 
 /**
  * Describes a element which can draw itself on a canvas.

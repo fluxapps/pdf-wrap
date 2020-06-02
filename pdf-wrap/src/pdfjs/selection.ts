@@ -1,8 +1,7 @@
 import { merge, Observable, Subject } from "rxjs";
 import { map, takeUntil } from "rxjs/operators";
-import { Color } from "../api/draw/color";
-import { BorderElement, DrawElement, Form } from "../api/draw/elements";
-import { ElementSelection } from "../api/selection/selection.api";
+import { BorderElement, Color, DrawElement, Form } from "../api/draw";
+import { ElementSelection } from "../api/selection";
 import { CanvasBorderElement, CanvasFormElement } from "../paint/canvas.elements";
 import { BoxDragData, PaintEvent } from "../paint/events";
 import { Page } from "./document.model";

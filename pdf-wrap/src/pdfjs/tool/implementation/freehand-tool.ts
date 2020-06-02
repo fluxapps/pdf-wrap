@@ -1,10 +1,8 @@
 import { merge, Observable, Subject } from "rxjs";
 import { mapTo, takeUntil, tap } from "rxjs/operators";
-import { Color, colorFrom, Colors } from "../../../api/draw/color";
-import { Point } from "../../../api/draw/draw.basic";
-import { PolyLine } from "../../../api/draw/elements";
-import { DrawEvent, PageLayer } from "../../../api/storage/page.event";
-import { Freehand } from "../../../api/tool/toolbox";
+import { Color, colorFrom, Colors, Point, PolyLine } from "../../../api/draw";
+import { DrawEvent, PageLayer } from "../../../api/storage";
+import { Freehand } from "../../../api/tool";
 import { PolyLinePainter } from "../../../paint/painters";
 import { DocumentModel } from "../../document.model";
 import { RescaleManager } from "../../rescale-manager";

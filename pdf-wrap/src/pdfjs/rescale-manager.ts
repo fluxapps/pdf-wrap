@@ -1,5 +1,5 @@
-import { BorderElement, Circle, Ellipse, Line, PolyLine, Rectangle } from "../api/draw/elements";
-import {Dimension, Point} from "../api/draw/draw.basic";
+import { BorderElement, Circle, Ellipse, Line, PolyLine, Rectangle } from "../api/draw";
+import {Dimension, Point} from "../api/draw";
 import {PDFViewer} from "pdfjs-dist/web/pdf_viewer";
 import {ElementBuilderFactoryImpl} from "../paint/element.builders.impl";
 import {Logger} from "typescript-logging";

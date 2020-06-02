@@ -2,7 +2,7 @@ import { PDFViewer } from "pdfjs-dist/web/pdf_viewer";
 import { fromEvent, merge, Subject } from "rxjs";
 import { bufferCount, filter, map, takeUntil, tap } from "rxjs/operators";
 import { Logger } from "typescript-logging";
-import { DoubleTapZoomingInteraction } from "../../api/zoom/interaction";
+import { DoubleTapZoomingInteraction } from "../../api/zoom";
 import { LoggerFactory } from "../../log-config";
 import { DocumentModel } from "../document.model";
 

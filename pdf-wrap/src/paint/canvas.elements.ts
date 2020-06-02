@@ -1,13 +1,23 @@
-import { TeardownLogic, Observable, Subscriber } from "rxjs";
+import { Observable, Subscriber, TeardownLogic } from "rxjs";
+
+import svgjs from "svg.js";
 import { Logger } from "typescript-logging";
-import { Color, colorFromHex, colorFromRgba } from "../api/draw/color";
-import { Dimension, Point } from "../api/draw/draw.basic";
-import { Circle, DrawElement, Ellipse, Line, PolyLine, Rectangle } from "../api/draw/elements";
+import {
+    Circle,
+    Color,
+    colorFromHex,
+    colorFromRgba,
+    Dimension,
+    DrawElement,
+    Ellipse,
+    Line,
+    Point,
+    PolyLine,
+    Rectangle
+} from "../api/draw";
 import { LoggerFactory } from "../log-config";
 import { ElementBuilderFactoryImpl } from "./element.builders.impl";
 import { ElementDragEventMap, ElementResizeEventMap } from "./events";
-
-import svgjs from "svg.js";
 
 // Do really nasty stuff to fix the test environment which hasn't a window.
 /* tslint:disable */
@@ -24,11 +34,10 @@ if (typeof window === "undefined") {
 } else {
     window.SVG = svgjs;
 }
-/* tslint:enable */
-
+import "svg.resize.js";
 import "svg.select.js";
 import "svg.draggable.js";
-import "svg.resize.js";
+/* tslint:enable */
 
 type ElementEventMap = (HTMLElementEventMap & ElementDragEventMap & ElementResizeEventMap);
 

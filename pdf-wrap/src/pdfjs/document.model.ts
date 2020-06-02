@@ -1,8 +1,8 @@
 import { Observable, Subject } from "rxjs";
-import {Canvas} from "../paint/painters";
-import {Dimension, Point} from "../api/draw/draw.basic";
-import {Logger} from "typescript-logging";
-import {LoggerFactory} from "../log-config";
+import { Logger } from "typescript-logging";
+import { Dimension, Point } from "../api/draw";
+import { LoggerFactory } from "../log-config";
+import { Canvas } from "../paint/painters";
 
 /**
  * Describes a visibility change of a page within the PDF viewer.

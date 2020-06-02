@@ -1,9 +1,7 @@
 import * as svgjs from "svg.js";
 import { Logger } from "typescript-logging";
 import uuid from "uuid-js";
-import { Color, colorFrom, Colors } from "../api/draw/color";
-import { Dimension, Point } from "../api/draw/draw.basic";
-import { DrawElement } from "../api/draw/elements";
+import { Color, colorFrom, Colors, Dimension, DrawElement, Point } from "../api/draw";
 import { LoggerFactory } from "../log-config";
 import {
     CanvasCircle,

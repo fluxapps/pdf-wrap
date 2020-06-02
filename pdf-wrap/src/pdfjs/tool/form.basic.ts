@@ -1,10 +1,7 @@
-
 import { Observable, Subject } from "rxjs";
-import { Point } from "../../api/draw/draw.basic";
-import { DrawEvent } from "../../api/storage/page.event";
-import { FormToolConfig } from "../../api/tool";
-import { BorderFormTool, StandardFormTool } from "../../api/tool/forms";
-import { Color, colorFrom, Colors } from '../../api/draw/color';
+import { Color, colorFrom, Colors, Point } from "../../api/draw";
+import { DrawEvent } from "../../api/storage";
+import { BorderFormTool, FormToolConfig, StandardFormTool } from "../../api/tool";
 import { DocumentModel, Page } from "../document.model";
 
 export abstract class AbstractBorderForm<T, C = FormToolConfig> implements BorderFormTool<T, C> {

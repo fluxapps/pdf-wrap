@@ -1,7 +1,7 @@
-import {DocumentSearch, SearchOptions} from "../api/search/search.api";
-import {PDFFindController} from "pdfjs-dist/web/pdf_viewer";
-import {LoggerFactory} from "../log-config";
-import {Logger} from "typescript-logging";
+import { PDFFindController } from "pdfjs-dist/web/pdf_viewer";
+import { Logger } from "typescript-logging";
+import { DocumentSearch, SearchOptions } from "../api/search";
+import { LoggerFactory } from "../log-config";
 
 /**
  * {@link DocumentSearch} implementation for PDFjs.

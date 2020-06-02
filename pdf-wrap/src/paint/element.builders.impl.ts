@@ -1,17 +1,27 @@
-import {
-    BorderElementBuilder, CircleBuilder,
-    ElementBuilderFactory, EllipseBuilder, FormBuilder,
-    LineBuilder,
-    PolyLineBuilder,
-    RectangleBuilder
-} from "../api/draw/element.builders";
-import {Dimension, Point} from "../api/draw/draw.basic";
-import { Circle, Ellipse, Line, PolyLine, Rectangle } from "../api/draw/elements";
-import {Color, colorFrom, Colors} from "../api/draw/color";
-import { DrawableCircle, DrawableEllipse, DrawableLine, DrawablePolyLine, DrawableRectangle } from "./elements.impl";
+import { Logger } from "typescript-logging";
 import uuid from "uuid-js";
-import {Logger} from "typescript-logging";
-import {LoggerFactory} from "../log-config";
+import {
+    BorderElementBuilder,
+    Circle,
+    CircleBuilder,
+    Color,
+    colorFrom,
+    Colors,
+    Dimension,
+    ElementBuilderFactory,
+    Ellipse,
+    EllipseBuilder,
+    FormBuilder,
+    Line,
+    LineBuilder,
+    Point,
+    PolyLine,
+    PolyLineBuilder,
+    Rectangle,
+    RectangleBuilder
+} from "../api/draw";
+import { LoggerFactory } from "../log-config";
+import { DrawableCircle, DrawableEllipse, DrawableLine, DrawablePolyLine, DrawableRectangle } from "./elements.impl";
 
 /**
  * Default element builder factory implementation.
@@ -191,12 +201,12 @@ export class LineBuilderImpl extends AbstractBorderElementBuilder<LineBuilder, L
     build(): Line {
         this.log.trace(() => `Build line element: lineId=${this._id}`);
         return new DrawableLine(
-           this._borderColor,
-           this._borderWidth,
-           this._id,
-           this._start,
-           this._end,
-           this._rotation
+            this._borderColor,
+            this._borderWidth,
+            this._id,
+            this._start,
+            this._end,
+            this._rotation
         );
     }
 }

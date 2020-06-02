@@ -2,113 +2,28 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a1118649-6a96-4655-82c6-8f39b8e5a685" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.eslintrc.js" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/.eslintrc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitlab-ci.yml" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/.gitlab-ci.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/pdf-wrap.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/pdf-wrap.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.mocharc.js" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/.mocharc.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.npmrc" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/.npmrc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LICENSE.md" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/LICENSE.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.properties.js" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/app.properties.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/development-guide.md" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/docs/development-guide.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/guides/basic-viewer.md" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/docs/guides/basic-viewer.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/index.md" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/docs/index.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/reference-documentation.md" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/docs/reference-documentation.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/resources/img/pdf_wrap_architecture.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/docs/resources/img/pdf_wrap_architecture.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/resources/img/pdf_wrap_build_directory_structure.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/docs/resources/img/pdf_wrap_build_directory_structure.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/resources/img/pdf_wrap_directory_structure.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/docs/resources/img/pdf_wrap_directory_structure.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/resources/img/pdf_wrap_pages_structure.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/docs/resources/img/pdf_wrap_pages_structure.jpeg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/dev-viewer/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/dev-viewer/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/dev-viewer/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/dev-viewer/src/assets/resources/chicken.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/src/assets/resources/chicken.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/dev-viewer/src/css/dev-viewer.css" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/src/css/dev-viewer.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/dev-viewer/src/css/normalize.css" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/src/css/normalize.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/dev-viewer/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/src/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/dev-viewer/src/js/color-pickers.js" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/src/js/color-pickers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/dev-viewer/src/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/src/js/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/dev-viewer/src/js/sidebar.js" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/src/js/sidebar.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/dev-viewer/src/js/storage.js" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/src/js/storage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/dev-viewer/src/js/tools/forms.js" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/src/js/tools/forms.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/dev-viewer/src/js/tools/freehand.js" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/src/js/tools/freehand.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/dev-viewer/src/js/tools/highlight.js" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/src/js/tools/highlight.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/dev-viewer/src/js/tools/selection.js" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/src/js/tools/selection.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/dev-viewer/src/js/ui.js" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/src/js/ui.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/dev-viewer/webpack.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/webpack.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/dev-viewer/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/yarn.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gulpfile.js" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/gulpfile.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mkdocs.yml" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/mkdocs.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/document.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/document.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/document/document.info.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/document/document.info.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/document/pdf.document.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/document/pdf.document.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/draw/color.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/draw/color.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/draw/draw.basic.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/draw/draw.basic.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/draw/element.builders.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/draw/element.builders.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/draw/elements.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/draw/elements.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/event/event.api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/event/event.api.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/highlight/highlight.api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/highlight/highlight.api.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/search/search.api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/search/search.api.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/selection/selection.api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/selection/selection.api.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/storage/adapter.registry.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/storage/adapter.registry.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/storage/adapter.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/storage/adapter.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/storage/page.event.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/storage/page.event.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/tool/forms.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/tool/forms.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/tool/toolbox.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/tool/toolbox.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/zoom/interaction.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/zoom/interaction.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/api/zoom/settings.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/zoom/settings.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/arrays.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/arrays.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/css/pdf-wrap.css" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/assets/css/pdf-wrap.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/declarations/pdfjs/pdf-dist.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/declarations/pdfjs/pdf-dist.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/declarations/pdfjs/pdfjst-dist-viewer.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/declarations/pdfjs/pdfjst-dist-viewer.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/log-config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/log-config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/paint/canvas.elements.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/paint/canvas.elements.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/paint/element.builders.impl.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/paint/element.builders.impl.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/paint/elements.impl.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/paint/elements.impl.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/paint/events.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/paint/events.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/paint/painters.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/paint/painters.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/client-line.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/client-line.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/client-rectangle.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/client-rectangle.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/document-configuration.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/document-configuration.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/document.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/document.model.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/document.search.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/document.search.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/highlight.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/highlight.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/layer-manager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/layer-manager.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/page-event-collection.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/page-event-collection.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/pdfjs.document.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/pdfjs.document.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/polyfill.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/polyfill.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/rescale-manager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/rescale-manager.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/selection.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/selection.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/storage-adapter-wrapper.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/storage-adapter-wrapper.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/tool/form.basic.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/tool/form.basic.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/tool/forms.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/tool/forms.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/tool/implementation/eraser-tool.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/tool/implementation/eraser-tool.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/tool/implementation/freehand-tool.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/tool/implementation/freehand-tool.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/tool/implementation/selection-tool.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/tool/implementation/selection-tool.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/tool/tool.basic.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/tool/tool.basic.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/tool/tools.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/tool/tools.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/zoom/double-tap-zoom.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/double-tap-zoom.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/zoom/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/zoom/pinch-zoom.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/pinch-zoom.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pdfjs/zoom/settings.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/settings.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/api/document.service.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/test/api/document.service.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/api/document/document.info.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/test/api/document/document.info.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/api/draw/color.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/test/api/draw/color.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/api/storage/adapter.registry.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/test/api/storage/adapter.registry.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/arrays.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/test/arrays.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/pdfjs/client-line.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/test/pdfjs/client-line.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/pdfjs/client-rectangle.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/test/pdfjs/client-rectangle.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/pdfjs/highlight.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/test/pdfjs/highlight.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/pdfjs/selection.mocks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/test/pdfjs/selection.mocks.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/pdfjs/storage-adapter-wrapper.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/test/pdfjs/storage-adapter-wrapper.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/tsconfig.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/types/svg.draggable.js.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/types/svg.draggable.js.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/types/svg.select.js.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/types/svg.select.js.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/types/touch-event.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/types/touch-event.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/types/window_SVG.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/types/window_SVG.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/yarn.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/paint/canvas.elements.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/paint/canvas.elements.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/paint/element.builders.impl.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/paint/element.builders.impl.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/paint/elements.impl.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/paint/elements.impl.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/paint/painters.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/paint/painters.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/client-line.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/client-line.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/document-configuration.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/document-configuration.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/document.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/document.model.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/document.search.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/document.search.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/highlight.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/highlight.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/page-event-collection.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/page-event-collection.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/rescale-manager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/rescale-manager.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/selection.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/selection.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/storage-adapter-wrapper.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/storage-adapter-wrapper.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/tool/form.basic.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/tool/form.basic.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/tool/forms.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/tool/forms.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/tool/implementation/eraser-tool.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/tool/implementation/eraser-tool.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/tool/implementation/freehand-tool.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/tool/implementation/freehand-tool.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/tool/implementation/selection-tool.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/tool/implementation/selection-tool.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/tool/tool.basic.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/tool/tool.basic.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/double-tap-zoom.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/double-tap-zoom.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/pinch-zoom.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/pinch-zoom.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -284,7 +199,7 @@
       <workItem from="1590415334463" duration="533000" />
       <workItem from="1590581475862" duration="741000" />
       <workItem from="1590587368567" duration="17000" />
-      <workItem from="1591102219477" duration="7930000" />
+      <workItem from="1591102219477" duration="8925000" />
     </task>
     <servers />
   </component>
@@ -362,11 +277,11 @@
     </state>
     <state x="341" y="164" key="SettingsEditor/0.0.1680.1050/-1288.0.1288.946@0.0.1680.1050" timestamp="1589888676411" />
     <state x="341" y="164" key="SettingsEditor/0.0.1680.1050@0.0.1680.1050" timestamp="1590587249183" />
-    <state x="498" y="282" width="684" height="490" key="find.popup" timestamp="1591111265073">
+    <state x="498" y="282" width="684" height="490" key="find.popup" timestamp="1591113520884">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="498" y="282" width="684" height="518" key="find.popup/0.0.1680.1050/-1288.0.1288.946@0.0.1680.1050" timestamp="1590065799213" />
-    <state x="498" y="282" width="684" height="490" key="find.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1591111265073" />
+    <state x="498" y="282" width="684" height="490" key="find.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1591113520884" />
     <state x="505" y="233" width="670" height="676" key="search.everywhere.popup" timestamp="1589990725232">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
