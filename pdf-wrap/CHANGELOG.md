@@ -6,8 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 0.7.0
 ### Added
-* The ellipse from tool now accepts an optional config object, which allows users to drop
-ellipses proportional (circle).
+* The ellipse form tool now accepts an optional configuration object, which allows users to drop
+can be used to drop ellipses proportionally like a circle.
 
 ### Fixed
 * The selection tool ignored new forms while active.
