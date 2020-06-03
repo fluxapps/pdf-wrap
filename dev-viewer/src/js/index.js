@@ -34,7 +34,8 @@ export async function loadPDF() {
     const pdfDocument = await documentService.loadWith({
         container: document.getElementById("viewerContainer"),
         pdf: pdf,
-        layerStorage: URI.from("mem://chicken.pdf")
+        layerStorage: URI.from("mem://chicken.pdf"),
+        features: {selectableText: true}
     });
 
     pdfDocument.scaleTo("page-fit");

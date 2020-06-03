@@ -4,7 +4,7 @@ export class FormsService {
 
     /**
      *
-     * @param {Forms} forms
+     * @param {FormsTool} forms
      */
     constructor(forms) {
         this.forms = forms;
@@ -25,7 +25,7 @@ export class FormsService {
             this.forms.ellipse.borderWith = parseInt(this._borderSizeInput.value);
             this.forms.ellipse.borderColor = selectedColors.border;
             this.forms.ellipse.fillColor = selectedColors.fill;
-            this.forms.ellipse.create();
+            this.forms.ellipse.create({proportional: false});
         });
 
         this._circleButton.addEventListener("click", () => {
