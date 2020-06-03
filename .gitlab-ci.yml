@@ -22,27 +22,27 @@ stages:
 lint:
   stage: lint
   extends: .node_docker
-  script: yarn gulp lint
+  script: yarn workspace @srag/pdf-wrap run gulp lint
 
 build:
   stage: build
   extends: .node_docker
-  script: yarn run gulp repackage
+  script: yarn workspace @srag/pdf-wrap run gulp repackage
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
     paths:
-      - build/
+      - pdf-wrap/build/
     expire_in: 30 days
 
 test:code:
   stage: test
   extends: .node_docker
-  script: yarn gulp test
+  script: yarn workspace @srag/pdf-wrap run gulp test
 test:deploy_dry_run:
   stage: test
   extends: .node_docker
   script:
-    - npm publish build/distributions/npm --dry-run --access public
+    - npm publish pdf-wrap/build/distributions/npm --dry-run --access public
   dependencies:
     - build
 
@@ -52,7 +52,7 @@ deploy:
   only:
     refs:
       - master
-  script: npm publish build/distributions/npm --access public
+  script: npm publish pdf-wrap/build/distributions/npm --access public
   when: manual
   dependencies:
     - build
