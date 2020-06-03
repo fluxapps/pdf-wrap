@@ -9,6 +9,7 @@ const eslint = require("gulp-eslint");
 const typedoc = require("gulp-typedoc");
 const concat = require("gulp-concat");
 const resolve = require("resolve");
+const path = require("path");
 
 const appProperties = require("./app.properties");
 
@@ -170,12 +171,10 @@ gulp.task("transformPackageJSON", function () {
  * Declares every dependency used in package.json as bundledDependencies.
  * In addition devDependencies are cleared.
  */
-gulp.task("copyNpmRc", function () {
-
+gulp.task("copyNpmRc", () => {
     return gulp.src([
-        `${appProperties.root}/.npmrc`
-    ])
-        .pipe(gulp.dest(`${appProperties.build.dirs.dist}/npm`))
+        path.join(path.dirname(appProperties.root), ".npmrc")
+    ]).pipe(gulp.dest(path.join(appProperties.build.dirs.dist, "npm")));
 });
 
 

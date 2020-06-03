@@ -45,6 +45,11 @@ test:deploy_dry_run:
     - npm publish pdf-wrap/build/distributions/npm --dry-run --access public
   dependencies:
     - build
+test:authorization:
+  stage: test
+  extends: .node_docker
+  script:
+    - npm whoami
 
 deploy:
   stage: deploy
