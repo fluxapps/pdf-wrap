@@ -1,23 +1,39 @@
 import { PDFViewer } from "pdfjs-dist/web/pdf_viewer";
 import { Subject } from "rxjs";
 import { filter, takeUntil } from "rxjs/operators";
-import { DoubleTabInteractions, ZoomSettings } from "../../api/zoom";
+import { DoubleTabInteractions, GlobalZoomConfiguration, ZoomingInteractions, ZoomSettings } from "../../api/zoom";
 import { DocumentModel } from "../document.model";
 import { DoubleTapSnapInteractionImpl } from "./double-tap-snap";
 import { DoubleTapZoomingInteractionImpl } from "./double-tap-zoom";
+import { DefaultGlobalZoomConfiguration } from "./global-zoom-config";
 import { PinchZoomingInteraction } from "./pinch-zoom";
 
 export class DefaultZoomSettings implements ZoomSettings {
 
+    readonly config: DefaultGlobalZoomConfiguration;
+    readonly gesture: DefaultZoomInteractions;
+
+    constructor(viewer: PDFViewer, container: DocumentModel) {
+        this.config = new DefaultGlobalZoomConfiguration();
+        this.gesture = new DefaultZoomInteractions(viewer, container, this.config);
+    }
+
+    dispose(): void {
+        this.gesture.dispose();
+    }
+
+}
+
+class DefaultZoomInteractions implements ZoomingInteractions {
     private readonly dispose$: Subject<void> = new Subject<void>();
 
     readonly pinch: PinchZoomingInteraction;
     readonly doubleTap: DefaultDoubleTapInteractions;
 
-    constructor(viewer: PDFViewer, container: DocumentModel) {
-        const zoom: DoubleTapZoomingInteractionImpl = new DoubleTapZoomingInteractionImpl(viewer, container);
+    constructor(viewer: PDFViewer, container: DocumentModel, config: GlobalZoomConfiguration) {
+        const zoom: DoubleTapZoomingInteractionImpl = new DoubleTapZoomingInteractionImpl(viewer, config, container);
         const snap: DoubleTapSnapInteractionImpl = new DoubleTapSnapInteractionImpl(viewer, container);
-        this.pinch = new PinchZoomingInteraction(viewer, container);
+        this.pinch = new PinchZoomingInteraction(viewer, container, config);
         this.doubleTap = new DefaultDoubleTapInteractions(
             zoom,
             snap

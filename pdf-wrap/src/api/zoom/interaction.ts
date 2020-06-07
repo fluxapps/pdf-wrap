@@ -108,3 +108,17 @@ export interface DoubleTabInteractions {
      */
     readonly snap: DoubleTapSnapInteraction;
 }
+
+/**
+ * Zoom interactions.
+ */
+export interface ZoomingInteractions {
+    /**
+     * Pinch zoom interaction settings.
+     */
+    readonly pinch: ZoomingInteraction;
+    /**
+     * Double tap interaction settings.
+     */
+    readonly doubleTap: DoubleTabInteractions;
+}

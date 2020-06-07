@@ -2,7 +2,7 @@ import { PDFViewer } from "pdfjs-dist/web/pdf_viewer";
 import { Observable } from "rxjs";
 import { Logger } from "typescript-logging";
 import { Optional } from "typescript-optional";
-import { DoubleTapZoomingInteraction } from "../../api/zoom";
+import { DoubleTapZoomingInteraction, GlobalZoomConfiguration } from "../../api/zoom";
 import { LoggerFactory } from "../../log-config";
 import { DocumentModel, Page } from "../document.model";
 import { AbstractDoubleTapInteraction } from "./interaction-base";
@@ -26,7 +26,7 @@ export class DoubleTapZoomingInteractionImpl extends AbstractDoubleTapInteractio
         this.#log.warn(`Double tap zoom factor ignored! Expected min: 1.01 max: 10 given: ${value}`);
     }
 
-    constructor(private readonly viewer: PDFViewer, container: DocumentModel) {
+    constructor(private readonly viewer: PDFViewer, private readonly globalZoomConfig: GlobalZoomConfiguration, container: DocumentModel) {
         super(container);
     }
 
@@ -45,7 +45,8 @@ export class DoubleTapZoomingInteractionImpl extends AbstractDoubleTapInteractio
             }
 
             previousScale = this.viewer.currentScale;
-            this.viewer.currentScale *= this.#documentZoomFactor;
+            const newScale: number = this.viewer.currentScale * this.#documentZoomFactor;
+            this.viewer.currentScale = Math.min(this.globalZoomConfig.maxScale, Math.max(newScale, this.globalZoomConfig.minScale));
             latestKnownScale = this.viewer.currentScale;
             this.#log.trace(`Double tap zoom in to: ${latestKnownScale}`);
         });

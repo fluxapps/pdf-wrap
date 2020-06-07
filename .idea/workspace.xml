@@ -2,15 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a1118649-6a96-4655-82c6-8f39b8e5a685" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/global-zoom-config.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dev-viewer/src/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/src/js/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/api/document/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/document/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/api/document/pdf.document.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/document/pdf.document.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/CHANGELOG.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pdf-wrap/src/api/zoom/interaction.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/zoom/interaction.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pdf-wrap/src/api/zoom/settings.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/zoom/settings.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/pdfjs.document.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/pdfjs.document.service.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/double-tap-zoom.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/double-tap-zoom.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/pinch-zoom.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/pinch-zoom.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/settings.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/settings.ts" afterDir="false" />
     </list>
@@ -23,8 +22,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="CSS File" />
-        <option value="TypeScript File" />
         <option value="JavaScript File" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>
@@ -203,7 +202,7 @@
       <workItem from="1590581475862" duration="741000" />
       <workItem from="1590587368567" duration="17000" />
       <workItem from="1591102219477" duration="23690000" />
-      <workItem from="1591193261824" duration="91303000" />
+      <workItem from="1591193261824" duration="97341000" />
     </task>
     <servers />
   </component>
@@ -243,11 +242,11 @@
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="304" y="187" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1591548974948" />
-    <state x="653" y="248" key="#com.intellij.ide.util.MemberChooser" timestamp="1591282285566">
+    <state x="653" y="248" key="#com.intellij.ide.util.MemberChooser" timestamp="1591565747569">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="653" y="248" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050/-1288.0.1288.946@0.0.1680.1050" timestamp="1590057722586" />
-    <state x="653" y="248" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050@0.0.1680.1050" timestamp="1591282285566" />
+    <state x="653" y="248" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050@0.0.1680.1050" timestamp="1591565747569" />
     <state width="1659" height="294" key="GridCell.Tab.0.bottom" timestamp="1591549249719">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>

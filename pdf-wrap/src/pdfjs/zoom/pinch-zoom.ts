@@ -1,5 +1,6 @@
 import { PDFViewer } from "pdfjs-dist/web/pdf_viewer";
 import { Logger } from "typescript-logging";
+import { GlobalZoomConfiguration } from "../../api/zoom";
 import { LoggerFactory } from "../../log-config";
 import { DocumentModel } from "../document.model";
 import { AbstractZoomingInteraction } from "./interaction-base";
@@ -44,7 +45,11 @@ export class PinchZoomingInteraction extends AbstractZoomingInteraction {
     #unsubscribe: (() => void) | null = null;
 
 
-    constructor(private readonly viewer: PDFViewer, private readonly container: DocumentModel) {
+    constructor(
+        private readonly viewer: PDFViewer,
+        private readonly container: DocumentModel,
+        private readonly globalZoomConfig: GlobalZoomConfiguration
+    ) {
         super();
     }
 
@@ -78,6 +83,17 @@ export class PinchZoomingInteraction extends AbstractZoomingInteraction {
 
             this.#log.trace(`PinchDistance: ${pinchDistance}, PinchScale: ${this.#pinchScale}`);
             this.#log.trace(`OriginX: ${originX}, OriginY: ${originY}`);
+
+            const docScale: number = this.viewer.currentScale * this.#pinchScale;
+            if (docScale > this.globalZoomConfig.maxScale) {
+                this.#pinchScale = this.globalZoomConfig.maxScale / this.viewer.currentScale;
+                this.#log.trace(`Max zoom scale of ${this.globalZoomConfig.maxScale} reached, limit pinch scale to: ${this.#pinchScale}`);
+            }
+
+            if (docScale < this.globalZoomConfig.minScale) {
+                this.#pinchScale = this.globalZoomConfig.minScale / this.viewer.currentScale;
+                this.#log.trace(`Min zoom scale of ${this.globalZoomConfig.minScale} reached, limit pinch scale to: ${this.#pinchScale}`);
+            }
 
             viewer.style.transform = `scale(${this.#pinchScale})`;
             viewer.style.transformOrigin = `${originX}px ${originY}px`;

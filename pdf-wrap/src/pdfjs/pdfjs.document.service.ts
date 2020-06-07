@@ -265,16 +265,16 @@ export class PDFjsDocumentService implements PDFDocumentService {
             .subscribe((it) => {
             if (it && oldPinchZoomState === null && oldDoubleTapZoomState === null) {
                 this.log.trace(`Disable gestures and store state, pinch: "${oldPinchZoomState}" doubleTap: "${oldDoubleTapZoomState}"`);
-                oldDoubleTapZoomState = zoomSettings.doubleTap.zoom.enabled;
-                oldPinchZoomState = zoomSettings.pinch.enabled;
-                zoomSettings.doubleTap.zoom.enabled = false;
-                zoomSettings.pinch.enabled = false;
+                oldDoubleTapZoomState = zoomSettings.gesture.doubleTap.zoom.enabled;
+                oldPinchZoomState = zoomSettings.gesture.pinch.enabled;
+                zoomSettings.gesture.doubleTap.zoom.enabled = false;
+                zoomSettings.gesture.pinch.enabled = false;
             }
 
             if (!it && oldPinchZoomState !== null && oldDoubleTapZoomState !== null) {
                 this.log.trace(`Restore gesture state, pinch: "${oldPinchZoomState}" doubleTap: "${oldDoubleTapZoomState}"`);
-                zoomSettings.doubleTap.zoom.enabled = oldDoubleTapZoomState;
-                zoomSettings.pinch.enabled = oldPinchZoomState;
+                zoomSettings.gesture.doubleTap.zoom.enabled = oldDoubleTapZoomState;
+                zoomSettings.gesture.pinch.enabled = oldPinchZoomState;
                 oldDoubleTapZoomState = null;
                 oldPinchZoomState = null;
             }
@@ -484,8 +484,9 @@ class PDFjsDocument implements PDFDocument {
     }
 
     set scale(scale: number) {
-        this.log.trace(() => `Set scale to ${scale}`);
-        this.viewer.currentScale = scale;
+        const newScale: number = Math.min(this.zoom.config.maxScale, Math.max(this.zoom.config.minScale, scale));
+        this.log.trace(() => `Set scale to ${newScale}`);
+        this.viewer.currentScale = newScale;
     }
 
     get zoom(): ZoomSettings {
@@ -506,8 +507,8 @@ class PDFjsDocument implements PDFDocument {
         private dispose: (() => void) | null,
         private readonly zoomSettings: DefaultZoomSettings,
     ) {
-        this.zoomSettings.pinch.enabled = true;
-        this.zoomSettings.doubleTap.zoom.enabled = true;
+        this.zoomSettings.gesture.pinch.enabled = true;
+        this.zoomSettings.gesture.doubleTap.zoom.enabled = true;
 
         this.pageChange = new Observable((subscriber: Subscriber<PageChangingEvent>): TeardownLogic => {
             const eventHandler: (ev: PageChangingEvent) => void = (ev: PageChangingEvent): void => subscriber.next(ev);

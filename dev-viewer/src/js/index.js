@@ -10,6 +10,7 @@ import {FormsService} from "./tools/forms";
 import {HighlightService} from "./tools/highlight";
 import {EraserButton, PenButton} from "./tools/freehand";
 import {SidebarManager} from "./sidebar";
+import {ScalePreset} from "@srag/pdf-wrap";
 
 
 LoggerFactory.configure({
@@ -37,8 +38,9 @@ export async function loadPDF() {
     });
 
     pdfDocument.scaleTo("page-fit");
-    pdfDocument.zoom.doubleTap.snap.enabled = true;
-    pdfDocument.zoom.doubleTap.snap.scaleTo = "page-height";
+    pdfDocument.zoom.config.minScale = 0.1;
+    pdfDocument.zoom.gesture.doubleTap.snap.enabled = true;
+    pdfDocument.zoom.gesture.doubleTap.snap.scaleTo = "page-height";
 
     new HighlightService(pdfDocument.highlighting);
     new PenButton(pdfDocument.toolbox.freehand);
