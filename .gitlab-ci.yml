@@ -4,7 +4,9 @@
 
 .chromium_docker:
   timeout: "10m"
-  image: j33f/node-docker-container
+  variables:
+    CHROME_BIN: "chromium-browser"
+  image: zenika/alpine-chrome:83-with-node-12
 
 variables:
   YARN_CACHE_FOLDER: &yarn_cache_path "$CI_PROJECT_DIR/.yarn_cache_pdf_wrap"
