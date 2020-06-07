@@ -1,0 +1,11 @@
+/docs
+.env
+app.properties.cjs
+tsconfig.*
+mkdocs.yml
+karma.conf.cjs
+.eslintrc.cjs
+gulpfile.mjs
+.mocharc.cjs
+/types
+/src
