@@ -1,5 +1,5 @@
 import * as chai from "chai";
-import {ClientLine} from "../../src/pdfjs/client-line";
+import {ClientLine} from "./client-line";
 
 // tslint:disable: no-unused-expression
 describe('a client line', () => {

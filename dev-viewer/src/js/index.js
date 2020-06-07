@@ -2,14 +2,12 @@ import 'core-js/stable/promise';
 import './ui';
 import './storage';
 
-import {LoggerFactory, LogLevel} from "@srag/pdf-wrap";
-
-import {PDFjsDocumentService, setAssetsSrc} from "@srag/pdf-wrap";
+import {PDFjsDocumentService, setAssetsSrc, LoggerFactory, LogLevel} from "@srag/pdf-wrap";
 import {URI} from "@srag/pdf-wrap";
 
 import {SelectionButton} from "./tools/selection";
 import {FormsService} from "./tools/forms";
-import {ClearButton, HighlightButton, HighlightService} from "./tools/highlight";
+import {HighlightService} from "./tools/highlight";
 import {EraserButton, PenButton} from "./tools/freehand";
 import {SidebarManager} from "./sidebar";
 
@@ -39,6 +37,7 @@ export async function loadPDF() {
     });
 
     pdfDocument.scaleTo("page-fit");
+    pdfDocument.zoom.doubleTap.snap.enabled = true;
 
     new HighlightService(pdfDocument.highlighting);
     new PenButton(pdfDocument.toolbox.freehand);

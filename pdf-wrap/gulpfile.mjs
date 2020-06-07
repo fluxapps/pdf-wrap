@@ -1,17 +1,20 @@
-const gulp = require("gulp");
-const ts = require("gulp-typescript");
-const sourcemaps = require("gulp-sourcemaps");
-const del = require("del");
-const file = require("gulp-file");
-const spawn = require("child_process").spawn;
-const terser = require("gulp-terser");
-const eslint = require("gulp-eslint");
-const typedoc = require("gulp-typedoc");
-const concat = require("gulp-concat");
-const resolve = require("resolve");
-const path = require("path");
+import gulp from "gulp";
+import ts from "gulp-typescript";
+import sourcemaps from "gulp-sourcemaps";
+import del from "del";
+import {spawn} from "child_process";
+// import terser from "gulp-terser-js";
+import eslint from "gulp-eslint";
+import typedoc from "gulp-typedoc";
+import concat from "gulp-concat";
+import rename from "gulp-rename";
+import resolve from "resolve";
+// import merge from "merge2";
+import path from "path";
+// import terserConfig from "./terser-config.cjs";
+import ciDetect from "@npmcli/ci-detect";
 
-const appProperties = require("./app.properties");
+import appProperties from "./app.properties.cjs";
 
 // build ----------------------------------------------------
 
@@ -20,7 +23,7 @@ const appProperties = require("./app.properties");
  * Cleans the build by removing the build directory.
  */
 gulp.task("clean", function () {
-    return del(`${appProperties.build.dir}/**`, {force: false});
+    return del([appProperties.doc, appProperties.assets.dir, appProperties.dist], {force: false});
 });
 
 
@@ -41,9 +44,10 @@ gulp.task("typedoc", () => {
         .pipe(typedoc({
             module: "commonjs",
             target: "ES6",
-            out: `${appProperties.build.dirs.docs}/typedoc`,
+            out: path.join(appProperties.doc, "typedoc"),
             name: "PDF Wrap",
-            externalPattern: `${appProperties.root}/node_modules/**`,
+            externalPattern: `**/node_modules/**`,
+            exclude: `${appProperties.root}/src/api/**/*.(spec|mocks).ts`,
             excludeExternals: true,
             ignoreCompilerErrors: true,
             includeDeclarations: true,
@@ -51,38 +55,38 @@ gulp.task("typedoc", () => {
             excludeProtected: true,
             excludeNotExported: true,
             readme: `${appProperties.root}/README.md`,
-            tsconfig: `${appProperties.root}/tsconfig.json`
-
+            tsconfig: `${appProperties.root}/tsconfig.app.json`
         }));
 });
 
 /*
  * Generates the full PDF Wrap documentation
  */
-gulp.task("mkdocs", gulp.series("typedoc", (done) => {
+gulp.task("mkdocs", (done) => {
 
     spawn("mkdocs", ["build"], {stdio: "inherit", shell: true})
         .once("exit", function (code) {
             if (code === 0) {
-
-                gulp.src(`${appProperties.build.dirs.docs}/typedoc/**/*`)
-                    .pipe(gulp.dest(`${appProperties.build.dirs.docs}/mkdocs/typedoc`))
-                    .on("end", done)
-                    .on("error", done);
-
+                done();
             } else {
                 done(`Process finished with exit code ${code}`);
             }
         });
-}));
+});
+
+
+/*
+ * Generates the full PDF Wrap documentation
+ */
+gulp.task("generateDoc", gulp.series("mkdocs", "typedoc"));
 
 // --- publishDoc
 /*
  * Builds and publishes the documentation
  */
-gulp.task("publishDoc", gulp.series("mkdocs", (done) => {
+gulp.task("publishDoc", gulp.series("generateDoc", (done) => {
 
-    spawn("ghp-import", [`${appProperties.build.dirs.docs}/mkdocs`, "-p", "-n"], {stdio: "inherit", shell: true})
+    spawn("ghp-import", [path.join(appProperties.doc, "mkdocs"), "-p", "-n"], {stdio: "inherit", shell: true})
         .once("exit", function (code) {
             if (code === 0) {
                 done();
@@ -94,14 +98,6 @@ gulp.task("publishDoc", gulp.series("mkdocs", (done) => {
 
 // other ----------------------------------------------------
 
-// --- copyDependencies
-/*
- * Copies every dependency declared in package.json
- */
-gulp.task("copyDependencies", function (done) {
-    done(); // Noop don't bundle dependencies.
-});
-
 // --- copyCMaps
 /*
  * Copies the cmaps used in pdfjs.
@@ -110,7 +106,7 @@ gulp.task("copyCMaps", () => {
 
     const packagePath = getPdfJsPath();
     return gulp.src(`${packagePath}/cmaps/**/*`)
-        .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap/assets/cmaps`));
+        .pipe(gulp.dest(appProperties.assets.cmaps));
 });
 
 // --- copyImages
@@ -120,7 +116,7 @@ gulp.task("copyCMaps", () => {
 gulp.task("copyImages", () => {
     const packagePath = getPdfJsPath();
     return gulp.src(`${packagePath}/web/images/*`)
-        .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap/assets/images`));
+        .pipe(gulp.dest(appProperties.assets.image));
 });
 
 // --- copyPDFJS
@@ -133,7 +129,7 @@ gulp.task("copyPDFJS", gulp.series(gulp.parallel("copyCMaps", "copyImages"), () 
         .src([
             `${packagePath}/build/pdf.worker.js`
         ])
-        .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap/assets`));
+        .pipe(gulp.dest(appProperties.assets.script));
 }));
 
 // -- copyCSS
@@ -147,34 +143,7 @@ gulp.task("copyCSS", () => {
         `${appProperties.root}/src/assets/css/pdf-wrap.css`
     ])
         .pipe(concat("pdf-wrap.css"))
-        .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap/assets`))
-});
-
-// --- transformPackageJSON
-/*
- * Declares every dependency used in package.json as bundledDependencies.
- * In addition devDependencies are cleared.
- */
-gulp.task("transformPackageJSON", function () {
-
-    const pkg = require(`${appProperties.root}/package.json`);
-    pkg.devDependencies = {};
-    pkg.scripts = {};
-    pkg.main = "index.js";
-
-    return file("package.json", JSON.stringify(pkg), {src: true})
-        .pipe(gulp.dest(`${appProperties.build.dirs.dist}/npm`));
-});
-
-// --- transformPackageJSON
-/*
- * Declares every dependency used in package.json as bundledDependencies.
- * In addition devDependencies are cleared.
- */
-gulp.task("copyNpmRc", () => {
-    return gulp.src([
-        path.join(path.dirname(appProperties.root), ".npmrc")
-    ]).pipe(gulp.dest(path.join(appProperties.build.dirs.dist, "npm")));
+        .pipe(gulp.dest(appProperties.assets.css));
 });
 
 
@@ -183,16 +152,33 @@ gulp.task("copyNpmRc", () => {
  * Transpiles typescript to javascript based on the tsconfig.json file
  * and generates inline source maps.
  */
-gulp.task("transpileTypescript", function () {
+function transpileTypescript() {
 
-    const tsProject = ts.createProject("tsconfig.json");
+    const tsProject = ts.createProject("tsconfig.app.json");
 
     return tsProject.src()
         .pipe(sourcemaps.init())
         .pipe(tsProject())
-        .pipe(sourcemaps.write("."))
-        .pipe(gulp.dest(appProperties.build.dirs.javascript));
-});
+        .pipe(sourcemaps.write(".", { includeContent: false, sourceRoot: '../src' }))
+        .pipe(rename((it) => {
+            const newPath = path.join(...(it.dirname.split(path.sep).slice(1)));
+            it.dirname = newPath === "." ? "./" : newPath;
+            return it;
+        }))
+        .pipe(gulp.dest(appProperties.dist));
+
+    /**
+     * return merge([
+     tsResult.dts,
+     tsResult.js.pipe(terser(terserConfig))
+     ])
+     .pipe(sourcemaps.write(".", { includeContent: false, sourceRoot: '../src' }))
+     .pipe(gulp.dest(appProperties.dist));
+     */
+
+}
+
+gulp.task("transpile", gulp.series(transpileTypescript));
 
 // verification ---------------------------------------------
 
@@ -200,8 +186,8 @@ gulp.task("transpileTypescript", function () {
 /*
  * Runs the tests
  */
-gulp.task("test", gulp.series("transpileTypescript", (done) => {
-    spawn("yarn", ["mocha"], {stdio: "inherit", shell: true})
+export function test (done) {
+    spawn("yarn", ["karma", "start", "karma.conf.cjs"], {stdio: "inherit", env: process.env, shell: true})
         .once("exit", function (code) {
             if (code === 0) {
                 done();
@@ -209,69 +195,35 @@ gulp.task("test", gulp.series("transpileTypescript", (done) => {
                 done(`Process finished with exit code ${code}`);
             }
         });
-}));
+}
 
 // --- lint
 /*
  * Lints the typescript code
  */
-gulp.task("lint", () =>
-    gulp.src(`${appProperties.root}/src/**/*.ts`)
+export function lint() {
+    return gulp.src([
+        `${appProperties.root}/src/**/*.ts`
+    ])
         .pipe(eslint())
         .pipe(eslint.format())
         .pipe(eslint.failAfterError())
-);
+}
 
 // --- build
 /*
  * Transpiles typescript and runs the tests.
  */
-gulp.task("build", gulp.parallel("test", "lint"));
-
-// --- minify
-/*
- * Minify javascript files.
- */
-gulp.task("minify", gulp.series("build", function () {
-
-    const options = {
-        output: {
-            beautify: false
-        },
-        nameCache: null,
-        toplevel: false,
-        ie8: false,
-        warnings: false
-    };
-
-    return gulp.src(`${appProperties.build.dirs.javascript}/src/**/*.js`)
-        .pipe(sourcemaps.init({loadMaps: true}))
-        .pipe(terser(options))
-        .pipe(sourcemaps.write("."))
-        .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap`))
-}));
-
-// --- package
-gulp.task("lib", gulp.series("minify", () => {
-    return gulp.src(`${appProperties.build.dirs.javascript}/src/**/*.ts`)
-        .pipe(gulp.dest(`${appProperties.build.dirs.libs}/pdf-wrap`))
-
-}));
+if (ciDetect()) {
+    gulp.task("build", "transpile");
+} else {
+    gulp.task("build", gulp.series(lint, test, "transpile"));
+}
 
 /*
  * Copies javascript files, README.md, LICENSE.md and package.json to the libs directory.
  */
-gulp.task("package", gulp.series(gulp.parallel("lib", "copyDependencies", "copyPDFJS", "copyCSS", "transformPackageJSON", "copyNpmRc"), function () {
-
-    return gulp
-        .src([
-            `${appProperties.root}/README.md`,
-            `${appProperties.root}/LICENSE.md`,
-            `${appProperties.root}/CHANGELOG.md`,
-            `${appProperties.build.dirs.libs}/pdf-wrap/**/*`
-        ])
-        .pipe(gulp.dest(`${appProperties.build.dirs.dist}/npm`));
-}));
+gulp.task("package", gulp.series(gulp.parallel("build", "copyPDFJS", "copyCSS")));
 
 // --- repackage
 /*

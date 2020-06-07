@@ -1,7 +1,6 @@
-import {PageOverlay, StorageAdapter} from "../../../src/api/storage/adapter";
-import {URI} from "../../../src/api/document.service";
 import * as chai from "chai";
-import {StorageRegistry} from "../../../src/api/storage/adapter.registry";
+import { URI } from "../../api";
+import { PageOverlay, StorageAdapter, StorageRegistry } from "../../api/storage";
 
 
 function mockStorageAdapter(uri: URI): StorageAdapter {
@@ -14,10 +13,12 @@ function mockStorageAdapter(uri: URI): StorageAdapter {
     /* tslint:enable */
 }
 
+type AdapterMap = {adapterMap: Map<unknown, unknown>};
+
 describe('a storage registry', () => {
 
     beforeEach(() => {
-        (StorageRegistry.instance as any).adapterMap = new Map(); // tslint:disable-line: no-any
+        ((StorageRegistry.instance as unknown) as AdapterMap).adapterMap = new Map(); // tslint:disable-line: no-any
     });
 
     describe('using a storage adapter', () => {

@@ -1,5 +1,5 @@
 import * as chai from "chai";
-import {ClientRectangle} from "../../src/pdfjs/client-rectangle";
+import {ClientRectangle} from "./client-rectangle";
 
 // tslint:disable: no-unused-expression
 describe('a client rectangle', () => {

@@ -12,6 +12,6 @@ pages:
   - Reference Documentation: reference-documentation.md
   - Development Guide: development-guide.md
 
-site_dir: "build/docs/mkdocs"
+site_dir: "doc"
 
 dev_addr: "localhost:8000"

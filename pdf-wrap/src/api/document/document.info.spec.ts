@@ -1,4 +1,4 @@
-import {Outline, OutlineEntry, TreeOutlineEntry} from "../../../src/api/document/document.info";
+import {Outline, OutlineEntry, TreeOutlineEntry} from "./document.info";
 import * as chai from "chai";
 
 

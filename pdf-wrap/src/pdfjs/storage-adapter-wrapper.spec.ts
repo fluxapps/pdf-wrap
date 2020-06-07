@@ -1,10 +1,9 @@
-import {StorageAdapterWrapper} from "../../src/pdfjs/storage-adapter-wrapper";
-import {StorageRegistry} from "../../src/api/storage/adapter.registry";
-import {anyNumber, anything, instance, mock, verify, when} from "ts-mockito";
-import {PageOverlay, StorageAdapter, UnfinishedExecutionError} from "../../src/api/storage/adapter";
-import {URI} from "../../src/api/document.service";
 import * as chai from "chai";
 import chaiAsPromised from "chai-as-promised";
+import { anyNumber, anything, instance, mock, verify, when } from "ts-mockito";
+import { URI } from "../api";
+import { PageOverlay, StorageAdapter, StorageRegistry, UnfinishedExecutionError } from "../api/storage";
+import { StorageAdapterWrapper } from "./storage-adapter-wrapper";
 
 chai.use(chaiAsPromised);
 

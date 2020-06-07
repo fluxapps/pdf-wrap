@@ -2,6 +2,10 @@
   timeout: "10m"
   image: node:lts-alpine
 
+.chromium_docker:
+  timeout: "10m"
+  image: j33f/node-docker-container
+
 variables:
   YARN_CACHE_FOLDER: &yarn_cache_path "$CI_PROJECT_DIR/.yarn_cache_pdf_wrap"
 
@@ -36,13 +40,13 @@ build:
 
 test:code:
   stage: test
-  extends: .node_docker
+  extends: .chromium_docker
   script: yarn workspace @srag/pdf-wrap run gulp test
 test:deploy_dry_run:
   stage: test
   extends: .node_docker
   script:
-    - npm publish pdf-wrap/build/distributions/npm --dry-run --access public
+    - npm publish --dry-run --access public
   dependencies:
     - build
 test:authorization:
@@ -57,7 +61,7 @@ deploy:
   only:
     refs:
       - master
-  script: npm publish pdf-wrap/build/distributions/npm --access public
+  script: npm publish --access public
   when: manual
   dependencies:
     - build

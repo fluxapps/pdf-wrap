@@ -116,3 +116,5 @@ dist
 .yarn/build-state.yml
 .pnp.*
 
+./assets/
+./lib/

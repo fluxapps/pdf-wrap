@@ -1,5 +1,5 @@
-import {URI} from "../../src/api/document.service";
-import * as chai from "chai";
+import { URI } from "./document.service";
+import chai from "chai";
 
 describe('an URI', () => {
 
