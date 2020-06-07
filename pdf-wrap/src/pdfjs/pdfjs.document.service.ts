@@ -45,7 +45,7 @@ import { RescaleManager } from "./rescale-manager";
 import { StorageAdapterWrapper } from "./storage-adapter-wrapper";
 import { FormFactory } from "./tool/forms";
 import { EraserTool, FreehandTool, SelectionTool } from "./tool/tools";
-import { DefaultZoomSettings, DoubleTapZoomingInteractionImpl, PinchZoomingInteraction } from "./zoom";
+import { DefaultZoomSettings } from "./zoom";
 
 // PDF.js defaults
 GlobalWorkerOptions.workerSrc = "assets/pdf.worker.js";
@@ -193,9 +193,7 @@ export class PDFjsDocumentService implements PDFDocumentService {
         );
 
         const rescaleManager: RescaleManager = new RescaleManager(viewer);
-        const pinchZoom: PinchZoomingInteraction = new PinchZoomingInteraction(viewer, documentModel);
-        const doubleTapZoom: DoubleTapZoomingInteractionImpl = new DoubleTapZoomingInteractionImpl(viewer, documentModel);
-        const zoomSettings: DefaultZoomSettings = new DefaultZoomSettings(pinchZoom, doubleTapZoom);
+        const zoomSettings: DefaultZoomSettings = new DefaultZoomSettings(viewer, documentModel);
 
         const searchController: DocumentSearch = new PDFjsDocumentSearch(findController);
         const highlighting: DisposableHighlighting = featureConfig.selectableText ? new TextHighlighting(documentModel) : new DummyTextHighlighting();
@@ -267,15 +265,15 @@ export class PDFjsDocumentService implements PDFDocumentService {
             .subscribe((it) => {
             if (it && oldPinchZoomState === null && oldDoubleTapZoomState === null) {
                 this.log.trace(`Disable gestures and store state, pinch: "${oldPinchZoomState}" doubleTap: "${oldDoubleTapZoomState}"`);
-                oldDoubleTapZoomState = zoomSettings.doubleTap.enabled;
+                oldDoubleTapZoomState = zoomSettings.doubleTap.zoom.enabled;
                 oldPinchZoomState = zoomSettings.pinch.enabled;
-                zoomSettings.doubleTap.enabled = false;
+                zoomSettings.doubleTap.zoom.enabled = false;
                 zoomSettings.pinch.enabled = false;
             }
 
             if (!it && oldPinchZoomState !== null && oldDoubleTapZoomState !== null) {
                 this.log.trace(`Restore gesture state, pinch: "${oldPinchZoomState}" doubleTap: "${oldDoubleTapZoomState}"`);
-                zoomSettings.doubleTap.enabled = oldDoubleTapZoomState;
+                zoomSettings.doubleTap.zoom.enabled = oldDoubleTapZoomState;
                 zoomSettings.pinch.enabled = oldPinchZoomState;
                 oldDoubleTapZoomState = null;
                 oldPinchZoomState = null;
@@ -509,7 +507,7 @@ class PDFjsDocument implements PDFDocument {
         private readonly zoomSettings: DefaultZoomSettings,
     ) {
         this.zoomSettings.pinch.enabled = true;
-        this.zoomSettings.doubleTap.enabled = true;
+        this.zoomSettings.doubleTap.zoom.enabled = true;
 
         this.pageChange = new Observable((subscriber: Subscriber<PageChangingEvent>): TeardownLogic => {
             const eventHandler: (ev: PageChangingEvent) => void = (ev: PageChangingEvent): void => subscriber.next(ev);

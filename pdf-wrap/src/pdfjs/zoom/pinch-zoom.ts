@@ -1,39 +1,37 @@
 import { PDFViewer } from "pdfjs-dist/web/pdf_viewer";
 import { Logger } from "typescript-logging";
-import { ZoomingInteraction } from "../../api/zoom";
 import { LoggerFactory } from "../../log-config";
 import { DocumentModel } from "../document.model";
+import { AbstractZoomingInteraction } from "./interaction-base";
 
-export class PinchZoomingInteraction implements ZoomingInteraction {
+export class PinchZoomingInteraction extends AbstractZoomingInteraction {
 
-    private readonly log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/zoomt/pinch-zoom:PinchZoomingInteraction");
-
-    private isPinchZoomEnabled: boolean = false;
+    readonly #log: Logger = LoggerFactory.getLogger("ch/studerraimann/pdfwrap/pdfjs/zoomt/pinch-zoom:PinchZoomingInteraction");
 
     /**
      * Pinch center X
      */
-    private startX: number = 0;
+    #startX: number = 0;
     /**
      * Pinch center Y
      */
-    private startY: number = 0;
+    #startY: number = 0;
 
     /**
      * Transform origin X axis
      */
-    private originX: number = 0;
+    #originX: number = 0;
 
     /**
      * Transform origin Y axis
      */
-    private originY: number = 0;
+    #originY: number = 0;
 
     /**
      * Initial pinch distance
      * used to calculate the pinch scale factor.
      */
-    private initialPinchDistance: number = 0;
+    #initialPinchDistance: number = 0;
     /**
      * Zoom factor
      * Example:
@@ -41,38 +39,21 @@ export class PinchZoomingInteraction implements ZoomingInteraction {
      * Pinch distance start to end is factor 3 (end / start)
      * New pdf scaling is 0.5 * 3 = 1.5.
      */
-    private pinchScale: number = 1;
+    #pinchScale: number = 1;
 
-    private unsubscribe: (() => void) | null = null;
-
-    get enabled(): boolean {
-        return this.isPinchZoomEnabled;
-    }
-
-    set enabled(value: boolean) {
-        this.isPinchZoomEnabled = value;
-        if (value) {
-            this.enablePinchZoom();
-            return;
-        }
-
-        this.disablePinchZoom();
-    }
+    #unsubscribe: (() => void) | null = null;
 
 
     constructor(private readonly viewer: PDFViewer, private readonly container: DocumentModel) {
+        super();
     }
 
-    toggle(): void {
-        this.enabled = !this.enabled;
-    }
-
-    private enablePinchZoom(): void {
+    protected startListenForGesture(): void {
         const container: HTMLElement = this.container.viewer;
         const viewer: HTMLElement | null | undefined = (container?.firstElementChild as (HTMLElement | null | undefined));
 
         if (viewer === null || viewer === undefined) {
-            this.log.error(
+            this.#log.error(
                 "Can't bind to viewer or container DOM! The elements '#viewerContainer' and '#viewerContainer > .pdfViewer' are not present."
             );
             return;
@@ -85,37 +66,35 @@ export class PinchZoomingInteraction implements ZoomingInteraction {
             }
         };
         const touchMoveViewerHandler: (e: TouchEvent) => void = (e: TouchEvent): void => {
-            if (this.initialPinchDistance <= 0 || e.touches.length < 2) {
+            if (this.#initialPinchDistance <= 0 || e.touches.length < 2) {
                 return;
             }
 
             const pinchDistance: number = Math.hypot((e.touches[1].pageX - e.touches[0].pageX), (e.touches[1].pageY - e.touches[0].pageY));
             const rect: DOMRect = container.getBoundingClientRect();
-            this.pinchScale = pinchDistance / this.initialPinchDistance;
-            const originX: number = ((this.startX - rect.x) + container.scrollLeft);
-            const originY: number = ((this.startY - rect.y) + container.scrollTop);
+            this.#pinchScale = pinchDistance / this.#initialPinchDistance;
+            const originX: number = ((this.#startX - rect.x) + container.scrollLeft);
+            const originY: number = ((this.#startY - rect.y) + container.scrollTop);
 
-            // tslint:disable-next-line:no-console
-            console.log("PinchDistance", pinchDistance, "PinchScale", this.pinchScale);
-            // tslint:disable-next-line:no-console
-            console.log("originX", originX, "originY", originY);
+            this.#log.trace(`PinchDistance: ${pinchDistance}, PinchScale: ${this.#pinchScale}`);
+            this.#log.trace(`OriginX: ${originX}, OriginY: ${originY}`);
 
-            viewer.style.transform = `scale(${this.pinchScale})`;
+            viewer.style.transform = `scale(${this.#pinchScale})`;
             viewer.style.transformOrigin = `${originX}px ${originY}px`;
-            this.originX = originX;
-            this.originY = originY;
+            this.#originX = originX;
+            this.#originY = originY;
         };
         const touchStartViewerHandler: (e: TouchEvent) => void = (e: TouchEvent): void => {
             if (e.touches.length > 1) {
-                this.startX = (e.touches[0].pageX + e.touches[1].pageX) / 2;
-                this.startY = (e.touches[0].pageY + e.touches[1].pageY) / 2;
-                this.initialPinchDistance = Math.hypot((e.touches[1].pageX - e.touches[0].pageX), (e.touches[1].pageY - e.touches[0].pageY));
+                this.#startX = (e.touches[0].pageX + e.touches[1].pageX) / 2;
+                this.#startY = (e.touches[0].pageY + e.touches[1].pageY) / 2;
+                this.#initialPinchDistance = Math.hypot((e.touches[1].pageX - e.touches[0].pageX), (e.touches[1].pageY - e.touches[0].pageY));
             } else {
-                this.initialPinchDistance = 0;
+                this.#initialPinchDistance = 0;
             }
         };
         const touchEndViewerHandler: (e: TouchEvent) => void = (_: TouchEvent): void => {
-            if (this.initialPinchDistance <= 0) {
+            if (this.#initialPinchDistance <= 0) {
                 this.reset();
                 return;
             }
@@ -125,23 +104,16 @@ export class PinchZoomingInteraction implements ZoomingInteraction {
             viewer.style.transformOrigin = `unset`;
 
             // scale pdf to new zoom size
-            // tslint:disable-next-line:no-console
-            console.log("old pdf scaling", this.viewer.currentScale);
-            this.viewer.currentScale *= this.pinchScale;
-            // tslint:disable-next-line:no-console
-            console.log("new pdf scaling", this.viewer.currentScale);
-            this.disablePinchZoom();
-            requestAnimationFrame(() => {
-                // tslint:disable-next-line:no-console
-                console.log("container", container);
-                // tslint:disable-next-line:no-console
-                console.log("viewer", viewer);
+            this.#log.trace(`Old pdf scaling: ${this.viewer.currentScale}`);
+            this.viewer.currentScale *= this.#pinchScale;
+            this.#log.debug(`New pdf scaling: ${this.viewer.currentScale}`);
 
+            this.enabled = false;
+            requestAnimationFrame(() => {
                 this.scrollToPinchCenter();
                 this.reset();
-                this.enablePinchZoom();
+                this.enabled = true;
             });
-            // Scroll (pinchScale -1 is necessary because we have to zoom out on pinchIn)
         };
 
         // Prevent native iOS page zoom
@@ -150,12 +122,12 @@ export class PinchZoomingInteraction implements ZoomingInteraction {
         viewer.addEventListener("touchmove", touchMoveViewerHandler);
         viewer.addEventListener("touchend", touchEndViewerHandler);
 
-        this.unsubscribe = (): void => {
+        this.#unsubscribe = (): void => {
             document.removeEventListener("touchmove", touchMoveDocumentHandler);
             viewer.removeEventListener("touchstart", touchStartViewerHandler);
             viewer.removeEventListener("touchmove", touchMoveViewerHandler);
             viewer.removeEventListener("touchend", touchEndViewerHandler);
-            this.unsubscribe = null;
+            this.#unsubscribe = null;
         };
     }
 
@@ -163,17 +135,19 @@ export class PinchZoomingInteraction implements ZoomingInteraction {
         return  this.container.viewer;
     }
 
+    /*
     private getViewer(): HTMLElement {
         const viewer: HTMLElement | null | undefined = (this.getContainer()?.firstElementChild as (HTMLElement | null | undefined));
 
         if (viewer === null || viewer === undefined) {
             const errMessage: string = "Can't bind to viewer or container DOM! Failed to initialize pinch zoom.";
-            this.log.error(errMessage);
+            this.#log.error(errMessage);
             throw new Error(errMessage);
         }
 
         return viewer;
     }
+     */
 
     private scrollToPinchCenter(): void {
         /*
@@ -184,27 +158,27 @@ export class PinchZoomingInteraction implements ZoomingInteraction {
          */
 
         const container: HTMLElement = this.getContainer();
-        const viewer: Element = this.getViewer();
+        // const viewer: Element = this.getViewer();
 
-        const vrect: DOMRect = viewer.getBoundingClientRect();
+        // const vrect: DOMRect = viewer.getBoundingClientRect();
         const crect: DOMRect = container.getBoundingClientRect();
 
         // Translate the origin coordinates the screen coordinates
-        const x0: number = -vrect.x;
-        const y0: number = -vrect.y;
+        // const x0: number = -vrect.x;
+        // const y0: number = -vrect.y;
 
         // Scale the origin of the old rectangle to match the scaled rectangle "vrect"
-        const x: number = (this.originX * this.pinchScale);
-        const y: number = (this.originY * this.pinchScale);
+        const x: number = (this.#originX * this.#pinchScale);
+        const y: number = (this.#originY * this.#pinchScale);
 
         // The translated coordinates (screen X, screen Y)
-        const xp: number = x - x0;
-        const yp: number = y - y0;
+        // const xp: number = x - x0;
+        // const yp: number = y - y0;
 
         // Calculate delta of the pinch center and the side of the container.
         // This is required because we would scroll the pinch center to the container left  and top position without the delta.
-        const dx: number = this.startX - crect.x;
-        const dy: number = this.startY - crect.y;
+        const dx: number = this.#startX - crect.x;
+        const dy: number = this.#startY - crect.y;
 
         // scroll to startX
         const scrollLeft: number = (x - dx);
@@ -212,44 +186,23 @@ export class PinchZoomingInteraction implements ZoomingInteraction {
         // scroll to startY
         const scrollTop: number = (y - dy);
 
-        // tslint:disable-next-line:no-console
-        console.log("viewerX", vrect.x, "viewerY", vrect.y);
-        // tslint:disable-next-line:no-console
-        console.log("containerX", crect.x, "containerY", crect.y);
-        // tslint:disable-next-line:no-console
-        console.log("centerX", this.startX, "centerY", this.startY);
-        // tslint:disable-next-line:no-console
-        console.log("originX", this.originX, "originY", this.originY);
-        // tslint:disable-next-line:no-console
-        console.log("dx", dx, "dy", dy);
-        // tslint:disable-next-line:no-console
-        console.log("x", x, "y", y);
-        // tslint:disable-next-line:no-console
-        console.log("xp", xp, "yp", yp);
-        // tslint:disable-next-line:no-console
-        console.log("x0", x0, "y0", y0);
-        // tslint:disable-next-line:no-console
-        console.log("pscale", this.pinchScale);
-        // tslint:disable-next-line:no-console
-        console.log("sleftv", scrollLeft, "stopv", scrollTop);
-
         container.scrollLeft = scrollLeft;
         container.scrollTop = scrollTop;
 
     }
 
-    private disablePinchZoom(): void {
-        if (typeof this.unsubscribe === "function") {
-            this.unsubscribe();
+    protected stopListeningForGesture(): void {
+        if (typeof this.#unsubscribe === "function") {
+            this.#unsubscribe();
         }
     }
 
     private reset(): void {
-        this.startX = this.startY = this.initialPinchDistance = 0;
-        this.pinchScale = 1;
+        this.#startX = this.#startY = this.#initialPinchDistance = 0;
+        this.#pinchScale = 1;
     }
 
     dispose(): void {
-        this.enabled = false;
+        super.dispose();
     }
 }

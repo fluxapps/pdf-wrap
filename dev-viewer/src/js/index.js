@@ -38,6 +38,7 @@ export async function loadPDF() {
 
     pdfDocument.scaleTo("page-fit");
     pdfDocument.zoom.doubleTap.snap.enabled = true;
+    pdfDocument.zoom.doubleTap.snap.scaleTo = "page-height";
 
     new HighlightService(pdfDocument.highlighting);
     new PenButton(pdfDocument.toolbox.freehand);

@@ -1,4 +1,4 @@
-import { DoubleTapZoomingInteraction, ZoomingInteraction } from "./interaction";
+import { DoubleTabInteractions, ZoomingInteraction } from "./interaction";
 
 /**
  * Zoom settings of the current pdf document.
@@ -11,5 +11,5 @@ export interface ZoomSettings {
     /**
      * Double tap interaction settings.
      */
-    readonly doubleTap: DoubleTapZoomingInteraction;
+    readonly doubleTap: DoubleTabInteractions;
 }
