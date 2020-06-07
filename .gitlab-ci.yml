@@ -37,7 +37,8 @@ build:
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
     paths:
-      - pdf-wrap/build/
+      - pdf-wrap/lib
+      - pdf-wrap/assets
     expire_in: 30 days
 
 test:code:
