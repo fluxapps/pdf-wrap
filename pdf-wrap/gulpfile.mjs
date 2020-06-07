@@ -152,7 +152,7 @@ gulp.task("copyCSS", () => {
  * Transpiles typescript to javascript based on the tsconfig.json file
  * and generates inline source maps.
  */
-function transpileTypescript() {
+function transpile() {
 
     const tsProject = ts.createProject("tsconfig.app.json");
 
@@ -177,8 +177,7 @@ function transpileTypescript() {
      */
 
 }
-
-gulp.task("transpile", gulp.series(transpileTypescript));
+gulp.task(transpile);
 
 // verification ---------------------------------------------
 
@@ -186,7 +185,7 @@ gulp.task("transpile", gulp.series(transpileTypescript));
 /*
  * Runs the tests
  */
-export function test (done) {
+function test (done) {
     spawn("yarn", ["karma", "start", "karma.conf.cjs"], {stdio: "inherit", env: process.env, shell: true})
         .once("exit", function (code) {
             if (code === 0) {
@@ -196,12 +195,13 @@ export function test (done) {
             }
         });
 }
+gulp.task(test);
 
 // --- lint
 /*
  * Lints the typescript code
  */
-export function lint() {
+function lint() {
     return gulp.src([
         `${appProperties.root}/src/**/*.ts`
     ])
@@ -209,15 +209,18 @@ export function lint() {
         .pipe(eslint.format())
         .pipe(eslint.failAfterError())
 }
+lint.displayName = "lint"
+lint.description = "Lint all project source files";
+gulp.task(lint);
 
 // --- build
 /*
  * Transpiles typescript and runs the tests.
  */
 if (ciDetect()) {
-    gulp.task("build", "transpile");
+    gulp.task("build", gulp.series(transpile));
 } else {
-    gulp.task("build", gulp.series(lint, test, "transpile"));
+    gulp.task("build", gulp.series(lint, test, transpile));
 }
 
 /*
