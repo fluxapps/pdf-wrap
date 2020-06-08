@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.8.0
+### Added
+* New double touch gesture which snaps the page to a configured format for example page height.
+The two double touch gestures are exclusive and disable each other automatically.
+* New zoom configuration API which is located at `PDFjsDocument.zoom.config` which
+can be used to set the max and min scale of the document.
+
+### BREAKING CHANGES
+* The `PDFjsDocument.zoom` properties have been moved to `PDFjsDocument.zoom.gesture`.
+* The `PDFjsDocument.zoom.gesture.doubleTap` now has two options **zoom** and **snap**
+which can be used to switch between the zoom and page snap behaviour of the double touch gesture.
+
+
 ## 0.7.0
 ### Added
 * The ellipse form tool now accepts an optional configuration object, which allows users to drop

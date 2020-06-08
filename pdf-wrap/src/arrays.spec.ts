@@ -1,4 +1,4 @@
-import {pairwise} from "../src/arrays";
+import {pairwise} from "./arrays";
 import * as chai from "chai";
 
 describe('a pairwise function', () => {

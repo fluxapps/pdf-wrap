@@ -2,6 +2,12 @@
   timeout: "10m"
   image: node:lts-alpine
 
+.chromium_docker:
+  timeout: "10m"
+  variables:
+    CHROME_BIN: "chromium-browser"
+  image: zenika/alpine-chrome:83-with-node-12
+
 variables:
   YARN_CACHE_FOLDER: &yarn_cache_path "$CI_PROJECT_DIR/.yarn_cache_pdf_wrap"
 
@@ -31,18 +37,19 @@ build:
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
     paths:
-      - pdf-wrap/build/
+      - pdf-wrap/lib
+      - pdf-wrap/assets
     expire_in: 30 days
 
 test:code:
   stage: test
-  extends: .node_docker
+  extends: .chromium_docker
   script: yarn workspace @srag/pdf-wrap run gulp test
 test:deploy_dry_run:
   stage: test
   extends: .node_docker
   script:
-    - npm publish pdf-wrap/build/distributions/npm --dry-run --access public
+    - npm publish pdf-wrap --dry-run --access public
   dependencies:
     - build
 test:authorization:
@@ -57,7 +64,7 @@ deploy:
   only:
     refs:
       - master
-  script: npm publish pdf-wrap/build/distributions/npm --access public
+  script: npm publish pdf-wrap --access public
   when: manual
   dependencies:
     - build

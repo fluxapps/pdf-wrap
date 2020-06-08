@@ -1,4 +1,4 @@
-import {Color, colorFromHex, colorFromRgba} from "../../../src/api/draw/color";
+import {Color, colorFromHex, colorFromRgba} from "./color";
 import * as chai from "chai";
 
 describe("a color class", () => {

@@ -5,6 +5,7 @@ import {Outline, PageThumbnail} from "./document.info";
 import {Toolbox} from "../tool";
 import {Highlighting} from "../highlight";
 import {DocumentSearch} from "../search";
+import { ScalePreset } from "./document.scale";
 
 /**
  * Describes a PDF document containing several meta information and document data.
@@ -85,12 +86,4 @@ export interface PDFDocument {
      * After this method call, the document is no longer functional.
      */
     close(): Promise<void>;
-}
-
-export enum ScalePreset {
-    PAGE_WIDTH = "page-width",
-    PAGE_HIGHT = "page-height",
-    PAGE_FIT = "page-fit",
-    ACTUAL = "page-actual",
-    AUTO = "auto"
 }

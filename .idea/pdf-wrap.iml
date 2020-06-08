@@ -7,7 +7,9 @@
       <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/dev-viewer/build" />
       <excludeFolder url="file://$MODULE_DIR$/examples/dev-viewer/build" />
+      <excludeFolder url="file://$MODULE_DIR$/pdf-wrap/assets" />
       <excludeFolder url="file://$MODULE_DIR$/pdf-wrap/build" />
+      <excludeFolder url="file://$MODULE_DIR$/pdf-wrap/lib" />
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
     </content>

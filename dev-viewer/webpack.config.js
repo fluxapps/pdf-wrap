@@ -23,8 +23,8 @@ module.exports = {
         }),
         new CopyWebpackPlugin([
             {from: "src/assets", to: "assets"},
-            {from: `${WRAP_LIB_PATH}/build/distributions/npm/assets`, to: "assets/libs/pdf-wrap"},
-            {from: `${WRAP_LIB_PATH}/build/distributions/npm/assets/images`, to: "images"},
+            {from: `${WRAP_LIB_PATH}/assets`, to: "assets/libs/pdf-wrap"},
+            {from: `${WRAP_LIB_PATH}/assets/images`, to: "images"},
         ]),
     ],
 

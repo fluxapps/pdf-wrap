@@ -2,7 +2,7 @@ declare module "pdfjs-dist/web/pdf_viewer" {
 
     import {PDFDocumentProxy} from "pdfjs-dist";
     import { PDFRenderingQueue } from "pdfjs-dist/lib/web/pdf_rendering_queue";
-    import {PDFDocument, ScalePreset} from "../../api/document/pdf.document";
+    import {PDFDocument, ScalePreset} from "../../api/document";
 
     export interface PageChangingEvent {
         pageNumber: number;

@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": [
+    "node_modules",
+    "../node_modules",
+    "src/**/*.spec.ts",
+    "src/**/*.mocks.ts"
+  ],
+  "compilerOptions": {
+    "outDir": "./lib"
+  }
+}
