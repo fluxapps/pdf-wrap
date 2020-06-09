@@ -77,7 +77,6 @@
     "svg.js": "^2.7.1",
     "svg.resize.js": "^1.4.3",
     "svg.select.js": "^3.0.1",
-    "tslib": "^1.10.0",
     "typescript-logging": "^0.6.4",
     "typescript-optional": "^2.0.1",
     "uuid-js": "^0.7.5"

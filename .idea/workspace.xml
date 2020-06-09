@@ -2,16 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a1118649-6a96-4655-82c6-8f39b8e5a685" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/global-zoom-config.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev-viewer/src/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/dev-viewer/src/js/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pdf-wrap/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/api/zoom/interaction.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/zoom/interaction.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/api/zoom/settings.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/api/zoom/settings.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/pdfjs.document.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/pdfjs.document.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/double-tap-zoom.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/double-tap-zoom.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/pinch-zoom.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/pinch-zoom.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/settings.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/src/pdfjs/zoom/settings.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pdf-wrap/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/pdf-wrap/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/yarn.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -202,7 +197,7 @@
       <workItem from="1590581475862" duration="741000" />
       <workItem from="1590587368567" duration="17000" />
       <workItem from="1591102219477" duration="23690000" />
-      <workItem from="1591193261824" duration="97341000" />
+      <workItem from="1591193261824" duration="103728000" />
     </task>
     <servers />
   </component>
@@ -284,19 +279,19 @@
     </state>
     <state x="341" y="164" key="SettingsEditor/0.0.1680.1050/-1288.0.1288.946@0.0.1680.1050" timestamp="1589888676411" />
     <state x="341" y="164" key="SettingsEditor/0.0.1680.1050@0.0.1680.1050" timestamp="1591548200751" />
-    <state x="498" y="282" width="684" height="490" key="find.popup" timestamp="1591394261674">
+    <state x="498" y="282" width="684" height="490" key="find.popup" timestamp="1591692429554">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="498" y="282" width="684" height="518" key="find.popup/0.0.1680.1050/-1288.0.1288.946@0.0.1680.1050" timestamp="1590065799213" />
-    <state x="498" y="282" width="684" height="490" key="find.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1591394261674" />
+    <state x="498" y="282" width="684" height="490" key="find.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1591692429554" />
     <state x="639" y="390" key="scopes" timestamp="1591548191554">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="639" y="390" key="scopes/0.0.1680.1050@0.0.1680.1050" timestamp="1591548191554" />
-    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup" timestamp="1591386390390">
+    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup" timestamp="1591605722525">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="505" y="233" width="670" height="676" key="search.everywhere.popup/0.0.1680.1050/-1288.0.1288.946@0.0.1680.1050" timestamp="1589990725232" />
-    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1591386390390" />
+    <state x="505" y="233" width="670" height="676" key="search.everywhere.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1591605722525" />
   </component>
 </project>
