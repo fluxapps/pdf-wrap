@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.8.2
+### Changed
+* The build 0.8.1 broke in ts environments which use the esnext modules
+because the `tslib.__classPrivateFieldGet` helper is not defined. Also mentioned in the typescript issue [#36841](https://github.com/microsoft/TypeScript/issues/36841).
+We will re-enable the tslib helpers after this issue is resolved.
+
 ## 0.8.1
 ### Fixed
 * Add missing `ElementBuilderFactoryImpl` export.
