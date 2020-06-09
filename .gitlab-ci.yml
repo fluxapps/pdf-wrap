@@ -62,8 +62,9 @@ deploy:
   stage: deploy
   extends: .node_docker
   only:
-    refs:
-      - master
+    - /^v\d+\.\d+\.\d+$/
+  except:
+    - branches
   script: npm publish pdf-wrap --access public
   when: manual
   dependencies:
