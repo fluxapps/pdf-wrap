@@ -54,7 +54,7 @@
     "gulp-typedoc": "^2.2.4",
     "gulp-typescript": "^6.0.0-alpha.1",
     "install-peers-cli": "^2.2.0",
-    "karma": "^5.0.9",
+    "karma": "^6.3.14",
     "karma-chrome-launcher": "^3.1.0",
     "karma-mocha": "^2.0.1",
     "karma-spec-reporter": "^0.0.32",
