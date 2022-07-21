@@ -63,7 +63,7 @@
     "mocha": "^7.0.0",
     "resolve": "^1.17.0",
     "rxjs": "^6.5.4",
-    "terser": "^4.6.3",
+    "terser": "^4.8.1",
     "ts-mockito": "^2.5.0",
     "typedoc": "^0.16.6",
     "typescript": "^3.7.4",
